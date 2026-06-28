@@ -1,0 +1,13 @@
+# Shell scripts must be checked out with LF line endings, even on Windows,
+# so they execute correctly on Linux (Vast) without "bad interpreter" errors.
+*.sh text eol=lf
+
+# Rust / TOML / Markdown / Python — let git auto-handle.
+*.rs text
+*.toml text
+*.md text
+*.py text
+
+# Reference data files — leave as-is, never normalize.
+data/*.json -text
+*.pdf binary
