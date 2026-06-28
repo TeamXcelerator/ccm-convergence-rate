@@ -1,0 +1,68 @@
+================================================================
+                          LICENSE
+================================================================
+
+This repository contains two distinct works under two distinct
+license terms:
+
+  1. Source code, build scripts, configuration, and data files
+     (everything in this repository EXCEPT paper.tex, paper.pdf,
+     and any auxiliary LaTeX files such as paper.aux, paper.log,
+     paper.out)
+
+  2. The accompanying paper (paper.tex, paper.pdf, and any
+     auxiliary LaTeX files generated from paper.tex)
+
+----------------------------------------------------------------
+1. SOURCE CODE LICENSE
+----------------------------------------------------------------
+
+Copyright (c) 2026 Ronnie Andrews, Jr. (Team Xcelerator Inc.®)
+All rights reserved.
+
+"Team Xcelerator Inc." is a registered trademark of
+Team Xcelerator Inc.
+
+Permission is granted to:
+- Clone and build this software for personal verification of
+  results
+- Run the software to reproduce the published findings
+- Read and study the source code for educational purposes
+- Cite this work in academic publications with proper attribution
+
+Permission is NOT granted to:
+- Modify and redistribute this software
+- Incorporate any portion of this code into other projects
+- Use this software or its outputs for commercial purposes
+
+For licensing inquiries: randrewsmath@gmail.com
+
+----------------------------------------------------------------
+2. PAPER LICENSE
+----------------------------------------------------------------
+
+The accompanying paper (paper.tex, paper.pdf, and auxiliary LaTeX
+files) is licensed under the
+
+  Creative Commons Attribution-NonCommercial-NoDerivatives
+  4.0 International License (CC BY-NC-ND 4.0)
+
+You are free to:
+- Share — copy and redistribute the paper in any medium or
+  format, with attribution
+
+Under the following terms:
+- Attribution — You must give appropriate credit to
+  Ronnie Andrews, Jr., provide a link to the license, and
+  indicate if changes were made.
+- NonCommercial — You may not use the paper for commercial
+  purposes.
+- NoDerivatives — If you remix, transform, or build upon the
+  paper, you may not distribute the modified material.
+
+Full license text: https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode
+Human-readable summary: https://creativecommons.org/licenses/by-nc-nd/4.0/
+
+SPDX-License-Identifier: CC-BY-NC-ND-4.0
+
+================================================================

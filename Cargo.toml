@@ -1,0 +1,28 @@
+[package]
+name = "ccm-convergence-rate"
+version = "0.1.0"
+edition = "2021"
+description = "Empirical convergence formula for the CCM Zeta Spectral Triple (arXiv:2511.22755)"
+authors = ["Ronnie Andrews, Jr. <5178942+TeamXceleratorDev@users.noreply.github.com>"]
+license-file = "LICENSE"
+
+[features]
+default = []
+# High-precision tier via rug (MPFR/GMP). Required for meaningful results.
+# Build: cargo build --release --features hp
+# Requires: sudo apt install build-essential m4 libgmp-dev libmpfr-dev libmpc-dev
+hp = ["xc-spectral/hp", "xc-zeta/hp", "xc-numerics/hp", "dep:rug"]
+
+[dependencies]
+anyhow = "1.0"
+clap = { version = "4.5", features = ["derive"] }
+rug = { version = "1.30", optional = true, default-features = false, features = ["float", "integer"] }
+
+# Xcelerator Toolkit — pinned for reproducibility.
+xc-spectral = { git = "https://github.com/TeamXcelerator/xcelerator-toolkit", tag = "v0.11.1" }
+xc-zeta     = { git = "https://github.com/TeamXcelerator/xcelerator-toolkit", tag = "v0.11.1" }
+xc-numerics = { git = "https://github.com/TeamXcelerator/xcelerator-toolkit", tag = "v0.11.1" }
+
+[profile.release]
+opt-level = 3
+lto = "thin"

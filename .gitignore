@@ -1,0 +1,40 @@
+# Build artifacts
+target/
+*.exe
+*.pdb
+
+# LaTeX build artifacts
+paper.aux
+paper.log
+paper.out
+paper.synctex.gz
+paper.toc
+paper.bbl
+paper.blg
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Scratch PDF preview renders
+_preview*.png
+
+# Python
+__pycache__/
+*.pyc
+outputs/
+
+# Cached toolkit artifacts — regeneratable fixtures, ignored but layout preserved.
+data/gl_cache/**
+data/tau_cache/**
+data/prolate_eigvals_cache/**
+data/weil_eigvec_cache/**
+# ...except the .gitkeep placeholders that preserve the directories.
+!data/gl_cache/.gitkeep
+!data/tau_cache/.gitkeep
+!data/prolate_eigvals_cache/.gitkeep
+!data/weil_eigvec_cache/.gitkeep
