@@ -3,14 +3,16 @@ target/
 *.exe
 *.pdb
 
-# LaTeX build artifacts
-paper.aux
-paper.log
-paper.out
-paper.synctex.gz
-paper.toc
-paper.bbl
-paper.blg
+# LaTeX build artifacts (paper.*, paper_v1.1.*, any versioned paper*.* — NOT .tex/.pdf)
+paper*.aux
+paper*.log
+paper*.out
+paper*.synctex.gz
+paper*.toc
+paper*.bbl
+paper*.blg
+paper*.fls
+paper*.fdb_latexmk
 
 # IDE
 .vscode/

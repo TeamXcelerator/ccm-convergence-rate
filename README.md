@@ -10,7 +10,12 @@ Companion repository for the paper
 **Author:** Ronnie Andrews, Jr.  
 **ORCID:** [0009-0003-9724-3104](https://orcid.org/0009-0003-9724-3104)  
 **Contact:** randrewsmath@gmail.com  
-**Date:** June 2026
+**Version:** 1.1 (July 2026)
+
+> **New in v1.1.** The convergence law is now stated in two equivalent forms: an
+> *intrinsic* two-channel spectral error (modes and primes), which carries the
+> mathematics, and its *finite-precision measurement* in matching digits. The
+> working-precision term is a measurement cap, not a third mathematical budget.
 
 ---
 
@@ -23,17 +28,39 @@ first nontrivial Riemann zero `γ₁`. The accuracy sharpens as three parameters
 grow: a prime cutoff `λ²`, a basis size `N`, and the working precision `P`. The
 rate of convergence in `N` is named the central open problem in arXiv:2511.22755.
 
-Writing the matching-digit count `D(λ²,N,P) = −log₁₀(|ν₁−γ₁|/|γ₁|)`, so that
-`D → ∞` is exactly `ν₁ → γ₁`, the paper shows `D` obeys a single law — the
-**Andrews CCM Convergence Law**:
+The paper characterizes that convergence and states it — the **Andrews CCM
+Convergence Law** — in two equivalent forms.
+
+**Intrinsic (spectral) form.** The construction's relative error is a single
+two-channel quantity,
+
+```
+E(N, λ²) = ε_modes(N, λ²) + ε_primes(λ²)
+```
+
+a mode channel `ε_modes ~ exp(−a·N^q)` that vanishes as `N → ∞`, and a prime
+channel `ε_primes` that vanishes as `λ² → ∞`. Convergence `ν₁ → γ₁` is exactly
+`E → 0`, and requires both limits. The two channels are the finite-`N` transition
+and the extreme tail of a single prolate-type spectral edge. This form makes no
+reference to precision — it is the mathematics of the construction.
+
+**Observed (digit) form.** With the matching-digit count
+`D = −log₁₀(|ν₁−γ₁|/|γ₁|)`, so that `D → ∞` is exactly `ν₁ → γ₁`, a computation at
+working precision `P` resolves the intrinsic error only down to its round-off
+floor:
 
 ```
 D(λ², N, P) = min( D_Wprec(P),  D_nModes(N, λ²),  D_Primes(λ²) )
 ```
 
-the minimum of three independent convergence budgets (precision, modes, prime
-content). This repository contains the paper, its source, and a one-command
-driver that reproduces each empirical claim.
+the minimum of three budgets — precision, modes, prime content — of which
+precision is the instrument resolution, absent from the intrinsic form. In digit
+space the minimum is **forced, not fitted** (`D` is a negative logarithm of a sum
+of independent errors, so the largest binds), which is why earlier
+single-expression digit fits fail.
+
+This repository contains the paper, its source, and a one-command driver that
+reproduces each empirical claim.
 
 > This README is a guide to the claims and how to reproduce them. It is **not**
 > a substitute for the paper, which carries the derivations, proofs, and the
@@ -68,7 +95,9 @@ largest error dominates and `D = min(D_Wprec, D_nModes, D_Primes) + O(1)`
 (`max ≤ Σ ≤ 3·max`, and `log₁₀3 < 0.48`). The `min` agrees with `D` to within half a digit; what a single smooth term
 cannot capture is the combination of a hard precision wall, a prime ceiling, and
 a `λ²`-coupled mode ramp (the precision junction is sharp; the mode→prime
-junction is a smooth `tanh` saturation). *Full statement: §3.*
+junction is a smooth `tanh` saturation). The precision budget is a measurement
+cap, not mathematics; removing it leaves the single intrinsic two-channel edge
+(the intrinsic form above). *Full statement: §3.*
 
 Low-scale demonstration of the budget switching:
 ```bash
@@ -268,7 +297,8 @@ are skipped.
 ## Repository layout
 
 ```
-paper.tex / paper.pdf       the manuscript
+paper.tex / paper.pdf       the manuscript (current source + build)
+paper_v1.1.tex / .pdf       frozen v1.1 snapshot (this release)
 paper_v1.0.pdf              frozen snapshot matching the Zenodo v1.0 deposit
 src/main.rs                 the `measure` binary (CCM construction + matching digits)
 scripts/reproduce.py        one-command claim reproduction driver
