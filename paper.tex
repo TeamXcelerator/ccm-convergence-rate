@@ -35,32 +35,42 @@ the first
 nontrivial Riemann zero $\gamma_1$ that sharpens as three parameters grow: a
 prime cutoff $\lambda^2$, a basis size $N$, and the working precision $P$. The
 rate of this convergence in the basis size is named the central open problem
-in~\cite{CCM2025}. We characterize the convergence quantitatively. Writing the
-relative error on a logarithmic scale as the matching-digit count
-$D(\lambda^2,N,P)=-\log_{10}(|\nu_1-\gamma_1|/|\gamma_1|)$, so that
-$D\to\infty$ is exactly $\nu_1\to\gamma_1$, we show that $D$ obeys a single law,
+in~\cite{CCM2025}. We characterize the convergence quantitatively, in two equivalent forms.
+Intrinsically, the construction's relative error $|\nu_1-\gamma_1|/|\gamma_1|$
+is a single two-channel quantity,
+\[
+  E(N,\lambda^2)=\varepsilon_{\mathrm{modes}}(N,\lambda^2)
+                 +\varepsilon_{\mathrm{primes}}(\lambda^2),
+\]
+a mode channel vanishing as $N\to\infty$ and a prime channel vanishing as
+$\lambda^2\to\infty$, so that $\nu_1\to\gamma_1$ is exactly $E\to0$ and forces
+both limits; the two channels are the finite-$N$ transition and the extreme tail
+of one prolate-type spectral edge. Observed at finite working precision $P$, the
+same law is the matching-digit count
+$D(\lambda^2,N,P)=-\log_{10}(|\nu_1-\gamma_1|/|\gamma_1|)$,
 \[
   D(\lambda^2,N,P)=\min\!\bigl(D_{\mathrm{Wprec}}(P),\,
   D_{\mathrm{nModes}}(N,\lambda^2),\,D_{\mathrm{Primes}}(\lambda^2)\bigr),
 \]
-the minimum of three independent convergence budgets --- precision, modes, and
-prime content. The minimum is forced, not fitted: $D$ is a negative logarithm
-of a sum of independent errors, so the largest error binds. We prove that
+the minimum of three budgets --- precision, modes, and prime content --- of which
+precision is the instrument resolution, absent from the intrinsic form. In digit
+space the minimum is forced, not fitted ($D$ is a negative logarithm of a sum of
+independent errors, so the largest binds), which is why earlier single-expression
+digit fits fail. We prove that
 convergence to $\gamma_1$ requires all three budgets to diverge: at a fixed
 cutoff the accuracy is capped at the prime ceiling
 $D_{\mathrm{Primes}}(\lambda^2)$, so no basis size or precision reaches the zero
 and the cutoff must grow. This reduces convergence to the growth of the prime
-ceiling, which the prolate spheroidal asymptotic and high-precision data to
-$\lambda^2=200$ give as $D_{\mathrm{Primes}}\sim(4\pi/\ln 10)\lambda^2$. The
+ceiling, whose leading coefficient is derived, parameter-free, from the prolate
+spheroidal eigenvalue asymptotic: $D_{\mathrm{Primes}}\sim(4\pi/\ln 10)\lambda^2$. The
 mode budget
 --- the basis-size convergence rate --- is the logarithm of a stretched-exponential
 convergence $\exp(-aN^{q})$ whose exponent $q(\lambda^2)$ is the analyticity
 class of the eigenvector, derived from the archimedean Gamma factor with a
 prime correction from Mertens' theorem; a by-product is that the
 eigenvalue-space Galerkin exponent measured by Groskin~\cite{Groskin2026} is a
-finite-window slice of the same curve. The prime ceiling has the parameter-free
-leading coefficient $4\pi/\ln 10$ from the prolate spheroidal eigenvalue
-asymptotic. We state each component with an explicit rigor level, separating
+finite-window slice of the same curve. We state each component with an explicit
+rigor level, separating
 what is proved versus what is derived and empirically validated up to
 $\lambda^2=200$. The results have been communicated to
 co-authors of~\cite{CCM2025}.
@@ -101,12 +111,21 @@ not reference-limited; its leading digits agree with the standard tabulations
 of~\cite{Odlyzko}.
 \end{definition}
 
-\noindent Our central result is:
+\noindent Our central result, the \emph{Andrews CCM Convergence Law}, has two
+equivalent forms. Its intrinsic (spectral) form is the two-channel error
+\begin{equation}\label{eq:main-intrinsic}
+  \boxed{\;E(N,\lambda^2)=\varepsilon_{\mathrm{modes}}(N,\lambda^2)
+         +\varepsilon_{\mathrm{primes}}(\lambda^2)\;}
+\end{equation}
+whose two channels are the finite-$N$ transition and the extreme tail of a single
+prolate-type spectral edge (Section~\ref{ssec:twoforms}); convergence
+$\nu_1\to\gamma_1$ is exactly $E\to0$. Its finite-precision measurement is the
+matching-digit count
 \begin{equation}\label{eq:main}
   \boxed{\;D(\lambda^2,N,P)=\min\!\bigl(D_{\mathrm{Wprec}}(P),\,
   D_{\mathrm{nModes}}(N,\lambda^2),\,D_{\mathrm{Primes}}(\lambda^2)\bigr)\;}
 \end{equation}
-which we call the \emph{Andrews CCM Convergence Law}. Since $D$ is the
+in which $D_{\mathrm{Wprec}}$ is the instrument resolution alone. Since $D$ is the
 relative error on a logarithmic scale, the law is a quantitative convergence
 statement: $D\to\infty$ is precisely $\nu_1\to\gamma_1$, and the three budgets
 are the independent mechanisms that drive (or stall) that convergence
@@ -114,10 +133,13 @@ are the independent mechanisms that drive (or stall) that convergence
 distinguish it from prior empirical fits:
 \begin{enumerate}
 \item \textbf{The minimum is forced, not fitted} (Section~\ref{sec:skeleton}).
-  Because $D$ is a negative logarithm of a sum of independent positive errors,
-  the largest error dominates and $D$ equals the minimum of the three
-  per-source digit budgets up to an $O(1)$ term. This is the structural reason
-  earlier single-formula fits failed.
+  In digit space $D$ is a negative logarithm of a sum of independent positive
+  errors, so the largest dominates and $D$ equals the minimum of the three
+  per-source budgets up to an $O(1)$ term --- the structural reason earlier
+  single-formula digit fits failed. The precision budget is measurement, not
+  mathematics: removing it leaves the single intrinsic
+  edge~\eqref{eq:main-intrinsic}, whose two channels (modes, primes) are the only
+  mathematical content.
 \item \textbf{Each budget is analyzed from the construction}, not guessed. The
   precision budget follows from elementary round-off analysis; the prime
   ceiling from the prolate eigenvalue asymptotic; and the mode budget from the
@@ -218,6 +240,49 @@ $N\to\infty$.
 Each budget is isolated experimentally by \emph{starvation}: to read $D_i$
 directly, set the other two parameters large enough that their budgets exceed
 $D_i$. We use this throughout Sections~\ref{sec:wprec}--\ref{sec:primes}.
+
+\subsection{The two forms of the law}\label{ssec:twoforms}
+
+Of the three budgets, only two --- mode truncation and prime cutoff --- are
+properties of the finite operator; round-off is a property of the computation.
+Separating them gives the two forms stated in Section~\ref{sec:intro}.
+
+\smallskip
+\noindent\emph{Intrinsic (spectral) form.} The mathematical content is the
+two-channel error~\eqref{eq:main-intrinsic}, $E=\varepsilon_{\mathrm{modes}}
++\varepsilon_{\mathrm{primes}}$, with $\varepsilon_{\mathrm{modes}}\sim
+\exp(-aN^{q})\to0$ as $N\to\infty$ (Section~\ref{sec:nmodes}) and
+$\varepsilon_{\mathrm{primes}}\to0$ as $\lambda^2\to\infty$
+(Section~\ref{sec:primes}). It makes no reference to precision, and
+$\nu_1\to\gamma_1$ is exactly $E\to0$, which requires both channels to vanish.
+
+\smallskip
+\noindent\emph{Observed (digit) form.} A computation at working precision $P$
+resolves $E$ only down to its round-off floor, so the measured matching-digit
+count is
+\begin{equation}\label{eq:observed}
+  D(\lambda^2,N,P)=\min\!\bigl(D_{\mathrm{Wprec}}(P),\,-\log_{10}E(N,\lambda^2)\bigr)
+   =\min\!\bigl(D_{\mathrm{Wprec}},D_{\mathrm{nModes}},D_{\mathrm{Primes}}\bigr)+O(1),
+\end{equation}
+the second equality by Proposition~\ref{prop:min}. Here $D_{\mathrm{Wprec}}(P)$
+is the instrument resolution: it is no property of $\nu_1$, $\gamma_1$, or the
+operator, and as $P\to\infty$ it disappears, returning the intrinsic form in
+digit units. Thus the boxed law~\eqref{eq:main} is the finite-precision
+\emph{measurement} of the intrinsic law~\eqref{eq:main-intrinsic}.
+
+\begin{remark}[The two channels are one edge]\label{rem:oneedge}
+The mode and prime channels are the two ends of a single spectral edge. By
+\eqref{eq:nmodes}, $D_{\mathrm{nModes}}=D_{\mathrm{Primes}}\cdot g$ with
+$g=\tanh\!\bigl((c\,N/(\lambda^2\ln\lambda^2))^{q}\bigr)\uparrow1$ as
+$N\to\infty$, so $D_{\mathrm{Primes}}=\lim_{N\to\infty}D_{\mathrm{nModes}}$ is not
+a separate budget but the $N\to\infty$ ceiling of the mode ramp. Both are
+features of one prolate-type band edge: the ramp is its finite-$N$ transition
+(the Landau--Widom plunge, Section~\ref{sec:nmodes}), the ceiling its extreme
+tail (the prolate asymptotic, Section~\ref{sec:primes}). Equivalently the digit
+law is a single edge function $D_{\mathrm{edge}}(N,\lambda^2)=
+D_{\mathrm{Primes}}\cdot g$ capped by precision,
+$D=\min(D_{\mathrm{Wprec}},D_{\mathrm{edge}})+O(1)$.
+\end{remark}
 
 %==============================================================================
 \section{The precision budget $D_{\mathrm{Wprec}}$}\label{sec:wprec}
