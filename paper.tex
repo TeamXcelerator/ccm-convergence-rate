@@ -2,8 +2,11 @@
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage{booktabs}
+\usepackage{graphicx}
 \usepackage{float}
+\usepackage[expansion=false]{microtype}
 \usepackage{hyperref}
+\hypersetup{hidelinks}
 \usepackage{geometry}
 \usepackage{orcidlink}
 \geometry{margin=1in}
@@ -22,13 +25,17 @@ Connes--Consani--Moscovici Zeta Spectral Triple}
 \author{Ronnie Andrews, Jr.\,\orcidlink{0009-0003-9724-3104}%
 \thanks{Correspondence: \texttt{randrewsmath@gmail.com}}}
 
-\date{June 2026}
+\date{June 2026\\[2pt]{\small Revised July 2026}}
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
-The Connes--Consani--Moscovici (CCM) zeta spectral triple~\cite{CCM2025} and
+We give a quantitative convergence law
+for the first Riemann zero produced by the Connes--Consani--Moscovici (CCM)
+zeta spectral triple: a three-budget minimum in digit space, equivalently a
+single two-channel spectral edge, with every component carried at an explicit
+rigor level. In detail, the CCM construction~\cite{CCM2025} and
 its Connes--van Suijlekom refinement~\cite{CvS2025} produce finite real
 symmetric matrices whose ground state yields an approximation $\nu_1$ to
 the first
@@ -37,12 +44,14 @@ prime cutoff $\lambda^2$, a basis size $N$, and the working precision $P$. The
 rate of this convergence in the basis size is named the central open problem
 in~\cite{CCM2025}. We characterize the convergence quantitatively, in two equivalent forms.
 Intrinsically, the construction's relative error $|\nu_1-\gamma_1|/|\gamma_1|$
-is a single two-channel quantity,
+is controlled by a single two-channel decomposition,
 \[
-  E(N,\lambda^2)=\varepsilon_{\mathrm{modes}}(N,\lambda^2)
+  E(N,\lambda^2)\le\varepsilon_{\mathrm{modes}}(N,\lambda^2)
                  +\varepsilon_{\mathrm{primes}}(\lambda^2),
 \]
-a mode channel vanishing as $N\to\infty$ and a prime channel vanishing as
+with both channels \emph{defined} from the construction (the finite-$N$
+displacement at fixed cutoff and the cutoff displacement at infinite basis
+size), a mode channel vanishing as $N\to\infty$ and a prime channel vanishing as
 $\lambda^2\to\infty$, so that $\nu_1\to\gamma_1$ is exactly $E\to0$ and forces
 both limits. The two channels are the finite-$N$ transition and the extreme tail
 of a single spectral edge (the lower edge of the equilibrium measure of the
@@ -54,19 +63,21 @@ $D(\lambda^2,N,P)=-\log_{10}(|\nu_1-\gamma_1|/|\gamma_1|)$,
   D(\lambda^2,N,P)=\min\!\bigl(D_{\mathrm{Wprec}}(P),\,
   D_{\mathrm{nModes}}(N,\lambda^2),\,D_{\mathrm{Primes}}(\lambda^2)\bigr),
 \]
-the minimum of three budgets --- precision, modes, and prime content --- of which
+the minimum of three budgets (precision, modes, and prime content), of which
 precision is the instrument resolution, absent from the intrinsic form. In digit
 space the minimum is forced, not fitted ($D$ is a negative logarithm of a sum of
 independent errors, so the largest binds), which is why earlier single-expression
-digit fits fail. We prove that
+digit fits fail. We prove, under an explicit finite-cutoff positivity
+hypothesis (unconditional in the Yoshida--Bombieri small-support range), that
 convergence to $\gamma_1$ requires all three budgets to diverge: at a fixed
 cutoff the accuracy is capped at the prime ceiling
 $D_{\mathrm{Primes}}(\lambda^2)$, so no basis size or precision reaches the zero
 and the cutoff must grow. This reduces convergence to the growth of the prime
 ceiling, whose leading coefficient is derived, parameter-free, from the prolate
-spheroidal eigenvalue asymptotic: $D_{\mathrm{Primes}}\sim(4\pi/\ln 10)\lambda^2$. The
-mode budget
---- the basis-size convergence rate --- is the logarithm of a stretched-exponential
+spheroidal eigenvalue asymptotic: $D_{\mathrm{Primes}}\sim(4\pi/\ln 10)\lambda^2$,
+rigorously anchored from one side by a variational floor bound; the reverse
+inequality, that the ceiling cannot be beaten at this rate, remains open. The
+mode budget, the basis-size convergence rate, is the logarithm of a stretched-exponential
 convergence $\exp(-aN^{q})$ whose exponent $q(\lambda^2)$ is the analyticity
 class of the eigenvector, derived from the archimedean Gamma factor with a
 prime correction from Mertens' theorem; a by-product is that the
@@ -74,24 +85,23 @@ eigenvalue-space Galerkin exponent measured by Groskin~\cite{Groskin2026} is a
 finite-window slice of the same curve. We state each component with an explicit
 rigor level, separating
 what is proved versus what is derived and empirically validated up to
-$\lambda^2=200$. The results have been communicated to
-co-authors of~\cite{CCM2025}.
+$\lambda^2=200$; the structural inputs are independent
+of~\cite{CvS2025} (Appendix~\ref{app:selfcontained}). The results have been
+communicated to co-authors of~\cite{CCM2025}.
 \end{abstract}
 
-%==============================================================================
 \section{Introduction}\label{sec:intro}
-%==============================================================================
 
 The Connes--Consani--Moscovici (CCM) construction~\cite{CCM2025}, building on
 the Connes--van Suijlekom truncated Weil form~\cite{CvS2025}, produces a family
 of finite self-adjoint operators $D_{\log}^{(\lambda,N)}$ whose spectra
 approximate the imaginary parts $\gamma_k$ of the nontrivial Riemann zeta
-zeros to remarkable numerical accuracy --- $55$ digits at the headline
+zeros to remarkable numerical accuracy: $55$ digits at the headline
 configuration of~\cite{CCM2025}, which we extended to $999$ digits in an
 independent reproduction~\cite{AndrewsA}. The construction has two integer-like
-control parameters --- a prime cutoff $\lambda^2$ (the primes $p\le\lambda^2$
-enter the Weil form) and a basis size $N$ (the matrix is $(2N{+}1)\times(2N{+}1)$)
---- together with the working precision $P$ in decimal digits. The rate at
+control parameters, a prime cutoff $\lambda^2$ (the primes $p\le\lambda^2$
+enter the Weil form) and a basis size $N$ (the matrix is $(2N{+}1)\times(2N{+}1)$),
+together with the working precision $P$ in decimal digits. The rate at
 which the eigenvalue converges in the basis size $N$ is named the central open
 problem in~\cite{CCM2025}; Groskin~\cite{Groskin2026}
 measured a Galerkin convergence exponent empirically but disclaims deriving it,
@@ -100,8 +110,12 @@ on the mean spectral error. We previously
 tested two proposed rate laws against high-precision data and found them
 unsupported~\cite{AndrewsB}.
 
-This paper characterizes that convergence explicitly.
-\begin{definition}
+The author's starting point is a belief the Hilbert--P\'olya conjecture
+already expresses: that apparent randomness in the zeros is structure not yet
+written down. The CCM construction gives that belief a computable form. What
+remained open is the rate at which the computation converges, and
+characterizing that rate explicitly is the subject of this paper.
+\begin{definition}\label{def:D}
 $D(\lambda^2,N,P) := -\log_{10}\bigl(|\nu_1-\gamma_1|/|\gamma_1|\bigr)$ is the
 \emph{matching-digit count}: the number of correct leading decimal digits of the
 first Riemann zero $\gamma_1$ reproduced by $\nu_1$, the first ordinate produced
@@ -113,13 +127,36 @@ not reference-limited; its leading digits agree with the standard tabulations
 of~\cite{Odlyzko}.
 \end{definition}
 
+\begin{center}
+\small
+\begin{tabular}{@{}ll@{}}
+\toprule
+\multicolumn{2}{@{}l}{\textbf{Notation} (each object is defined where cited; collected here for reference)}\\
+\midrule
+$E=|\nu_1-\gamma_1|/|\gamma_1|$ & relative error of the first ordinate; $D=-\log_{10}E$ (Def.~\ref{def:D})\\
+$\varepsilon_{\mathrm{modes}},\ \varepsilon_{\mathrm{primes}}$ & intrinsic error channels, eq.~\eqref{eq:channels}\\
+$D_{\mathrm{Wprec}},\,D_{\mathrm{nModes}},\,D_{\mathrm{Primes}}$ & per-source digit budgets (Sections~\ref{sec:wprec}--\ref{sec:primes})\\
+$\varepsilon^\infty(\lambda)$ & smallest eigenvalue of the continuum form at cutoff $\lambda$\\
+$D_{\mathrm{eig}}=-\log_{10}\varepsilon^\infty$ & eigenvalue floor (Section~\ref{sec:primes})\\
+$D_{\mathrm{edge}}=D_{\mathrm{Primes}}\cdot g$ & the single edge function (Section~\ref{ssec:twoforms})\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent The same number is read as a \emph{ceiling} or a
+\emph{floor} depending on the direction of view. $D_{\mathrm{Primes}}$ is a
+ceiling on the achievable digit count and, equally, the depth of the accuracy
+floor at the cutoff; both usages refer to the one object.
+
 \noindent Our central result, the \emph{Andrews CCM Convergence Law}, has two
-equivalent forms. Its intrinsic (spectral) form is the two-channel error
+equivalent forms. Its intrinsic (spectral) form is the two-channel decomposition
 \begin{equation}\label{eq:main-intrinsic}
-  \boxed{\;E(N,\lambda^2)=\varepsilon_{\mathrm{modes}}(N,\lambda^2)
+  \boxed{\;E(N,\lambda^2)\le\varepsilon_{\mathrm{modes}}(N,\lambda^2)
          +\varepsilon_{\mathrm{primes}}(\lambda^2)\;}
 \end{equation}
-whose two channels are the finite-$N$ transition and the extreme tail of a single
+with the channels defined in Section~\ref{sec:skeleton},
+\eqref{eq:channels} (an equality up to sign cancellation, confined to
+crossover seams; Prop.~\ref{prop:min}). The two channels are the finite-$N$ transition and the extreme tail of a single
 prolate-type spectral edge (Section~\ref{ssec:twoforms}); convergence
 $\nu_1\to\gamma_1$ is exactly $E\to0$. Its finite-precision measurement is the
 matching-digit count
@@ -135,10 +172,11 @@ are the independent mechanisms that drive (or stall) that convergence
 distinguish it from prior empirical fits:
 \begin{enumerate}
 \item \textbf{The minimum is forced, not fitted} (Section~\ref{sec:skeleton}).
-  In digit space $D$ is a negative logarithm of a sum of independent positive
-  errors, so the largest dominates and $D$ equals the minimum of the three
-  per-source budgets up to an $O(1)$ term --- the structural reason earlier
-  single-formula digit fits failed. The precision budget is measurement, not
+  In digit space $D$ is a negative logarithm of an error bounded by a sum of
+  operationally independent channels, so the largest binds and $D$ is at least
+  the minimum of the three per-source budgets, unconditionally, and equals it up
+  to an $O(1)$ term absent cancellation (Prop.~\ref{prop:min}). This is the
+  structural reason earlier single-formula digit fits failed. The precision budget is measurement, not
   mathematics: removing it leaves the single intrinsic
   edge~\eqref{eq:main-intrinsic}, whose two channels (modes, primes) are the only
   mathematical content.
@@ -151,19 +189,19 @@ distinguish it from prior empirical fits:
   against high-precision computation. We do not label the whole law a
   theorem; we state precisely which pieces are.
 \item \textbf{It yields a convergence criterion} (Prop.~\ref{prop:limit}): the
-  prime cutoff is an unbeatable ceiling --- at a fixed $\lambda^2$ no basis size
+  prime cutoff is an unbeatable ceiling. At a fixed $\lambda^2$ no basis size
   or precision reaches the zero, so convergence to $\gamma_1$ forces
-  $\lambda^2\to\infty$ --- which turns the qualitative convergence
+  $\lambda^2\to\infty$, which turns the qualitative convergence
   of~\cite{CCM2025} into an explicit, conditional rate.
 \item \textbf{No prior unified law, to our knowledge.} Earlier attempts are
   single closed-form fits of the digit count, and they fail: we tested two
   proposed rate laws against high-precision data and found them
-  unsupported~\cite{AndrewsB}, and Groskin~\cite{Groskin2026} likewise reports
+  unsupported~\cite{AndrewsB}. Groskin~\cite{Groskin2026} likewise reports
   that no single smooth-convergence law fits his data and declines to assert a
-  rate, while \'Sliwi\'nski~\cite{Sliwinski2026} establishes only a lower bound
-  on the mean error. The unified characterization given here --- the intrinsic
+  rate, and \'Sliwi\'nski~\cite{Sliwinski2026} establishes only a lower bound
+  on the mean error. The unified characterization given here, the intrinsic
   two-channel edge~\eqref{eq:main-intrinsic} and its finite-precision
-  measurement~\eqref{eq:main} --- is, to the best of the author's knowledge, the
+  measurement~\eqref{eq:main}, is, to the best of the author's knowledge, the
   first working closed-form convergence law for the construction. Its unity is
   the point: one spectral edge (Section~\ref{sec:equilibrium}) underlies both the
   mode ramp and the prime ceiling, which is why a single expression can hold
@@ -176,13 +214,11 @@ a stretched-exponential convergence, identify its exponent with the analyticity
 class of the eigenvector, and derive that exponent end to end. A by-product is
 that the eigenvalue-space Galerkin exponent measured by Groskin~\cite{Groskin2026}
 is a finite-window slice of the same curve. That the mode ramp and the prime
-ceiling are not two mechanisms but one spectral edge at two scales --- the lower
-edge of an equilibrium measure whose bulk is the Riemann--von Mangoldt density
---- is the subject of Section~\ref{sec:equilibrium}.
+ceiling are not two mechanisms but one spectral edge at two scales, the lower
+edge of an equilibrium measure whose bulk is the Riemann--von Mangoldt density,
+is the subject of Section~\ref{sec:equilibrium}.
 
-%==============================================================================
 \section{The construction and the object $D$}\label{sec:background}
-%==============================================================================
 
 We recall the construction of~\cite{CCM2025,CvS2025}. Let $\lambda>1$ and
 $L=2\ln\lambda=\ln\lambda^2$. On $\mathcal H_\lambda=L^2([\lambda^{-1},\lambda],
@@ -193,12 +229,29 @@ matrix whose archimedean part carries the local factor at infinity and whose
 arithmetic part is a finite sum over prime powers $p^j\le\lambda^2$. Its
 smallest eigenvalue $\varepsilon_N$ has an even eigenvector $\xi$, and the
 positive zeros of the associated Fourier--Mellin function $\widehat\xi$
-approximate the ordinates $\gamma_k$~\cite{CvS2025}.
+approximate the ordinates $\gamma_k$~\cite{CCM2025}.
 
-Two facts about $\widehat\xi$ are used below and are due to~\cite{CCM2025,CvS2025}:
-$\widehat\xi$ is entire, and (in the critical case) all its zeros are real and
-coincide with the spectrum. The eigenvector $\xi$ is even and, in the regime we
-study, the smallest eigenvalue is simple --- the even-symmetry verified
+Two facts about $\widehat\xi$ are used below: $\widehat\xi$ is entire, and (in
+the critical case) all its zeros are real and coincide with the spectrum. Both
+are proven \emph{self-contained} in~\cite{CCM2025}: the closed form of the
+transform is \cite[Prop.~5.9]{CCM2025} (rederived from scratch in
+Appendix~\ref{app:selfcontained}), and entirety/reality is
+\cite[Thm.~5.10]{CCM2025}, whose proof chain (Lemmas~5.2 and~5.4 there: the
+matrix structure $\tau_{ij}=(b_i-b_j)/(i-j)$, an elementary commutator
+identity, and self-adjointness in the induced inner product) is complete
+within~\cite{CCM2025}. The Carath\'eodory--Fej\'er--type reality mechanism
+\emph{originates} in the Connes--van Suijlekom paper~\cite{CvS2025}, which we
+cite as the historical source; no statement used in this paper depends on it
+(Appendix~\ref{app:selfcontained}). An independent classical foundation for the
+truncated Weil form predates both: Weil's positivity criterion, Yoshida's
+unconditional positivity theorem for test functions of sufficiently small
+support~\cite{Yoshida1992}, Bombieri's study of the truncated quadratic form
+and the eigenvalues of its finite sections~\cite{Bombieri2000}, and Suzuki's
+screw-function framework~\cite{SuzukiJLMS,SuzukiHilbert,Suzuki2026}, which
+unifies all of these by means of continuous functions.
+
+The eigenvector $\xi$ is even and, in the regime we
+study, the smallest eigenvalue is simple, the even-symmetry verified
 numerically across $38$ configurations spanning $\lambda^2=13$--$1000$
 in~\cite{AndrewsA}.
 
@@ -209,76 +262,114 @@ law~\eqref{eq:main-intrinsic}; $D$ is its measurement in digits, and the
 arithmetic of that measurement is what makes the minimum structure
 of~\eqref{eq:main} inevitable.
 
-%==============================================================================
 \section{The three-budget skeleton}\label{sec:skeleton}
-%==============================================================================
 
-The computed approximation $\nu_1$ carries error from three independent sources:
+The computed approximation $\nu_1$ carries error from three sources:
 finite working precision (round-off), finite basis size (mode truncation), and
-finite prime cutoff (the intrinsic ceiling at $N,P\to\infty$):
+finite prime cutoff (the intrinsic ceiling at $N,P\to\infty$). We now
+\emph{define} the channels, rather than posit their additivity. Write
+$\nu_1(N,\lambda^2)$ for the first ordinate of the exact (infinite-precision)
+finite-$N$ operator and $\nu_1(\infty,\lambda^2)$ for its $N\to\infty$ limit at
+fixed cutoff, and set
+\begin{equation}\label{eq:channels}
+  \varepsilon_{\mathrm{modes}}(N,\lambda^2)
+   :=\frac{|\nu_1(N,\lambda^2)-\nu_1(\infty,\lambda^2)|}{|\gamma_1|},
+  \qquad
+  \varepsilon_{\mathrm{primes}}(\lambda^2)
+   :=\frac{|\nu_1(\infty,\lambda^2)-\gamma_1|}{|\gamma_1|},
+\end{equation}
+the finite-$N$ displacement at fixed cutoff and the cutoff displacement at
+infinite basis size, with $\varepsilon_{\mathrm{round}}(P)$ the round-off
+perturbation of the computed $\nu_1$ relative to the exact finite-$N$ value.
+The triangle inequality then gives, for the computed relative error,
 \[
-  \text{error}\approx \varepsilon_{\mathrm{round}}(P)
-  +\varepsilon_{\mathrm{modes}}(N,\lambda^2)+\varepsilon_{\mathrm{primes}}(\lambda^2).
+  E \;\le\; \varepsilon_{\mathrm{round}}(P)
+  +\varepsilon_{\mathrm{modes}}(N,\lambda^2)+\varepsilon_{\mathrm{primes}}(\lambda^2),
 \]
-They are independent in that any one can be made dominant by taking the other
-two parameters large.
+an inequality, not an identity: the signed displacements can in principle
+cancel. The channels are \emph{independent} in a precise operational (not
+probabilistic or structural) sense: each answers to its own parameter
+(round-off to $P$, truncation to $N$, prime content to $\lambda^2$), so any
+one can be driven below the others at will. (Structurally they are coupled:
+$\varepsilon_{\mathrm{modes}}$ depends on $\lambda^2$ through both the exponent
+$q$ and the Shannon coordinate of Section~\ref{sec:nmodes}, and below the
+precision floor round-off corrupts the eigenvector nonlinearly,
+Section~\ref{ssec:evenness}; the operational sense is all
+Prop.~\ref{prop:min} uses.)
 
 \begin{proposition}[The minimum is forced]\label{prop:min}
-For positive errors $\varepsilon_1,\varepsilon_2,\varepsilon_3$ with
-$\Sigma=\sum_i\varepsilon_i$,
+Let $\varepsilon_1,\varepsilon_2,\varepsilon_3\ge0$ and let $E\ge0$ satisfy
+$E\le\Sigma:=\sum_i\varepsilon_i$. Then, unconditionally,
 \[
-  -\log_{10}\Sigma=-\log_{10}\bigl(\max_i\varepsilon_i\bigr)+O(1)
-  =\min_i\bigl(-\log_{10}\varepsilon_i\bigr)+O(1),
+  D:=-\log_{10}E\;\ge\;-\log_{10}\Sigma
+  \;\ge\;\min_i\bigl(-\log_{10}\varepsilon_i\bigr)-\log_{10}3 ,
 \]
-since $\max_i\varepsilon_i\le\Sigma\le 3\max_i\varepsilon_i$ and
-$\log_{10}3<0.48$. Hence $D=\min(D_{\mathrm{Wprec}},D_{\mathrm{nModes}},
-D_{\mathrm{Primes}})+O(1)$.
+since $\Sigma\le 3\max_i\varepsilon_i$. If in addition no cancellation occurs
+--- quantitatively, $E\ge\theta\max_i\varepsilon_i$ for some fixed
+$\theta\in(0,1]$ --- then also
+$D\le\min_i(-\log_{10}\varepsilon_i)+\log_{10}(1/\theta)$, whence
+$D=\min(D_{\mathrm{Wprec}},D_{\mathrm{nModes}},D_{\mathrm{Primes}})+O(1)$.
 \end{proposition}
 
-This is a rigorous consequence of two facts only: that $D$ is a digit count,
-and that the three sources are independent. No fitting is involved. By the
-bound, the minimum agrees with $D$ to within $\log_{10}3<0.48$ of a digit, so the
-law's content is that the \emph{binding mechanism} changes across the parameter
-space --- round-off, mode truncation, then prime content --- not that $D$ is
-literally non-smooth (it is smooth: a negative logarithm of a sum).
+The lower bound, that the computed digit count is at least the binding budget
+minus half a digit, is a rigorous consequence of the triangle inequality
+alone. The matching upper bound holds \emph{absent cancellation} between the
+signed displacements. Such cancellation is confined to the narrow crossover
+seams where two budgets are comparable (away from a seam a single channel
+dominates $E$ outright and $\theta$ is near $1$), and no seam in the
+$5{,}000$-plus experiments of this program shows $D$ exceeding the binding
+minimum by more than the stated $O(1)$; with that caveat recorded once, we
+write the law as an equality throughout. The $O(1)$ term is at most
+$\log_{10}3<0.48$ of a digit and lives only at the seams, so the law's content
+is that the \emph{binding mechanism} changes across the parameter space
+(round-off, mode truncation, then prime content), not that $D$ is literally
+non-smooth (it is smooth: a negative logarithm of a near-sum).
 
-The three sources are independent because they answer to different parameters
---- round-off to $P$, truncation to $N$, and prime content to $\lambda^2$ --- so
-any one can be driven below the others at will. The $O(1)$ term is at most
-$\log_{10}3<0.48$ of a digit, and arises only in the narrow crossover where two
-budgets are comparable; away from those seams a single budget binds and $D$
-equals it to within rounding. This is why, in digit space, $D$ is a minimum rather than a sum or product, and
+This is why, in digit space, $D$ is a minimum rather than a sum or product, and
 why global single-expression fits of the digit count fail in practice: a single
 elementary term cannot simultaneously hold a hard precision wall, a prime
-ceiling, and a $\lambda^2$-coupled mode ramp. In the intrinsic form the error is,
-by contrast, literally a sum, $E=\varepsilon_{\mathrm{modes}}
-+\varepsilon_{\mathrm{primes}}$~\eqref{eq:main-intrinsic}; the digit-space minimum
-is what the negative logarithm of that sum becomes, the largest term binding. The junctions differ in character.
-The precision junction is a hard wall --- round-off is a clamp --- so its corner
+ceiling, and a $\lambda^2$-coupled mode ramp. In the intrinsic form the error
+is, by contrast, the two-channel decomposition~\eqref{eq:main-intrinsic}; the
+digit-space minimum
+is what the negative logarithm of that near-sum becomes, the largest term
+binding. The junctions differ in character.
+The precision junction is a hard wall, since round-off is a clamp, so its corner
 is sharp. The mode$\to$prime junction, by contrast, is a wide, smooth saturation
 (the $\tanh$ of Section~\ref{sec:nmodes}): $D_{\mathrm{nModes}}$ is the
 mode-limited digit count, which rises along its pre-saturation ramp and is capped
 by the ceiling, $D_{\mathrm{nModes}}\le D_{\mathrm{Primes}}$, with equality as
 $N\to\infty$.
 
+\paragraph{The starvation protocol.}
 Each budget is isolated experimentally by \emph{starvation}: to read $D_i$
 directly, set the other two parameters large enough that their budgets exceed
-$D_i$. We use this throughout Sections~\ref{sec:wprec}--\ref{sec:primes}.
+$D_i$, so the channel of interest dominates $E$ outright and the cancellation
+caveat of Prop.~\ref{prop:min} is vacuous. This protocol is the
+experimental mirror of the minimum structure. It is what makes the digit form
+falsifiable rather than descriptive, since each budget's functional form is
+measured in a regime where it alone binds. We use it throughout
+Sections~\ref{sec:wprec}--\ref{sec:primes}.
 
 \subsection{The two forms of the law}\label{ssec:twoforms}
 
-Of the three budgets, only two --- mode truncation and prime cutoff --- are
+Of the three budgets, only two (mode truncation and prime cutoff) are
 properties of the finite operator; round-off is a property of the computation.
 Separating them gives the two forms stated in Section~\ref{sec:intro}.
 
 \smallskip
 \noindent\emph{Intrinsic (spectral) form.} The mathematical content is the
-two-channel error~\eqref{eq:main-intrinsic}, $E=\varepsilon_{\mathrm{modes}}
-+\varepsilon_{\mathrm{primes}}$, with $\varepsilon_{\mathrm{modes}}\sim
+two-channel decomposition~\eqref{eq:main-intrinsic}, with
+$\varepsilon_{\mathrm{modes}}\sim
 \exp(-aN^{q})\to0$ as $N\to\infty$ (Section~\ref{sec:nmodes}) and
 $\varepsilon_{\mathrm{primes}}\to0$ as $\lambda^2\to\infty$
 (Section~\ref{sec:primes}). It makes no reference to precision, and
-$\nu_1\to\gamma_1$ is exactly $E\to0$, which requires both channels to vanish.
+$\nu_1\to\gamma_1$ is exactly $E\to0$. Vanishing of both channels forces
+$E\to0$ unconditionally; conversely, sustained convergence $E\to0$ forces both
+channels to vanish, since a bounded cutoff pins $\varepsilon_{\mathrm{primes}}$
+away from zero (Prop.~\ref{prop:limit}) and the fixed-$\lambda^2$ mode
+displacement, vanishing as $N\to\infty$, cannot cancel it in the limit ---
+accidental cancellation can occur only at isolated parameter values, not along
+a convergent path.
 
 \smallskip
 \noindent\emph{Observed (digit) form.} A computation at working precision $P$
@@ -288,7 +379,7 @@ count is
   D(\lambda^2,N,P)=\min\!\bigl(D_{\mathrm{Wprec}}(P),\,-\log_{10}E(N,\lambda^2)\bigr)
    =\min\!\bigl(D_{\mathrm{Wprec}},D_{\mathrm{nModes}},D_{\mathrm{Primes}}\bigr)+O(1),
 \end{equation}
-the second equality by Proposition~\ref{prop:min}. Here $D_{\mathrm{Wprec}}(P)$
+the second equality by Prop.~\ref{prop:min}. Here $D_{\mathrm{Wprec}}(P)$
 is the instrument resolution: it is no property of $\nu_1$, $\gamma_1$, or the
 operator, and as $P\to\infty$ it disappears, returning the intrinsic form in
 digit units. Thus the boxed law~\eqref{eq:main} is the finite-precision
@@ -308,12 +399,10 @@ error~\eqref{eq:main-intrinsic} is one edge: $\varepsilon_{\mathrm{modes}}$ is i
 finite-$N$ transition (the Landau--Widom plunge, Section~\ref{sec:nmodes}) and
 $\varepsilon_{\mathrm{primes}}$ is its extreme tail (the prolate asymptotic,
 Section~\ref{sec:primes}). That these are literally the transition and the tail
-of one band edge --- the lower edge of the archimedean equilibrium measure ---
+of one band edge, the lower edge of the archimedean equilibrium measure,
 is established in Section~\ref{sec:equilibrium}.
 
-%==============================================================================
 \section{The precision budget $D_{\mathrm{Wprec}}$}\label{sec:wprec}
-%==============================================================================
 
 Finite working precision $P$ (decimal digits) introduces relative round-off
 $\sim 10^{-P}$, amplified by the eigenproblem's condition number $\kappa$ (set
@@ -333,8 +422,8 @@ analysis.}
 
 \subsection{Symmetry, positivity, and the precision floor}\label{ssec:evenness}
 
-A question the precision floor settles --- and one easy to answer wrongly
-without it --- is whether the even symmetry of the ground eigenvector, and the
+A question the precision floor settles, and one easy to answer wrongly
+without it, is whether the even symmetry of the ground eigenvector, and the
 positivity of $\varepsilon_N$, are genuine features of the operator or merely of
 the regime above the floor. The CCM construction~\cite{CCM2025} posits a simple
 smallest eigenvalue with an \emph{even} eigenvector (its Step~1) and enforces
@@ -342,7 +431,7 @@ this with a forced-even projection. The reproduction of~\cite{AndrewsA} tested
 that projection directly: across $38$ configurations ($\lambda^2=13$--$1000$,
 $N=10$--$800$, spanning both sides of the precision floor) with the projection
 \emph{disabled}, the natural smallest eigenvector converged to the very vector
-the projection would have produced --- to \emph{bit-identical} eigenvalues ---
+the projection would have produced, to \emph{bit-identical} eigenvalues,
 at every configuration above the floor. The forced-even projection is thus
 empirically a no-op above the floor: even symmetry is a property the operator
 exhibits unbidden, not an artifact of the projection or of the above-floor
@@ -350,12 +439,17 @@ regime.
 
 The qualifier ``above the floor'' is essential, and it is precisely where the
 budget of this section bites. When the target eigenvalue lies below
-$D_{\mathrm{Wprec}}$ --- smaller than the round-off that the working precision
-can resolve --- the computed eigenvector is dominated by numerical noise: it can
+$D_{\mathrm{Wprec}}$, smaller than the round-off that the working precision
+can resolve, the computed eigenvector is dominated by numerical noise: it can
 present spurious mixed symmetry, and the smallest computed eigenvalue can carry
 a spurious sign. These are artifacts of precision starvation, not properties of
 the operator; raising $P$ past the floor dissolves them, and the natural
-eigenvector is again even, into the deep near-zero spectrum.
+eigenvector is again even, into the deep near-zero spectrum. (This is also the
+regime in which the round-off channel of Section~\ref{sec:skeleton} stops
+acting as an additive perturbation of $\nu_1$: below the floor it corrupts the
+eigenvector nonlinearly, so the decomposition~\eqref{eq:channels}, like the
+symmetry and positivity statements of this subsection, is an above-floor
+statement.)
 
 This even, positive ground state was documented in our reproduction~\cite{AndrewsA}.
 In subsequent correspondence, and in a revision of his own paper~\cite{Groskin2026},
@@ -370,11 +464,9 @@ one. The even, positive ground state persists into the deep near-zero spectrum;
 apparent breakdowns are finite-precision or finite-cutoff artifacts, not features
 of the construction.
 
-%==============================================================================
 \section{The mode budget $D_{\mathrm{nModes}}$}\label{sec:nmodes}
-%==============================================================================
 
-This is the convergence rate in $N$ --- the open problem of~\cite{CCM2025}. In
+This is the convergence rate in $N$, the open problem of~\cite{CCM2025}. In
 the intrinsic form it is the mode channel $\varepsilon_{\mathrm{modes}}$; as a
 digit count it is the rising transition of the equilibrium-measure edge
 (Section~\ref{sec:equilibrium}), climbing toward the prime ceiling.
@@ -392,7 +484,7 @@ correction giving $q$ (\ref{ssec:prime}), and the Shannon coordinate
 
 \subsection{The ramp is a stretched exponential}\label{ssec:stretch}
 
-\begin{theorem}[Stretched-exponential convergence and rate unification]\label{thm:stretched}
+\begin{proposition}[Stretched-exponential convergence and rate unification]\label{prop:stretched}
 Suppose the pre-saturation mode budget satisfies $D_{\mathrm{nModes}}=(a/\ln10)\,
 N^{q}(1+o(1))$ for some $a=a(\lambda^2)>0$ and exponent $q=q(\lambda^2)$, and that
 the Weil-form ground eigenvalue is simple with even eigenvector. Then:
@@ -400,7 +492,9 @@ the Weil-form ground eigenvalue is simple with even eigenvector. Then:
 \item[(i)] \emph{(Stretched-exponential.)} The eigenvalue/zero error obeys
   $|\nu_1-\gamma_1|/|\gamma_1|=\exp(-aN^{q})(1+o(1))$; equivalently $q$ is the
   analyticity class of the eigenvector ($q=1$ exponential / strip-analytic,
-  $0<q<1$ sub-exponential but faster than any polynomial, $q\to0$ finite Sobolev).
+  $0<q<1$ sub-exponential but faster than any polynomial, $q\to0$ finite Sobolev)
+  --- on the classical scale, $q=1/\mu$ with $\mu$ the Gevrey index of the
+  eigenvector \cite{Rodino1993}.
 \item[(ii)] \emph{(Rate unification.)} Any local power-law fit
   $\mathrm{err}\sim C\,N^{-2s}$ over a window about $N$ returns the \emph{growing}
   local exponent $2s_{\mathrm{loc}}(N)=-\,d\ln\mathrm{err}/d\ln N=a\,q\,N^{q}$.
@@ -411,7 +505,7 @@ the Weil-form ground eigenvalue is simple with even eigenvector. Then:
   identity $|\varepsilon-\varepsilon_N|=O(\|\xi-\xi_N\|^2)$ for a self-adjoint
   operator with simple ground state~\cite{BabuskaOsborn1991}.
 \end{enumerate}
-\end{theorem}
+\end{proposition}
 \begin{proof}
 (i) $D=-\log_{10}(\mathrm{err})\Rightarrow\mathrm{err}=10^{-D}=\exp(-aN^q)$.
 (ii) $2s_{\mathrm{loc}}=-\,d\ln\mathrm{err}/d\ln N=d(aN^q)/d\ln N=aqN^q$; the
@@ -423,7 +517,16 @@ first-order dependence and no factor $2$.
 Thus $q$ is not a fitting knob but the \emph{analyticity class} of the
 eigenvector: $q=1$ is pure exponential decay (analytic in a strip), $0<q<1$ is
 sub-exponential but faster than any polynomial, and $q\to0$ is finite Sobolev
-($N^{-2s}$). The measured exponents lie just below $1$ and decrease with
+($N^{-2s}$). In standard terminology this scale is the \emph{Gevrey scale}: the
+Gevrey class $G^{\mu}$, $\mu\ge1$, is characterized exactly by Fourier-coefficient
+decay $\exp(-c\,|k|^{1/\mu})$, reducing to strip-analytic functions at $\mu=1$
+\cite{Rodino1993}, so the statement $|\xi_k|\sim\exp(-c\,k^{q})$ is the
+statement $\xi\in G^{1/q}$ (and no better). The open ``variance-to-exponent
+map'' of Section~\ref{ssec:prime} is thereby a precisely posed regularity
+lemma on a classical scale: \emph{prove that the ground eigenvector lies in the
+Gevrey class $G^{1/q(\lambda^2)}$ sharply, with
+$1/q=\gamma+\tfrac12\ln\ln\lambda^2$}. The measured exponents lie just below $1$
+and decrease with
 $\lambda^2$ (Table~\ref{tab:q}), the signature of an eigenvector that is
 strip-analytic in its archimedean part and roughened by the prime content.
 
@@ -431,20 +534,19 @@ The force of part~(i) is that it converts the open problem of \emph{measuring}
 a convergence rate into the analytic question of \emph{identifying} the
 eigenvector's regularity: the single exponent $q$ fixes the entire pre-saturation
 curve. It also explains why fixed power-law (Sobolev) fits are structurally the
-wrong model --- they are the $q\to0$ limit, whereas the operator sits near $q=1$
---- and hence why such fits drift and resist extrapolation
+wrong model (they are the $q\to0$ limit, whereas the operator sits near $q=1$),
+and hence why such fits drift and resist extrapolation
 (Section~\ref{sec:discussion}).
 
-Part~(ii) reconciles the two published pictures: the Galerkin exponent $s(c)$
-measured by Groskin~\cite{Groskin2026} in eigenvalue space is the local
-logarithmic slope of the present stretched-exponential, sampled at his window, so
-it is not a fixed Sobolev index and must grow with $N$ --- his eigenvalue-space
-exponent and the digit-space ramp are one object in two coordinates. The squaring
+Part~(ii) identifies the Galerkin exponent $s(c)$ measured by
+Groskin~\cite{Groskin2026} in eigenvalue space as the local logarithmic slope
+of the present stretched-exponential, sampled at his window; the data-level
+reconciliation this affords is taken up in Section~\ref{sec:discussion}. The squaring
 that links them needs the ground eigenvalue to be \emph{simple}, which is not
 assumed but established as the naturally-even, isolated ground state verified
 across $38$ configurations in the reproduction~\cite{AndrewsA}; were the state
 degenerate, the eigenvalue error would be only first order in the eigenvector
-error and the factor $2$ --- equivalently the $2s$ in Groskin's rate --- would not
+error and the factor $2$, equivalently the $2s$ in Groskin's rate, would not
 appear. \emph{Status: T1 (given the pre-saturation ramp form as hypothesis).}
 
 \subsection{The archimedean leading rate $\delta=\pi/4$}\label{ssec:arch}
@@ -503,7 +605,7 @@ Two points delimit what this establishes. It fixes the \emph{value}
 $\delta=\pi/4$ as a property of the limiting $\Gamma_\mathbb{R}$ factor: $\delta$
 is the half-width of the strip carrying the zeros of the limiting Fourier--Mellin
 function, and governs the zero convergence $\nu_1\to\gamma_1$ (with the squaring
-of Thm.~\ref{thm:stretched}(ii)); it is not the decay rate of the finite
+of Prop.~\ref{prop:stretched}(ii)); it is not the decay rate of the finite
 eigenvector's Galerkin coefficients, a distinct band-limited, prime-modulated
 quantity ($\approx0.71$ at $\lambda^2=100$), and the finite $\widehat\xi$, of
 exponential type $L/2$ via its $\sin(zL/2)$ factor, is not literally the completed
@@ -511,12 +613,13 @@ $\xi$. And it is structural motivation rather than a full derivation: obtaining
 $\pi/4$ from the symbol alone would require its conjugate part, which appears only
 through the analytic completion $\Gamma_\mathbb{R}$, that is, through the finite
 ground-state transform inheriting that factor, the realization step that remains
-open. \emph{Status: T3.}
+open.
 
 \begin{lemma}[Lattice sampling of the coefficients]\label{lem:sampling}
 The Fourier--Mellin transform of the $N$-mode eigenvector has the closed
 form $\widehat\xi_N(z)=2L^{-1/2}\sin(zL/2)\sum_{|j|\le N}\xi_j/(z-2\pi j/L)$
-\cite{CvS2025}. On the frequency lattice $z_k=2\pi k/L$,
+(\cite[Prop.~5.9]{CCM2025}; rederived from scratch in
+Appendix~\ref{app:selfcontained}). On the frequency lattice $z_k=2\pi k/L$,
 \[
   \widehat\xi_N(2\pi k/L)=(-1)^k\sqrt{L}\,\xi_k\ \ (|k|\le N),\qquad
   \widehat\xi_N(2\pi k/L)=0\ \ (|k|>N),
@@ -536,7 +639,7 @@ $\sin(z_kL/2)=0$.
 By Lemma~\ref{lem:sampling} the coefficients are the lattice samples of
 $\widehat\xi_N$ at spacing $2\pi/L$ with $L=\ln\lambda^2$, so the strip
 half-width~\eqref{eq:delta} gives a coefficient tail $\exp(-\delta(2\pi/L)N)$;
-with the squaring of Thm.~\ref{thm:stretched}(ii) the leading digit slope is
+with the squaring of Prop.~\ref{prop:stretched}(ii) the leading digit slope is
 \begin{equation}\label{eq:slope}
   \frac{\partial D_{\mathrm{nModes}}}{\partial N}
   =\frac{2\delta\,(2\pi/L)}{\ln10}=\frac{\pi^2}{\ln10\;\ln\lambda^2}
@@ -544,9 +647,90 @@ with the squaring of Thm.~\ref{thm:stretched}(ii) the leading digit slope is
 \end{equation}
 a parameter-free prediction. At $\lambda^2=7$, where few primes enter and
 $q\approx1$, \eqref{eq:slope} gives $2.203$ against a measured small-$N$ slope
-of $2.264$ --- agreement to $3\%$ with no free parameters. At larger $\lambda^2$
+of $2.264$, agreement to $3\%$ with no free parameters. At larger $\lambda^2$
 the measured early slope runs above~\eqref{eq:slope} exactly as the $q<1$
 concavity (below) requires.
+
+What \emph{is} rigorous is the transfer from strip convergence to zero
+displacement, which we now record; it confines the entire open content of
+$\delta=\pi/4$ to a coefficient-decay estimate.
+
+\begin{lemma}[Zero displacement from strip convergence]\label{lem:rouche}
+Let $F$ be holomorphic on a neighborhood of the closed disc
+$\overline{D}(\gamma_1,r)$ with a simple zero at $\gamma_1$, no other zero in the
+disc, and $|F(z)|\ge\tfrac12|F'(\gamma_1)|\,|z-\gamma_1|$ on the disc (true for
+$r$ small enough, by continuity of $F'$). Let $G$ be holomorphic on the disc
+with $\eta:=\sup_{\overline{D}(\gamma_1,r)}|G-F|$. If
+$\rho:=2\eta/|F'(\gamma_1)|\le r$, then $G$ has exactly one zero $\nu$ in
+$D(\gamma_1,\rho)$, and
+\[
+  |\nu-\gamma_1|\;\le\;\frac{2\,\eta}{|F'(\gamma_1)|}.
+\]
+\end{lemma}
+\begin{proof}
+On the circle $|z-\gamma_1|=\rho$ one has
+$|F(z)|\ge\tfrac12|F'(\gamma_1)|\rho=\eta\ge|G(z)-F(z)|$, with strict inequality
+after shrinking $\rho$ infinitesimally if equality holds; Rouch\'e's theorem then
+gives $G$ the same number of zeros as $F$ in the disc, namely one.
+\end{proof}
+
+Applied with $F=\widehat\xi_\infty$ (the fixed-$\lambda^2$ limit transform,
+whose zeros are real and simple in the critical case, the Hermite--Biehler
+structure underlying the de~Branges-space treatment of the Weil
+form~\cite{SuzukiHilbert,SuzukiJLMS}) and $G=\widehat\xi_N$, the lemma converts
+uniform convergence on a neighborhood of $\gamma_1$ inside the strip into zero
+displacement with the explicit constant $2/|\widehat\xi_\infty'(\gamma_1)|$.
+The entire open content of the archimedean rate is thereby confined to one
+statement. We record it formally, in three clauses that separate the objects
+involved: the eigenvector tail of the full form, the archimedean
+identification of its rate, and the transfer to the zero.
+
+\begin{conjecture}[Coefficient decay and zero displacement]\label{conj:decay}
+Fix $\lambda^2$, let $q=q(\lambda^2)$ be the exponent of
+Section~\ref{ssec:prime}, and let $\xi^{(\infty)}$ denote the limit
+eigenvector at cutoff $\lambda^2$.
+\begin{enumerate}
+\item[(i)] \emph{(Gevrey tail, full form.)} There exist $c(\lambda^2)>0$ and
+  $C$ with
+  \[
+    |\xi^{(\infty)}_k|\;\le\;C\,\exp\!\bigl(-c(\lambda^2)\,k^{q}\bigr).
+  \]
+\item[(ii)] \emph{(Archimedean identification.)} For the archimedean-only
+  localized form the tail is purely exponential ($q=1$) with rate
+  $\delta\cdot(2\pi/L)$, $\delta=\pi/4$; equivalently,
+  $c(\lambda^2)\,L/(2\pi)\to\delta$ and $q\to1$ as the prime content is
+  removed.
+\item[(iii)] \emph{(Doubling at the zero.)} The first-zero displacement obeys
+  \[
+    |\nu_1(N,\lambda^2)-\nu_1(\infty,\lambda^2)|
+    \;\le\;C\,\exp\!\bigl(-2\,c(\lambda^2)\,N^{q}(1+o(1))\bigr),
+  \]
+  twice the tail exponent of (i).
+\end{enumerate}
+\end{conjecture}
+
+Three remarks delimit the clauses. Clause (i) is the Gevrey membership of
+Section~\ref{ssec:prime} read per coefficient. Clauses (ii) and (iii) together
+recover the parameter-free slope~\eqref{eq:slope} at $q\approx1$, the
+prediction validated to $3\%$ at $\lambda^2=7$; the finite-$\lambda^2$
+coefficient rate ($\approx0.71$ at $\lambda^2=100$, against
+$\delta\approx0.785$) is then the first data point for the prime modulation
+that clause (ii) asserts, not a discrepancy. Clause (iii) carries the doubling:
+summing the tail of clause (i) over the discarded modes bounds the transform
+difference near $\gamma_1$ only at the single exponent $c(\lambda^2)N^{q}$,
+and Lemma~\ref{lem:rouche} then moves the zero at that same rate, while the
+observed displacement decays at twice it. The mechanism, whether first-order
+smallness of the transform difference at the zero itself or the second-order
+eigenvalue identity of Prop.~\ref{prop:stretched}(ii) transported through the
+spectrum--zeros identification, is part of what must be proven. None of the
+clauses is a citation target: no classical result supplies the
+$\Gamma_\mathbb{R}$ envelope for the finite ground-state transform (the
+realization step, in which the finite transform inherits the completed
+factor), so this is new analysis, precisely posed. \emph{Status: T2 modulo
+Conjecture~\ref{conj:decay}, the tier carried by the displacement transfer
+Lemma~\ref{lem:rouche} (T1); the open item is typed new analysis in
+Table~\ref{tab:tiers}, with clause (ii) the specific home of $\delta=\pi/4$
+and clause (i) the Gevrey membership shared with the exponent row.}
 
 \subsection{The prime correction: $q(\lambda^2)$}\label{ssec:prime}
 
@@ -579,8 +763,27 @@ $1/q=c_0+c_1\ln\ln\lambda^2$ over $\lambda^2\in\{7,13,20,25,50,100,150\}$ yields
   \qquad R^2=0.98 .
 \]
 Euler--Mascheroni $\gamma$ appears as the intercept of a regression that does
-not assume it. \emph{Status: T3; the remaining lemma is a rigorous
-variance-to-exponent map.}
+not assume it; the $c_1$ interval spans the regression variants used. The
+offset of the parameter-free curve is systematic, not centered scatter.
+Taking $c_0=\gamma$ exactly,
+the idealized $q=2/(2\gamma+\ln\ln\lambda^2)$ runs $5$--$7\%$ \emph{below} the
+per-$\lambda^2$ fits across the whole range (e.g.\ $1.10$ vs $1.185$ at
+$\lambda^2=7$; $0.75$ vs $0.785$ at $\lambda^2=100$), and the regression
+intercept $0.556$ sits $4\%$ under $\gamma=0.577$, always on the same side. We
+therefore report both curves side by side --- the fitted
+$(c_0,c_1)=(0.556,\,0.478\text{--}0.508)$ and the idealized
+$(\gamma,\tfrac12)$ --- and the identification of the intercept with $\gamma$
+is a structural hypothesis the data supports to that one-signed accuracy, not
+a measurement centered on it. \emph{Status: T3; the remaining lemma is a rigorous
+variance-to-exponent map, now precisely posed on the Gevrey scale
+(Section~\ref{ssec:stretch}): prove that the almost-periodic prime multiplier
+$S$, of mean square $\tfrac12\sum_{p\le\lambda^2}p^{-1}$, degrades the Gevrey
+index of the strip-analytic ($G^1$) archimedean part linearly in that mean
+square --- i.e.\ $\xi\in G^{\mu}$ sharply with
+$\mu=\gamma+\tfrac12\ln\ln\lambda^2$. The characterization of $G^{\mu}$ by
+coefficient decay $\exp(-c|k|^{1/\mu})$~\cite{Rodino1993} makes this statement
+equivalent to the measured tail; what is missing is the subordination
+mechanism, a piece of new analysis rather than a citation.}
 
 \begin{table}[t]
 \centering
@@ -614,25 +817,23 @@ which the leading ramp meets its ceiling is
 
 The $\lambda^2$ comes from the prime ceiling (Section~\ref{sec:primes}); the
 $\ln\lambda^2$ from the inverse of the archimedean slope~\eqref{eq:slope}.
-The combination $\lambda^2\ln\lambda^2$ --- the time--frequency Shannon number
+The combination $\lambda^2\ln\lambda^2$, the time--frequency Shannon number
 of the box (Landau--Pollak~\cite{LandauPollak1962};
-Slepian--Pollak~\cite{SlepianPollak1961}; Landau--Widom~\cite{LandauWidom1980})
---- is therefore forced, not posited. (Measured saturation occurs at
+Slepian--Pollak~\cite{SlepianPollak1961}; Landau--Widom~\cite{LandauWidom1980}),
+is therefore forced, not posited. (Measured saturation occurs at
 $N/(\lambda^2\ln\lambda^2)\approx2.0$--$2.3$, larger than the linear value
 $4/\pi$ because the $q<1$ ramp reaches its ceiling later than the initial-slope
 line.) The form and the constant separate cleanly: writing
 $N^\ast=\lambda^2\ln\lambda^2/\delta$, the grouping $\lambda^2\ln\lambda^2$ is
 forced by the ceiling's $\lambda^2$ scaling and the basis interval
-$L=\ln\lambda^2$ (Lemma~\ref{lem:sampling}) alone --- independently of the archimedean constant --- while
+$L=\ln\lambda^2$ (Lemma~\ref{lem:sampling}) alone, independently of the archimedean constant, while
 only the multiplier $4/\pi=1/\delta$ carries the rate $\delta$. That multiplier
 is the data-pinned piece: the full-ramp onset constant clusters at $4/\pi$ across
 the cutoffs of Table~\ref{tab:q} (mean $\approx1.27$). \emph{Status: the
 coordinate form is T2 (ceiling-over-slope inputs); the multiplier $4/\pi$ is T3,
 data-pinned.}
 
-%==============================================================================
 \section{The prime ceiling $D_{\mathrm{Primes}}$}\label{sec:primes}
-%==============================================================================
 
 The prime channel of the intrinsic law~\eqref{eq:main-intrinsic} is the accuracy
 at infinite $N$ and $P$, set solely by which primes $p\le\lambda^2$ enter the
@@ -672,6 +873,59 @@ prolate asymptotic (Groskin~\cite{Groskin2026} independently evaluates the same
 \S6.4 prefactor and obtains $\log_{10}\approx6.37$, in agreement). This fixes the
 leading rate of $\varepsilon_{\mathrm{primes}}$: the plunge sets $K\lambda^2$.
 
+One direction of this rate can be anchored rigorously, and we record it as a
+proposition. Recall that the bottom of the spectrum of the continuum form is a
+variational infimum, $\varepsilon^\infty(\lambda)=\inf_\varphi
+QW_\lambda(\varphi,\varphi)/\|\varphi\|^2$, so \emph{any} trial vector bounds it
+from above, irrespective of the sign of $\varepsilon^\infty$.
+
+\begin{proposition}[Variational one-sided floor bound]\label{prop:variational}
+Let $k_\lambda$ be the prolate trial vector of the CCM prolate transfer
+(\cite[\S\S7--8]{CCM2025}; \cite{ConnesConsaniZC}), built from the principal
+prolate spheroidal function at bandwidth $\lambda$. Then, unconditionally,
+\[
+  \varepsilon^\infty(\lambda)\;\le\;
+  R[k_\lambda]:=\frac{QW_\lambda(k_\lambda,k_\lambda)}{\|k_\lambda\|^2}.
+\]
+\end{proposition}
+\begin{proof}
+The bottom of the spectrum is the infimum of the Rayleigh quotient over the
+form domain; any admissible trial vector bounds the infimum from above.
+\end{proof}
+
+\noindent The proposition is the variational principle verbatim, and is T1
+with no caveat. The content lies in the expected size of the right-hand side:
+evaluating $R[k_\lambda]$ through the semilocal trace formula, with the
+uniform prolate estimates of Meixner--Sch\"afke as used in
+\cite[Lem.~7.2]{CCM2025} and the Fuchs asymptotic~\cite{Fuchs1964}, is
+expected to yield $R[k_\lambda]\le C\,\lambda^{9}e^{-4\pi\lambda^2}(1+o(1))$,
+hence
+\[
+  D_{\mathrm{eig}}(\lambda^2)\;\ge\;K\lambda^2-\frac{9}{2\ln10}\ln\lambda^2
+  -\log_{10}C
+\]
+whenever $\varepsilon^\infty(\lambda)>0$ so that the digit reading
+$D_{\mathrm{eig}}=-\log_{10}\varepsilon^\infty$ is defined. That evaluation
+is the \emph{named} open lemma behind the floor's leading rate; each
+ingredient (variational principle, Meixner--Sch\"afke, Fuchs) is classical,
+and this is the precise sense in which the rate is T2. The reverse inequality,
+that the ceiling cannot be beaten, i.e.\ a \emph{lower} bound on
+$\varepsilon^\infty$ and on $|\nu_1(\infty,\lambda^2)-\gamma_1|$ of the same
+exponential order, remains open, and is the archimedean--prime cancellation
+of Section~\ref{sec:discussion}.
+
+Where finite-$\lambda^2$ control (rather than asymptotics) is needed, for
+instance the curvature that produces the empirically steeper matching-floor
+slope $P_m\approx5$ below, the modern non-asymptotic prolate literature
+supplies two-sided eigenvalue bounds with explicit constants: the
+three-region estimates of Bonami--Jaming--Karoui~\cite{BJK2021}, the improved
+bounds of Karnik--Romberg--Davenport~\cite{KRD2021}, the upper bounds of
+Osipov~\cite{Osipov2013}, the super-exponential decay estimates of
+Bonami--Karoui~\cite{BonamiKaroui2017}, and Kulikov's exponential lower bound
+before the plunge region~\cite{Kulikov2023}. These replace the
+asymptotic-only inputs wherever a quantified inequality at a specific cutoff
+is wanted.
+
 The eigenvalue depth is a scaffold, not the object. What the law consumes is the
 zero error $\varepsilon_{\mathrm{primes}}$, which sits a few digits below the
 eigenvalue floor: converting the plunge depth $\varepsilon^\infty$ into the zero
@@ -689,9 +943,22 @@ with the $|\gamma_1|$ normalization. Equivalently the \emph{conversion gap}
 $\mathrm{conv}(\lambda^2):=D_{\mathrm{eig}}-D_{\mathrm{Primes}}
 =(P_m-\tfrac92)\log_{10}\lambda^2+(c_m-C_0)\approx\tfrac12\log_{10}\lambda^2+3$
 is that conversion, read in digit space. The leading rate $K$ is derived (prolate
-transfer); the conversion, hence $P_m$ and $c_m$, is empirical --- of it, the
+transfer, one side now anchored by Prop.~\ref{prop:variational}); the
+conversion, hence $P_m$ and $c_m$, is empirical; of it, the
 $\approx1.15$-digit part of $c_m$ is the explicit $|\gamma_1|$ normalization and
-the remainder is the depth-to-zero factor.
+the remainder is the depth-to-zero factor. A structural route to that factor exists, and we record it as a proposal
+rather than claim it as a derivation. The zero-displacement identity of
+Lemma~\ref{lem:rouche}, applied at the cutoff, gives
+$|\nu_1(\infty,\lambda^2)-\gamma_1|\le
+2\,\eta_\lambda/|\widehat\xi'(\gamma_1)|$, with $\eta_\lambda$ the
+plunge-scale perturbation of the transform. The numerator carries the plunge
+depth through the determinant identity
+$\det{}_{\!\mathrm{reg}}(D-z)=-i\lambda^{-iz}\widehat\xi(z)$ of
+\cite[Thm.~5.10]{CCM2025}; the denominator carries the $L$-dependent
+normalization of the transform and the local zero density $\rho_Q(\gamma_1)$
+of Section~\ref{sec:equilibrium}. Deriving the $\lambda$-scaling of that ratio
+would promote $(P_m,c_m)$ from empirical to structural; until that is done the
+row remains T4, with the route named.
 
 The arithmetic does not move the eigenvalue-floor slope. At the scale the
 operator resolves, the prime part of the Weil form has large-$|t|$ behavior
@@ -706,19 +973,22 @@ prime terms can therefore supply a $(\lambda^2)^\Delta$ prefactor correction:
 given the rate, the prefactor power is the Fuchs index $\tfrac92$ of the prolate
 model (Section~\ref{sec:primes}), and the entire arithmetic contribution is
 confined to the additive constant. This inertness is a statement about the
-prefactor only --- the archimedean part of the form does not by itself carry the
+prefactor only; the archimedean part of the form does not by itself carry the
 plunge (it is $O(1)$-indefinite; see the rate-origin discussion in
 Section~\ref{sec:discussion}). The empirically steeper
 matching-floor slope $P_m\approx5$ is a finite-$\lambda^2$ curvature effect, not a
 change in the asymptotic slope.
 
 \emph{Status: the leading coefficient $K$ and the eigenvalue-floor slope $\tfrac92$
-ride the prolate transfer (T2), and the arithmetic is provably inert on the slope;
-only the matching-floor offset ($P_m$, $c_m$), the eigenvalue-to-zero conversion,
-is empirical (T4).}
+ride the prolate transfer (T2), with one side anchored by the variational bound
+of Prop.~\ref{prop:variational} (the named lemma being the trace-formula
+evaluation of $R[k_\lambda]$) and the reverse inequality open (new analysis:
+the archimedean--prime cancellation); the arithmetic is provably inert on the
+slope; only the matching-floor offset ($P_m$, $c_m$), the eigenvalue-to-zero
+conversion, is empirical (T4), with a structural route named above.}
 
 \paragraph{The floor is smooth, not a prime staircase.}
-A natural hypothesis --- that $D_{\mathrm{Primes}}$ steps at prime entries ---
+A natural hypothesis, that $D_{\mathrm{Primes}}$ steps at prime entries,
 is falsified directly. With $N$ and $P$ held above floor ($N=300$, $P=200$),
 sweeping $\lambda^2$ in unit steps from $4$ to $30$ gives a smooth rise of
 $\approx5.3$ digits per unit $\lambda^2$; the per-unit rate at prime-power
@@ -731,17 +1001,22 @@ Floor-isolated measurements (both $N$ and $P$ above floor) give
 $D_{\mathrm{Primes}}(100)=526.08$ at $(N,P)=(1000,700)$ and a saturated
 $D_{\mathrm{Primes}}(200)\approx1070.4$ at $N\ge2400$. The latter sits at the
 matching floor $K\cdot200-5\log_{10}200-9.5=1070.5$, confirming the two-floor
-structure at the largest cutoff measured.
+structure at the largest cutoff measured. Regarding provenance, the $\lambda^2=200$
+anchor was measured against the $2500$-digit Arb reference of
+Definition~\ref{def:D}, not a shorter tabulation. A matching-digit count cannot exceed
+the length of its reference: against a $\sim1000$-digit reference the
+measurement would \emph{saturate} near $999$ and could never read
+$1070.4$, so the observed value is itself incompatible with a
+reference-limited artifact. Such an artifact would present as a suspicious
+plateau at the reference length, not a reading $70$ digits past it.
 
-%==============================================================================
 \section{The equilibrium-measure edge}\label{sec:equilibrium}
-%==============================================================================
 
 Sections~\ref{sec:nmodes} and~\ref{sec:primes} derived the mode ramp and the
 prime ceiling by two separate classical routes: the Landau--Widom transition
 width for the ramp, and the Fuchs prolate tail for the ceiling. This section
 states the structural fact that ties them together --- both are features of a
-single spectral edge --- so the intrinsic law~\eqref{eq:main-intrinsic} is one
+single spectral edge, so the intrinsic law~\eqref{eq:main-intrinsic} is one
 edge rather than two coincident mechanisms. It adds no new constant; it is the
 reason the two budgets share a form.
 
@@ -769,10 +1044,29 @@ the density; with this field it is
 the Riemann--von Mangoldt zero-counting density
 ($\int_0^T\rho_Q=\tfrac{T}{2\pi}\log\tfrac{T}{2\pi e}$). The smooth backbone of
 the spectrum is thus the equilibrium measure of the archimedean field, recovered
-without reference to the primes and independent of RH. \emph{Status: T3 --- the
-density~\eqref{eq:rvm} is the standard archimedean main term and the variational
-identification is structural; a rigorous equilibrium-measure limit for the
-truncated operator is the open step.}
+without reference to the primes and independent of RH.
+
+The variational identification can be re-based on Szeg\H{o} theory, which turns
+the open step into a \emph{named} lemma. The archimedean part of the truncated
+matrix is a Toeplitz-type operator whose symbol is explicit, the phase rate
+$\partial_t\theta(t)=\tfrac12\log(t/2\pi)+O(t^{-2})$ recorded in
+\cite[eq.~(3.24)]{CCM2025}, and first-order Szeg\H{o} /
+Kac--Murdock--Szeg\H{o} asymptotics for operators of this symbol
+class~\cite{KMS1953,Widom1982} yield the bulk eigenvalue-counting law directly,
+which is precisely the density~\eqref{eq:rvm}. The arithmetic part is a
+\emph{bounded} perturbation uniformly in $N$ (the content of the discreteness
+argument in \cite[Thm.~3.6]{CCM2025}: the contribution of the non-archimedean
+places to the operator is bounded), so Weyl's inequality transfers the bulk law
+to the full form unchanged up to an $O(1)$ shift. This two-step route ---
+first-order Szeg\H{o} for the log symbol, plus bounded perturbation ---
+replaces the variational analogy with checkable classical inputs; the
+second-order term of the same theory
+\cite{LandauWidom1980,Widom1982,Israel2015} is then the transition width of
+Section~\ref{ssec:oneedge}. \emph{Status: T2 --- the density~\eqref{eq:rvm} is
+the standard archimedean main term, the bounded-perturbation step is proven
+in~\cite{CCM2025}, and the remaining open step is the named first-order
+Szeg\H{o} lemma for this symbol class applied to the truncated operator;
+the tier carried by the Szeg\H{o} route above.}
 
 \subsection{One edge, two scales}\label{ssec:oneedge}
 
@@ -793,7 +1087,7 @@ transition and the tail of the \emph{same} band edge. This is the mechanism
 behind the algebra $D_{\mathrm{nModes}}=D_{\mathrm{Primes}}\cdot g$ of
 Section~\ref{ssec:twoforms}: $D_{\mathrm{nModes}}$ and $D_{\mathrm{Primes}}$ are
 one edge $D_{\mathrm{edge}}$ read at two resolutions, and the intrinsic
-error~\eqref{eq:main-intrinsic} is correspondingly one edge --- its
+error~\eqref{eq:main-intrinsic} is correspondingly one edge: its
 finite-$N$ transition $\varepsilon_{\mathrm{modes}}$ and its extreme tail
 $\varepsilon_{\mathrm{primes}}$ are the ramp and the ceiling of $\mu_Q$'s lower
 edge. The unification is conceptual, not a new estimate: the microscopic
@@ -802,25 +1096,28 @@ the exact deep-edge constant remain open, the latter being the same
 archimedean--prime cancellation left open for $D_{\mathrm{Primes}}$ in
 Section~\ref{sec:primes}. The equilibrium-measure framework itself is classical
 (above); to the best of the author's knowledge, its application to the
-Connes--Consani--Moscovici / Connes--van Suijlekom Weil form --- identifying the
+Connes--Consani--Moscovici / Connes--van Suijlekom Weil form (identifying the
 zero-counting backbone as the archimedean equilibrium measure, and the mode ramp
 and prime ceiling as the transition and extreme tail of that measure's lower
-edge --- is new here. \emph{Status: T3 --- structural unification riding the
-prolate transfer already used for both budgets; the framework is classical and
-no new constant is claimed.}
+edge) is new here. \emph{Status: T3 --- structural unification riding the
+prolate transfer already used for both budgets; the bulk beneath it is now T2
+via the Szeg\H{o} route of Section~\ref{ssec:eqmeasure}, while the edge
+universality class and the deep-edge constant remain open (new analysis).}
 
-%==============================================================================
 \section{The complete formula}\label{sec:complete}
-%==============================================================================
+
+\subsection{The assembled law}\label{ssec:assembled}
 
 Collecting Sections~\ref{sec:wprec}--\ref{sec:equilibrium}, the law stands in the
 two forms of the introduction. \emph{Intrinsically} it is the single edge of
-Section~\ref{sec:equilibrium}: the relative error is the two-channel quantity
+Section~\ref{sec:equilibrium}: the relative error obeys the two-channel
+decomposition
 \begin{equation}\label{eq:complete-intrinsic}
-  E(N,\lambda^2)=\varepsilon_{\mathrm{modes}}(N,\lambda^2)
-                +\varepsilon_{\mathrm{primes}}(\lambda^2),
+  E(N,\lambda^2)\le\varepsilon_{\mathrm{modes}}(N,\lambda^2)
+                +\varepsilon_{\mathrm{primes}}(\lambda^2)
 \end{equation}
-equivalently, in digit units, the edge function
+(an equality up to sign cancellation; Prop.~\ref{prop:min}); equivalently, in
+digit units, the edge function
 $D_{\mathrm{edge}}(N,\lambda^2)=D_{\mathrm{Primes}}(\lambda^2)\cdot
 \tanh\!\bigl((c\,N/(\lambda^2\ln\lambda^2))^{q}\bigr)$, whose $N\to\infty$ ceiling
 $D_{\mathrm{edge}}(\infty,\lambda^2)=D_{\mathrm{Primes}}$ is the prime floor and
@@ -838,17 +1135,16 @@ with $K=4\pi/\ln10$ exact, $q=2/(2\gamma+\ln\ln\lambda^2)$, and $c\approx4/\pi$.
 The last two entries are the one edge $D_{\mathrm{edge}}$ at finite $N$ and at
 $N\to\infty$, so the operative law is $D=\min(D_{\mathrm{Wprec}},
 D_{\mathrm{edge}})+O(1)$: a single spectral edge, capped by precision. This is
-the Andrews CCM Convergence Law. Of its parts, the minimum
-structure, the precision slope, and the stretched-exponential convergence and
-rate unification (Thm.~\ref{thm:stretched}) are rigorous (T1); the Shannon coordinate and the prime
-leading coefficient are derived modulo a stated lemma (T2); the archimedean rate,
-the exponent $q$, and the onset constant are derived in structure and validated
-to a few percent against high-precision data (T3); the prime subleading offset is
-empirical (T4). Table~\ref{tab:tiers} is the precise ledger.
+the Andrews CCM Convergence Law. Of its parts, the minimum bound, the
+precision slope, the stretched-exponential rate unification
+(Prop.~\ref{prop:stretched}), and the zero-displacement transfer
+(Lemma~\ref{lem:rouche}) are rigorous; every remaining component carries the
+explicit tier, open item, and open-item type recorded in
+Table~\ref{tab:tiers}, from the T2 constants through the T3 exponent and onset
+constant to the single empirical offset (T4).
 
 To the best of the author's knowledge, the complete convergence model
-of~\eqref{eq:complete} is novel, meaningful, and has not been previously
-published: the assembly of the three budgets into a single law, the closed-form
+of~\eqref{eq:complete} is new: the assembly of the three budgets into a single law, the closed-form
 mode exponent $q(\lambda^2)=2/(2\gamma+\ln\ln\lambda^2)$, the Shannon coordinate
 $\lambda^2\ln\lambda^2$, the stretched-exponential identification of the mode
 budget, and the recognition of the mode ramp and prime ceiling as one
@@ -861,19 +1157,27 @@ its mechanism; the underlying construction~\cite{CCM2025,CvS2025}, the
 Paley--Wiener strip mechanism~\cite{Groskin2026}, and the classical prolate and
 Mertens inputs are credited to their sources throughout.
 
+\subsection{Convergence criterion}\label{ssec:criterion}
+
 \begin{proposition}[Convergence criterion and the prime bottleneck]\label{prop:limit}
 Let $\nu_1=\nu_1(\lambda^2,N,P)$ and $D=-\log_{10}(|\nu_1-\gamma_1|/|\gamma_1|)$.
+Assume, at each fixed cutoff considered, the finite-cutoff hypothesis
+\begin{equation}\label{eq:poshyp}
+  (\mathrm{H}_\lambda):\qquad \varepsilon^\infty(\lambda)>0
+  \quad\text{and}\quad \nu_1(\infty,\lambda^2)\neq\gamma_1 .
+\end{equation}
 \begin{enumerate}
-\item[(i)] \emph{(Prime bottleneck.)} For every fixed $\lambda^2$,
+\item[(i)] \emph{(Prime bottleneck.)} For every fixed $\lambda^2$ satisfying
+  $(\mathrm{H}_\lambda)$,
   $\sup_{N,P}D(\lambda^2,N,P)=D_{\mathrm{Primes}}(\lambda^2)<\infty$. Hence no
   sequence with bounded $\lambda^2$ has $\nu_1\to\gamma_1$: convergence to the
   zero forces $\lambda^2\to\infty$.
 \item[(ii)] \emph{(Criterion.)} Since $D_{\mathrm{nModes}}\le D_{\mathrm{Primes}}$
-  --- a mode-limited count cannot beat the ceiling --- $D\to\infty$ if and only if
+  (a mode-limited count cannot beat the ceiling) $D\to\infty$ if and only if
   $D_{\mathrm{Wprec}}\to\infty$ and $D_{\mathrm{nModes}}\to\infty$; the latter
   forces $\lambda^2\to\infty$ (part~(i)), with $N$ past the Shannon scale
   $\lambda^2\ln\lambda^2$ and $P\to\infty$. The mode budget rises monotonically
-  toward its ceiling as $N\to\infty$ (\cite{CCM2025}, Prop.~3.4).
+  toward its ceiling as $N\to\infty$ \cite[Prop.~3.4]{CCM2025}.
 \end{enumerate}
 Consequently, conditional on the continuum plunge
 $D_{\mathrm{Primes}}(\lambda^2)\to\infty$ (i.e.\ $\varepsilon^\infty(\lambda)\to0$),
@@ -885,9 +1189,9 @@ $D\sim K\lambda^2$.
 (i) As $N\to\infty$ the truncation converges to the continuum operator at cutoff
 $\lambda$, whose first zero lies at relative distance
 $10^{-D_{\mathrm{Primes}}(\lambda^2)}$ from $\gamma_1$; here
-$D_{\mathrm{Primes}}(\lambda^2)<\infty$ because $\varepsilon^\infty(\lambda)>0$
-(Weil positivity; \cite{Sliwinski2026}) and is $N$-independent
-(\cite{Suzuki2026}, Thm 1.3), and finite working precision only lowers $D$.
+$D_{\mathrm{Primes}}(\lambda^2)<\infty$ by hypothesis
+$(\mathrm{H}_\lambda)$ and is $N$-independent
+\cite[Thm.~1.3]{Suzuki2026}, and finite working precision only lowers $D$.
 Hence $D\le D_{\mathrm{Primes}}(\lambda^2)$, finite, for all $N,P$.
 (ii) By Prop.~\ref{prop:min}, $D=\min(D_{\mathrm{Wprec}},D_{\mathrm{nModes}},
 D_{\mathrm{Primes}})+O(1)$; since $D_{\mathrm{nModes}}\le D_{\mathrm{Primes}}$,
@@ -897,11 +1201,34 @@ $D=-\log_{10}(|\nu_1-\gamma_1|/|\gamma_1|)$, this is exactly
 $\nu_1\to\gamma_1$.
 \end{proof}
 
-\noindent This refines the qualitative monotone convergence of~\cite{CCM2025}
-(Prop.~3.4) into an explicit, conditional rate. The equivalence
-$D\to\infty\Leftrightarrow\nu_1\to\gamma_1$ and the prime bottleneck~(i) are
-rigorous (T1); the conditional rate inherits the rigor of $D_{\mathrm{Primes}}$
---- the prolate transfer (T2) and the continuum plunge it assumes.
+\paragraph{Status of the hypothesis $(\mathrm{H}_\lambda)$.}
+We state $(\mathrm{H}_\lambda)$ explicitly because finite-cutoff Weil
+positivity is \emph{not} known unconditionally for all $\lambda$:
+\cite{CCM2025} is explicit that positivity of the continuum measure cannot be
+asserted in general, and positivity for all $\lambda$ is precisely the open
+conjecture linking the construction to RH. What is unconditional is the
+small-support range: Yoshida proved the Weil hermitian form positive definite
+for test functions of sufficiently small support~\cite{Yoshida1992}, Bombieri
+reproved and quantified this in his study of the truncated
+functional~\cite{Bombieri2000}, Connes--Consani gave the operator-theoretic
+strengthening at the archimedean place via the Sonin
+space~\cite{ConnesConsaniSelecta}, and the $\zeta$-cycles
+paper~\cite{ConnesConsaniZC} tracks finite-$\lambda$ positivity prime by prime
+through the first cutoffs. Beyond that range $(\mathrm{H}_\lambda)$ is verified
+numerically at every cutoff measured in this program ($\lambda^2\le200$, and
+$\lambda^2\le1000$ in~\cite{AndrewsA}); the second clause
+$\nu_1(\infty,\lambda^2)\neq\gamma_1$, that the truncated Euler product does
+not accidentally reproduce the zero exactly, is likewise numerical, and is
+what the finiteness of $D_{\mathrm{Primes}}$ actually uses.
+
+\noindent This refines the qualitative monotone convergence of
+\cite[Prop.~3.4]{CCM2025} into an explicit, conditional rate. The equivalence
+$D\to\infty\Leftrightarrow\nu_1\to\gamma_1$ is definitional and rigorous (T1);
+the prime bottleneck~(i) is rigorous \emph{conditional on}
+$(\mathrm{H}_\lambda)$, which is unconditional in the Yoshida--Bombieri
+small-support range and numerical beyond it; the conditional rate inherits the
+rigor of $D_{\mathrm{Primes}}$: the prolate transfer (T2, one side anchored
+by Prop.~\ref{prop:variational}) and the continuum plunge it assumes.
 
 Conceptually, the criterion isolates the prime cutoff as the sole hard
 bottleneck: precision and basis size are freely improvable and impose no ceiling,
@@ -911,15 +1238,13 @@ the growth of the prime content. The rate $D\sim K\lambda^2$ quantifies the cost
 --- turning the construction's qualitative convergence into a concrete, if
 conditional, budget.
 
-%==============================================================================
 \section{Discussion}\label{sec:discussion}
-%==============================================================================
 
 \paragraph{Relation to Groskin~\cite{Groskin2026}.}
 Groskin independently implemented the Connes--van Suijlekom matrix and measured
 a Galerkin convergence exponent $s(c)$ growing with the cutoff, proposing a
 Paley--Wiener analyticity-strip mechanism. The present work builds on that
-mechanism: Thm.~\ref{thm:stretched}(ii) shows his $s(c)$ is the local slope of our
+mechanism: Prop.~\ref{prop:stretched}(ii) shows his $s(c)$ is the local slope of our
 stretched-exponential, and the strip width is identified with the archimedean
 $\Gamma_\mathbb{R}$ rate $\delta=\pi/4$. What is new here is the digit-space
 formulation, the Shannon coordinate, the closed form for $q(\lambda^2)$, and the
@@ -930,9 +1255,9 @@ corroboration of this two-regime structure. He finds that no single
 smooth-convergence law fits his eigenvalue-space data and explicitly declines to
 assert a convergence rate, reporting instead an unresolved tension between a
 \emph{drifting} effective exponent and an apparent \emph{finite} convergence
-limit. Both halves are accounted for here: Theorem~\ref{thm:stretched}(ii) explains
-the drift --- a fixed Sobolev index cannot persist, since the local exponent
-$2s_{\mathrm{loc}}(N)=aqN^{q}$ grows with $N$ --- while the prime ceiling of
+limit. Both halves are accounted for here: Prop.~\ref{prop:stretched}(ii) explains
+the drift (a fixed Sobolev index cannot persist, since the local exponent
+$2s_{\mathrm{loc}}(N)=aqN^{q}$ grows with $N$), while the prime ceiling of
 Section~\ref{sec:primes} supplies the finite limit $D_{\mathrm{Primes}}(\lambda^2)$.
 What looks like an irreconcilable choice within a single-rate framework is simply
 the pre-saturation ramp and the ceiling of the minimum law~\eqref{eq:main}, seen
@@ -940,7 +1265,7 @@ in one dataset.
 
 \paragraph{Relation to \'Sliwi\'nski~\cite{Sliwinski2026} and Suzuki~\cite{Suzuki2026}.}
 \'Sliwi\'nski proves an inverse-logarithmic lower bound on the \emph{mean}
-spectral error over the whole spectrum (Thm.~3.1) --- a different regime from the
+spectral error over the whole spectrum (Thm.~3.1), a different regime from the
 first-zero convergence here, and consistent with it, since the mean is dominated
 by the unconverged high-index eigenvalues while $\nu_1\to\gamma_1$ converges
 super-exponentially. Suzuki's screw-function analysis supplies the archimedean
@@ -948,14 +1273,15 @@ $\ln|z|$ multiplier and the prime-frequency support that underlie
 Sections~\ref{ssec:arch}--\ref{ssec:prime}.
 
 \paragraph{Origin of the leading rate: arithmetic, not archimedean.}
-The prime ceiling is \emph{modeled} by an archimedean object --- the prolate
-eigenvalue of Section~\ref{sec:primes} --- yet the exponential rate is not carried
+The prime ceiling is \emph{modeled} by an archimedean object, the prolate
+eigenvalue of Section~\ref{sec:primes}, yet the exponential rate is not carried
 by the archimedean part of the Weil form itself. Diagonalizing the
 screw-function split~\cite{Suzuki2026} at high precision, the archimedean-only
 localized form is $O(1)$-indefinite, with no exponentially small eigenvalue.
-Restricting it to the Sonin subspace --- the orthogonal complement of the
-band-concentrated prolate modes, where Connes establishes archimedean Weil
-positivity~\cite{Connes2026} --- restores positivity, but only as an $O(1)$ gap:
+Restricting it to the Sonin subspace, the orthogonal complement of the
+band-concentrated prolate modes, where Connes--Consani establish archimedean Weil
+positivity~\cite{ConnesConsaniSelecta} (surveyed in~\cite{Connes2026}),
+restores positivity, but only as an $O(1)$ gap:
 the smallest Sonin eigenvalue is $2.26$, $2.28$, $2.57$ at $\lambda^2=5,8,13$,
 essentially flat in $\lambda^2$, against a floor $K\lambda^2=27,44,71$.
 Archimedean positivity and the plunge are therefore \emph{decoupled}: the place
@@ -963,7 +1289,7 @@ at infinity supplies an $O(1)$ spectral gap, while the exponentially small
 $\varepsilon^\infty\sim e^{-4\pi\lambda^2}$ is produced by the cancellation
 between the archimedean and prime parts of the full form. This locates the single
 open analytic step behind the leading coefficient: a quantitative
-archimedean--prime cancellation estimate on the even ground eigenvector --- the
+archimedean--prime cancellation estimate on the even ground eigenvector, the
 precise sense in which $K$ is~T2.
 
 \paragraph{Practical use.}
@@ -973,74 +1299,98 @@ $D^\ast$; pick $N$ so the $\tanh$ ramp clears $D^\ast$ (a few times the Shannon
 number $\lambda^2\ln\lambda^2$); and pick $P\gtrsim D^\ast$. Increasing any one
 parameter past the binding minimum yields nothing.
 
-%==============================================================================
 \section{Rigor ledger}\label{sec:rigor}
-%==============================================================================
 
 Table~\ref{tab:tiers} collects the rigor status of every component of the law,
-together with the open item that would promote each to the next level.
+together with the open item that would promote each to the next level. A
+fourth column types each open item: \emph{named lemma} means
+the missing step is a precisely posed statement inside an existing classical
+theory (variational principle, Rouch\'e, Szeg\H{o}, Gevrey characterization),
+so that closing it is a matter of executing known machinery; \emph{new
+analysis} means genuinely new estimates are required. Four rows sit in the
+second category.
 
 \begin{table}[H]
 \centering
 \caption{Rigor status of each component. T1: rigorous. T2: derived modulo one
 named lemma. T3: derived in structure and validated against data, with a map not
-yet rigorous. T4: empirical.}
+yet rigorous. T4: empirical. Open-item type: \emph{named lemma} = precisely
+posed inside existing theory; \emph{new analysis} = new estimates required.}
 \label{tab:tiers}
-\begin{tabular}{@{}lll@{}}
+{\footnotesize\setlength{\tabcolsep}{5pt}%
+\begin{tabular}{@{}l l p{4.9cm} l@{}}
 \toprule
-Component & Status & Open item \\
+Component & Status & Open item & Type \\
 \midrule
-Minimum structure (Prop.~\ref{prop:min}) & \textbf{T1} & --- \\
-$D_{\mathrm{Wprec}}=P+O(1)$, slope $1$ & \textbf{T1} & implementation offset \\
-Stretched-exp convergence $+$ rate unification (Thm.~\ref{thm:stretched}) & \textbf{T1} & --- \\
-Convergence criterion (Prop.~\ref{prop:limit}) & \textbf{T1} & continuum plunge $\varepsilon^\infty\!\to\!0$ (T2) \\
-$D_{\mathrm{Primes}}$ leading $K=4\pi/\ln10$ & \textbf{T2} & prolate asymptotic transfer \\
-$D_{\mathrm{Primes}}$ floor slope $9/2$ & \textbf{T2} & prolate transfer; primes provably inert \\
-$D_{\mathrm{Primes}}$ matching offset ($P_m,c_m$) & \textbf{T4} & empirically pinned \\
-Shannon coordinate $\lambda^2\ln\lambda^2$ & \textbf{T2} & ceiling/slope (Lem.~\ref{lem:coord}) \\
-Equilibrium-measure edge (one edge, two scales) & \textbf{T3} & equilibrium limit; edge universality class \\
-Archimedean rate $\delta=\pi/4$ & \textbf{T3} & zero-convergence from $\Gamma_\mathbb{R}$ \\
-Exponent $q=2/(2\gamma+\ln\ln\lambda^2)$ & \textbf{T3} & variance$\to$exponent map \\
-Onset constant $c$ ($\sim 4/\pi$) & \textbf{T3} & exact rational \\
+Minimum structure (Prop.~\ref{prop:min}), lower bound & \textbf{T1} & --- & --- \\
+Minimum structure, matching upper bound & \textbf{T1}$^\ast$ & cancellation excluded at seams & empirical check \\
+$D_{\mathrm{Wprec}}=P+O(1)$, slope $1$ & \textbf{T1} & implementation offset & --- \\
+Stretched-exp rate unification (Prop.~\ref{prop:stretched}) & \textbf{T1} & --- & --- \\
+Zero-displacement transfer (Lem.~\ref{lem:rouche}) & \textbf{T1} & --- & --- \\
+Convergence criterion (Prop.~\ref{prop:limit}) & \textbf{T1}$\,|\,(\mathrm{H}_\lambda)$ & positivity beyond Yoshida range & new analysis \\
+$D_{\mathrm{Primes}}$ leading $K$: floor lower bound & \textbf{T2} & evaluation of $R[k_\lambda]$ (Prop.~\ref{prop:variational}) & named lemma \\
+$D_{\mathrm{Primes}}$ leading $K$: ceiling unbeatable & open & archimedean--prime cancellation & new analysis \\
+$D_{\mathrm{Primes}}$ floor slope $9/2$ & \textbf{T2} & same $R[k_\lambda]$ evaluation; primes provably inert & named lemma \\
+$D_{\mathrm{Primes}}$ matching offset ($P_m,c_m$) & \textbf{T4} & $\lambda$-scaling of $\eta_\lambda/|\widehat\xi'(\gamma_1)|$, route named & named lemma \\
+Shannon coordinate $\lambda^2\ln\lambda^2$ & \textbf{T2} & ceiling/slope (Lem.~\ref{lem:coord}) & named lemma \\
+Equilibrium-measure bulk (RvM density) & \textbf{T2} & first-order Szeg\H{o} for the log symbol & named lemma \\
+Edge unification (one edge, two scales) & \textbf{T3} & edge universality class; deep-edge constant & new analysis \\
+Archimedean rate $\delta=\pi/4$ & \textbf{T2} & Conj.~\ref{conj:decay}(ii) (Lem.~\ref{lem:rouche} closes the transfer) & new analysis \\
+Exponent $q=2/(2\gamma+\ln\ln\lambda^2)$ & \textbf{T3} & Gevrey subordination (Conj.~\ref{conj:decay}(i)) & new analysis \\
+Onset constant $c$ ($\sim 4/\pi$) & \textbf{T3} & exact rational & --- \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
+\medskip
+
+{\footnotesize $^\ast$Unconditional as a lower bound; the equality direction
+holds absent cancellation between the signed channels
+(Prop.~\ref{prop:min}), verified across the experimental program.
+$\mathrm{T1}\,|\,(\mathrm{H}_\lambda)$: rigorous conditional on the
+finite-cutoff hypothesis~\eqref{eq:poshyp}, unconditional in the
+Yoshida--Bombieri small-support range~\cite{Yoshida1992,Bombieri2000}.}
 \end{table}
 
-%==============================================================================
 \section{Conclusion}\label{sec:conclusion}
-%==============================================================================
 
 We have given a single law~\eqref{eq:main} for the convergence of the CCM
-zeta spectral triple, in which the minimum structure is forced, the prime
-ceiling has the exact
-leading coefficient $4\pi/\ln10$, and the mode budget --- the convergence rate
-named open in~\cite{CCM2025} --- is the logarithm of a stretched-exponential
+zeta spectral triple. In it the minimum structure is forced; the prime ceiling
+has the parameter-free leading coefficient $4\pi/\ln10$, rigorously anchored
+from one side by the variational bound of Prop.~\ref{prop:variational} and
+open in the reverse inequality; and the mode budget, the convergence rate
+named open in~\cite{CCM2025}, is the logarithm of a stretched-exponential
 whose exponent is the eigenvector's analyticity class, derived end to end as
 $q=2/(2\gamma+\ln\ln\lambda^2)$. The mode ramp and the prime ceiling are not two
-mechanisms but one object --- the lower edge of the archimedean equilibrium
-measure, whose bulk density is the Riemann--von Mangoldt law --- seen at two
+mechanisms but one object, the lower edge of the archimedean equilibrium
+measure whose bulk density is the Riemann--von Mangoldt law, seen at two
 scales (Section~\ref{sec:equilibrium}). Read as a convergence statement, the law says
 $\nu_1\to\gamma_1$ exactly when all three budgets diverge, giving an explicit
 rate $D\sim(4\pi/\ln10)\lambda^2$ along $\lambda^2\to\infty$
 (Prop.~\ref{prop:limit}). Each claim is stated with an explicit rigor
-level. The rigorous core (the minimum, the precision slope, and the
-stretched-exponential convergence theorem~\ref{thm:stretched}, which unifies the
-digit- and eigenvalue-space rates) stands on its own; the remaining lemmas --- a coefficient-decay estimate
-for the $\Gamma_\mathbb{R}$-weighted form, and a variance-to-exponent map ---
-would promote the archimedean rate and the exponent to theorems, and are the
-natural next steps.
+level. The rigorous core (the minimum bound, the precision slope, the
+stretched-exponential convergence proposition~\ref{prop:stretched} (which unifies the
+digit- and eigenvalue-space rates), and the zero-displacement transfer of
+Lemma~\ref{lem:rouche}) stands on its own; the variational bound of
+Prop.~\ref{prop:variational} anchors one side of the prime floor; and the
+remaining open items are typed in Table~\ref{tab:tiers}. Of these, the
+\emph{named lemmas} (the trace-formula evaluation of
+$R[k_\lambda]$ and the first-order Szeg\H{o} asymptotics for the log symbol)
+are precisely posed inside classical theories and are the natural next
+steps; the \emph{new-analysis} items (the coefficient-decay estimate for
+the $\Gamma_\mathbb{R}$-weighted form (Conjecture~\ref{conj:decay}), the
+Gevrey subordination behind $q$,
+the archimedean--prime cancellation behind the unbeatable ceiling, and
+positivity beyond the Yoshida range) are where the construction's genuinely
+open mathematics lives.
 
-%==============================================================================
 \section{Explicit non-claims}\label{sec:nonclaims}
-%==============================================================================
 
 The per-component rigor of the law is the subject of Table~\ref{tab:tiers} and
 is not repeated here. Beyond it, we are explicit about three boundaries.
 
 \begin{itemize}
 \item \textbf{No proof of the Riemann Hypothesis.} We characterize how the
-  CCM/CvS approximation converges; the link from the construction to RH ---
-  continuum positivity of $QW_\lambda$ for all $\lambda$ --- is the open
+  CCM/CvS approximation converges; the link from the construction to RH,
+  continuum positivity of $QW_\lambda$ for all $\lambda$, is the open
   conjecture of~\cite{CCM2025,CvS2025,Connes2026}, and is neither assumed nor
   advanced here.
 \item \textbf{We do not establish that the construction reproduces the zeta
@@ -1051,38 +1401,54 @@ is not repeated here. Beyond it, we are explicit about three boundaries.
 \item \textbf{Scope.} The law is stated and tested for the first zero $\gamma_1$
   of the Riemann zeta function. We make no claim about its constants for higher
   zeros, nor about extension to Dirichlet $L$-functions or other settings.
+  The rate-law constants $(q,c)$ are pinned on $\lambda^2\le150$
+  ($\lambda^2=200$, sparse at $8$ points, is shown but excluded from the $q$
+  regression); their constancy at large $\lambda^2$, the regime in which the
+  law becomes a convergence statement, is untested, and we make no claim
+  that the fitted forms persist beyond the measured range.
+\item \textbf{No unconditional finite-cutoff positivity.} Statements requiring
+  $\varepsilon^\infty(\lambda)>0$ or $\nu_1(\infty,\lambda^2)\neq\gamma_1$ are
+  conditioned on the hypothesis~$(\mathrm{H}_\lambda)$ of
+  eq.~\eqref{eq:poshyp}, which is unconditional only in the small-support range
+  of Yoshida~\cite{Yoshida1992} and Bombieri~\cite{Bombieri2000} and is
+  verified numerically beyond it. We do not claim positivity of $QW_\lambda$
+  for general $\lambda$.
 \end{itemize}
 
-%==============================================================================
-\section*{Statement on the use of AI tools}
-%==============================================================================
-In keeping with the arXiv policy on authors' use of generative AI language
-tools, the author discloses that Anthropic's Claude AI model served as a
-text-to-text aid in preparing the LaTeX exposition and the Rust implementation
-code, to specifications set by the author. AI assistance was also used in gathering
-research material; all such material was inspected and characterized by the
-author. The author originated, directed, and checked every computational
-experiment and mathematical claim presented here, and bears full responsibility
-for the contents of this manuscript.
-
-%==============================================================================
 \section*{Acknowledgments}
-%==============================================================================
-The author thanks Professor Henri Moscovici (The Ohio State University) and
-Professor Nigel Higson (The Pennsylvania State University) for correspondence
-and encouragement, and Professor Alain Connes (Coll\`ege de France and IH\'ES)
-for reviewing the author's earlier reproduction~\cite{AndrewsA} and sharing it
-with fellow researcher Akiva Groskin.
+The author is deeply grateful to Professor Alain Connes (Coll\`ege de France
+and IH\'ES) for his warm correspondence and support --- in particular for
+reviewing the author's earlier reproduction~\cite{AndrewsA} and sharing it with
+fellow researcher Akiva Groskin --- and for his kind reception of an early
+draft of this work. The author also thanks Professor Henri Moscovici (The Ohio
+State University) and Professor Nigel Higson (The Pennsylvania State
+University) for correspondence and encouragement.
 
-%==============================================================================
+\section*{Statement on the use of AI tools}
+In keeping with the arXiv policy on authors' use of generative AI language
+tools, the author discloses that Anthropic's Claude AI model served as an aid
+in preparing the exposition and the Rust implementation code, to specifications
+set by the author. AI assistance was used to improve prose formatting and
+readability. It was also used to gather research material, propose candidate
+arguments, and validate calculations; all such output was reviewed by the
+author. The author originated, directed, and conducted every computational
+experiment presented here. The mathematical development was led by the author
+with assistance from AI. The author bears full responsibility for the contents
+of this manuscript.
+
 \section*{Empirical testing and code availability}
-%==============================================================================
-The results above rest on an extensive empirical program. The author conducted
-over $5{,}000$ high-precision CCM experiments to observe the operator's behavior
-across the cutoff, basis-size, and working-precision axes. This testing was
-critical: it provided the foundation for the derivation, ruling candidate ideas
-in or out quickly and aiming the analysis at the behavior the operator actually
-exhibits.
+The results above rest on an extensive empirical program: over $5{,}000$
+high-precision CCM experiments across the cutoff, basis-size, and
+working-precision axes, very likely the largest set of CCM calculations
+assembled to date, especially at large configurations. The testing came first
+and the analysis followed. Candidate rate laws were tested against the data and
+discarded when they failed~\cite{AndrewsB}, and each failure narrowed the space
+of forms the operator would tolerate. Isolating one parameter at a time for
+study, with the other two driven out of the way, is how each budget's form was
+read, and the breadth of the dataset ($\lambda^2=200$ at $N\ge2400$ here,
+$\lambda^2=1000$ in the reproduction~\cite{AndrewsA}) is what made that
+isolation possible. The extensive empirical testing was not decoration but the
+heart of how the author mapped the operator's behavior.
 
 The paper source and reproduction scripts are available at
 \url{https://github.com/TeamXcelerator/ccm-convergence-rate}; the shared
@@ -1090,9 +1456,83 @@ high-precision library (Xcelerator Toolkit) is at
 \url{https://github.com/TeamXcelerator/xcelerator-toolkit}. Both are
 source-available in accordance with the licensing provided with each repository.
 
-%==============================================================================
+\appendix
+\section{Self-contained structural facts}\label{app:selfcontained}
+
+This appendix records the two structural facts about $\widehat\xi$ used in the
+body, the closed form of the transform (Lemma~\ref{lem:sampling}) and
+entirety/reality of its zeros, in a form that depends only on elementary
+computation and on the self-contained proofs of~\cite{CCM2025}. Its purpose is
+to make explicit that no statement in this paper routes through the
+Carath\'eodory--Fej\'er machinery of~\cite{CvS2025}, which we cite as the
+historical origin of the reality mechanism only.
+
+\subsection{The closed form of the transform, from scratch}\label{app:closedform}
+
+Write $t=\ln u\in[-L/2,L/2]$, so that
+$V_n(u)=L^{-1/2}e^{2\pi i n(t+L/2)/L}=L^{-1/2}(-1)^n e^{2\pi i nt/L}$ and the
+Fourier--Mellin transform is the Fourier integral over the interval. For a
+single mode,
+\begin{align*}
+  \widehat V_n(z)&=\int_{-L/2}^{L/2}e^{izt}\,V_n(t)\,dt
+  =L^{-1/2}(-1)^n\int_{-L/2}^{L/2}e^{i(z+2\pi n/L)t}\,dt\\
+  &=L^{-1/2}(-1)^n\,\frac{2\sin\!\bigl((z+2\pi n/L)\,L/2\bigr)}{z+2\pi n/L}.
+\end{align*}
+Since $\sin(zL/2+\pi n)=(-1)^n\sin(zL/2)$, the sign cancels:
+\[
+  \widehat V_n(z)=\frac{2L^{-1/2}\sin(zL/2)}{z+2\pi n/L}.
+\]
+Summing over the eigenvector $\xi=\sum_{|n|\le N}\xi_n V_n$ and reindexing
+$j=-n$ (using $\xi_{-j}=\xi_j$ for the even eigenvector, or simply relabeling)
+gives
+\[
+  \widehat\xi_N(z)=2L^{-1/2}\sin(zL/2)\sum_{|j|\le N}\frac{\xi_j}{z-2\pi j/L},
+\]
+the closed form of Lemma~\ref{lem:sampling}, in agreement with
+\cite[Prop.~5.9]{CCM2025}. The derivation is a one-line Fourier integral; no
+external input is used. Entirety is immediate: each apparent pole
+$z=2\pi j/L$ is cancelled by the zero of $\sin(zL/2)$ there (the removable-pole
+computation in the proof of Lemma~\ref{lem:sampling}), so $\widehat\xi_N$ is
+entire of exponential type $L/2$.
+
+\subsection{Reality of the zeros: provenance}\label{app:reality}
+
+The statement that, in the critical case, all zeros of $\widehat\xi_N$ are real
+and coincide with the spectrum of the perturbed operator is
+\cite[Thm.~5.10]{CCM2025}. We record why its proof is self-contained there.
+The proof chain consists of: (a) \cite[Lem.~5.2]{CCM2025}, the observation that
+the relevant matrices have the structure $\tau_{ij}=(b_i-b_j)/(i-j)$; (b)
+\cite[Lem.~5.4]{CCM2025}, the elementary commutator identity
+$DT-TD=|\beta\rangle\langle\eta|-|\eta\rangle\langle\beta|$ for such matrices,
+with $D$ the diagonal mode operator; and (c) the conclusion of
+\cite[Thm.~5.10]{CCM2025}: when $\varepsilon_N$ is the smallest eigenvalue with
+even simple eigenvector, $T=QW^N_\lambda-\varepsilon_N\ge0$, the perturbed
+operator is self-adjoint in the $T$-inner product, and the transform is
+proportional to a regularized characteristic determinant,
+$\det_{\mathrm{reg}}(D''-z)=-i\lambda^{-iz}\widehat\xi(z)$, whose zeros are
+therefore real, being the characteristic polynomial of a self-adjoint matrix. Each
+of (a)--(c) is proven within~\cite{CCM2025} by direct computation; the general
+Carath\'eodory--Fej\'er extension of~\cite{CvS2025}, of which this is the
+specialization, is not invoked at any step used here.
+
+\subsection{The independent classical foundation}\label{app:foundation}
+
+For completeness we record the pre-CvS lineage on which the truncated Weil
+form itself rests: Weil's positivity criterion; Yoshida's unconditional
+positivity for test functions of sufficiently small
+support~\cite{Yoshida1992}; Bombieri's study of the quadratic functional
+restricted to a finite interval, its minimizer in the $L^2$ unit ball, and the
+eigenvalues of its finite truncations~\cite{Bombieri2000}; the
+operator-theoretic strengthening of Yoshida's theorem at the archimedean place
+by Connes--Consani~\cite{ConnesConsaniSelecta}; the prolate identification of
+the small eigenvectors in the $\zeta$-cycles paper~\cite{ConnesConsaniZC}; and
+Suzuki's screw-function framework~\cite{SuzukiJLMS,SuzukiHilbert,Suzuki2026},
+which unifies Yoshida, Bombieri, and the Connes--Consani(--Moscovici) results
+by means of continuous functions and de~Branges-space methods. The
+construction studied in this paper can be founded entirely on this lineage
+together with~\cite{CCM2025}.
+
 \begin{thebibliography}{99}
-%==============================================================================
 
 \bibitem{CCM2025}
 A.~Connes, C.~Consani, H.~Moscovici,
@@ -1129,6 +1569,86 @@ Form}, arXiv:2605.20224 (2026).
 D.~\'Sliwi\'nski,
 \emph{Spectral Analysis of the $D_{\log}^{(\lambda,N)}$ Operators},
 arXiv:2601.12133 (2026).
+
+\bibitem{Yoshida1992}
+H.~Yoshida,
+\emph{On Hermitian forms attached to zeta functions}, in \emph{Zeta Functions
+in Geometry} (Tokyo, 1990), Adv. Stud. Pure Math. \textbf{21}, Kinokuniya,
+Tokyo, 1992, pp.~281--325.
+
+\bibitem{Bombieri2000}
+E.~Bombieri,
+\emph{Remarks on Weil's quadratic functional in the theory of prime numbers, I},
+Atti Accad. Naz. Lincei Cl. Sci. Fis. Mat. Natur. Rend. Lincei (9) Mat. Appl.
+\textbf{11} (2000), no.~3, 183--233.
+
+\bibitem{ConnesConsaniSelecta}
+A.~Connes, C.~Consani,
+\emph{Weil positivity and trace formula: the archimedean place},
+Selecta Math. (N.S.) \textbf{27} (2021), no.~4, Paper No.~77.
+
+\bibitem{ConnesConsaniZC}
+A.~Connes, C.~Consani,
+\emph{Spectral triples and $\zeta$-cycles},
+Enseign. Math. \textbf{69} (2023), no.~1--2, 93--148.
+
+\bibitem{SuzukiJLMS}
+M.~Suzuki,
+\emph{Aspects of the screw function corresponding to the Riemann zeta function},
+J. Lond. Math. Soc. (2) \textbf{108} (2023), no.~2.
+
+\bibitem{SuzukiHilbert}
+M.~Suzuki,
+\emph{On the Hilbert space derived from the Weil distribution},
+Canad. J. Math. (to appear); arXiv:2301.00421.
+
+\bibitem{BJK2021}
+A.~Bonami, P.~Jaming, A.~Karoui,
+\emph{Non-asymptotic behavior of the spectrum of the sinc-kernel operator and
+related applications}, J. Math. Phys. \textbf{62} (2021), 033511.
+
+\bibitem{KRD2021}
+S.~Karnik, J.~Romberg, M.~A.~Davenport,
+\emph{Improved bounds for the eigenvalues of prolate spheroidal wave functions
+and discrete prolate spheroidal sequences},
+Appl. Comput. Harmon. Anal. \textbf{55} (2021), 97--128.
+
+\bibitem{Osipov2013}
+A.~Osipov,
+\emph{Certain upper bounds on the eigenvalues associated with prolate
+spheroidal wave functions},
+Appl. Comput. Harmon. Anal. \textbf{35} (2013), 309--340.
+
+\bibitem{BonamiKaroui2017}
+A.~Bonami, A.~Karoui,
+\emph{Spectral decay of time and frequency limiting operator},
+Appl. Comput. Harmon. Anal. \textbf{42} (2017), 1--20.
+
+\bibitem{Kulikov2023}
+A.~Kulikov,
+\emph{Exponential lower bound for the eigenvalues of the time-frequency
+localization operator before the plunge region}, arXiv:2306.12430.
+
+\bibitem{Israel2015}
+A.~Israel,
+\emph{The eigenvalue distribution of time-frequency localization operators},
+arXiv:1502.04404.
+
+\bibitem{KMS1953}
+M.~Kac, W.~L.~Murdock, G.~Szeg\H{o},
+\emph{On the eigenvalues of certain Hermitian forms},
+J. Rational Mech. Anal. \textbf{2} (1953), 767--800.
+
+\bibitem{Widom1982}
+H.~Widom,
+\emph{On a class of integral operators with discontinuous symbol},
+in \emph{Toeplitz Centennial}, Operator Theory: Adv. Appl. \textbf{4},
+Birkh\"auser, Basel, 1982, pp.~477--500.
+
+\bibitem{Rodino1993}
+L.~Rodino,
+\emph{Linear Partial Differential Operators in Gevrey Spaces},
+World Scientific, Singapore, 1993.
 
 \bibitem{Fuchs1964}
 W.~H.~J.~Fuchs,
