@@ -44,8 +44,10 @@ is a single two-channel quantity,
 \]
 a mode channel vanishing as $N\to\infty$ and a prime channel vanishing as
 $\lambda^2\to\infty$, so that $\nu_1\to\gamma_1$ is exactly $E\to0$ and forces
-both limits; the two channels are the finite-$N$ transition and the extreme tail
-of one prolate-type spectral edge. Observed at finite working precision $P$, the
+both limits. The two channels are the finite-$N$ transition and the extreme tail
+of a single spectral edge (the lower edge of the equilibrium measure of the
+archimedean field, whose bulk density is the Riemann--von Mangoldt law), so
+$D_{\mathrm{nModes}}$ and $D_{\mathrm{Primes}}$ are one edge read at two scales. Observed at finite working precision $P$, the
 same law is the matching-digit count
 $D(\lambda^2,N,P)=-\log_{10}(|\nu_1-\gamma_1|/|\gamma_1|)$,
 \[
@@ -129,7 +131,7 @@ in which $D_{\mathrm{Wprec}}$ is the instrument resolution alone. Since $D$ is t
 relative error on a logarithmic scale, the law is a quantitative convergence
 statement: $D\to\infty$ is precisely $\nu_1\to\gamma_1$, and the three budgets
 are the independent mechanisms that drive (or stall) that convergence
-(Prop.~\ref{prop:limit}). Four points
+(Prop.~\ref{prop:limit}). Five points
 distinguish it from prior empirical fits:
 \begin{enumerate}
 \item \textbf{The minimum is forced, not fitted} (Section~\ref{sec:skeleton}).
@@ -153,6 +155,19 @@ distinguish it from prior empirical fits:
   or precision reaches the zero, so convergence to $\gamma_1$ forces
   $\lambda^2\to\infty$ --- which turns the qualitative convergence
   of~\cite{CCM2025} into an explicit, conditional rate.
+\item \textbf{No prior unified law, to our knowledge.} Earlier attempts are
+  single closed-form fits of the digit count, and they fail: we tested two
+  proposed rate laws against high-precision data and found them
+  unsupported~\cite{AndrewsB}, and Groskin~\cite{Groskin2026} likewise reports
+  that no single smooth-convergence law fits his data and declines to assert a
+  rate, while \'Sliwi\'nski~\cite{Sliwinski2026} establishes only a lower bound
+  on the mean error. The unified characterization given here --- the intrinsic
+  two-channel edge~\eqref{eq:main-intrinsic} and its finite-precision
+  measurement~\eqref{eq:main} --- is, to the best of the author's knowledge, the
+  first working closed-form convergence law for the construction. Its unity is
+  the point: one spectral edge (Section~\ref{sec:equilibrium}) underlies both the
+  mode ramp and the prime ceiling, which is why a single expression can hold
+  where earlier per-fits could not.
 \end{enumerate}
 
 The deepest new content is the mode budget $D_{\mathrm{nModes}}$
@@ -160,7 +175,10 @@ The deepest new content is the mode budget $D_{\mathrm{nModes}}$
 a stretched-exponential convergence, identify its exponent with the analyticity
 class of the eigenvector, and derive that exponent end to end. A by-product is
 that the eigenvalue-space Galerkin exponent measured by Groskin~\cite{Groskin2026}
-is a finite-window slice of the same curve.
+is a finite-window slice of the same curve. That the mode ramp and the prime
+ceiling are not two mechanisms but one spectral edge at two scales --- the lower
+edge of an equilibrium measure whose bulk is the Riemann--von Mangoldt density
+--- is the subject of Section~\ref{sec:equilibrium}.
 
 %==============================================================================
 \section{The construction and the object $D$}\label{sec:background}
@@ -185,7 +203,10 @@ numerically across $38$ configurations spanning $\lambda^2=13$--$1000$
 in~\cite{AndrewsA}.
 
 The object of study, $D(\lambda^2,N,P)$, is a digit count: $D=-\log_{10}
-(\text{relative error})$. Its arithmetic is what makes the minimum structure
+(\text{relative error})$. The relative error itself,
+$E=|\nu_1-\gamma_1|/|\gamma_1|$, is the intrinsic object of the
+law~\eqref{eq:main-intrinsic}; $D$ is its measurement in digits, and the
+arithmetic of that measurement is what makes the minimum structure
 of~\eqref{eq:main} inevitable.
 
 %==============================================================================
@@ -226,10 +247,13 @@ The three sources are independent because they answer to different parameters
 any one can be driven below the others at will. The $O(1)$ term is at most
 $\log_{10}3<0.48$ of a digit, and arises only in the narrow crossover where two
 budgets are comparable; away from those seams a single budget binds and $D$
-equals it to within rounding. This is why the law is a minimum rather than a sum
-or product, and why global single-expression fits fail in practice: a single
+equals it to within rounding. This is why, in digit space, $D$ is a minimum rather than a sum or product, and
+why global single-expression fits of the digit count fail in practice: a single
 elementary term cannot simultaneously hold a hard precision wall, a prime
-ceiling, and a $\lambda^2$-coupled mode ramp. The junctions differ in character.
+ceiling, and a $\lambda^2$-coupled mode ramp. In the intrinsic form the error is,
+by contrast, literally a sum, $E=\varepsilon_{\mathrm{modes}}
++\varepsilon_{\mathrm{primes}}$~\eqref{eq:main-intrinsic}; the digit-space minimum
+is what the negative logarithm of that sum becomes, the largest term binding. The junctions differ in character.
 The precision junction is a hard wall --- round-off is a clamp --- so its corner
 is sharp. The mode$\to$prime junction, by contrast, is a wide, smooth saturation
 (the $\tanh$ of Section~\ref{sec:nmodes}): $D_{\mathrm{nModes}}$ is the
@@ -270,19 +294,22 @@ operator, and as $P\to\infty$ it disappears, returning the intrinsic form in
 digit units. Thus the boxed law~\eqref{eq:main} is the finite-precision
 \emph{measurement} of the intrinsic law~\eqref{eq:main-intrinsic}.
 
-\begin{remark}[The two channels are one edge]\label{rem:oneedge}
-The mode and prime channels are the two ends of a single spectral edge. By
-\eqref{eq:nmodes}, $D_{\mathrm{nModes}}=D_{\mathrm{Primes}}\cdot g$ with
-$g=\tanh\!\bigl((c\,N/(\lambda^2\ln\lambda^2))^{q}\bigr)\uparrow1$ as
-$N\to\infty$, so $D_{\mathrm{Primes}}=\lim_{N\to\infty}D_{\mathrm{nModes}}$ is not
-a separate budget but the $N\to\infty$ ceiling of the mode ramp. Both are
-features of one prolate-type band edge: the ramp is its finite-$N$ transition
-(the Landau--Widom plunge, Section~\ref{sec:nmodes}), the ceiling its extreme
-tail (the prolate asymptotic, Section~\ref{sec:primes}). Equivalently the digit
-law is a single edge function $D_{\mathrm{edge}}(N,\lambda^2)=
+\smallskip
+\noindent\emph{One edge, not two budgets.} The mode and prime channels are the
+two ends of a single spectral edge. Dividing out the ceiling
+(Section~\ref{sec:nmodes}) writes $D_{\mathrm{nModes}}=D_{\mathrm{Primes}}\cdot g$
+with $g=\tanh\!\bigl((c\,N/(\lambda^2\ln\lambda^2))^{q}\bigr)\uparrow1$ as
+$N\to\infty$, so $D_{\mathrm{Primes}}=\lim_{N\to\infty}D_{\mathrm{nModes}}$ is the
+$N\to\infty$ ceiling of the mode ramp, not a separate term; equivalently the
+digit law is a single edge function $D_{\mathrm{edge}}(N,\lambda^2)=
 D_{\mathrm{Primes}}\cdot g$ capped by precision,
-$D=\min(D_{\mathrm{Wprec}},D_{\mathrm{edge}})+O(1)$.
-\end{remark}
+$D=\min(D_{\mathrm{Wprec}},D_{\mathrm{edge}})+O(1)$. Correspondingly the intrinsic
+error~\eqref{eq:main-intrinsic} is one edge: $\varepsilon_{\mathrm{modes}}$ is its
+finite-$N$ transition (the Landau--Widom plunge, Section~\ref{sec:nmodes}) and
+$\varepsilon_{\mathrm{primes}}$ is its extreme tail (the prolate asymptotic,
+Section~\ref{sec:primes}). That these are literally the transition and the tail
+of one band edge --- the lower edge of the archimedean equilibrium measure ---
+is established in Section~\ref{sec:equilibrium}.
 
 %==============================================================================
 \section{The precision budget $D_{\mathrm{Wprec}}$}\label{sec:wprec}
@@ -347,8 +374,11 @@ of the construction.
 \section{The mode budget $D_{\mathrm{nModes}}$}\label{sec:nmodes}
 %==============================================================================
 
-This is the convergence rate in $N$ --- the open problem of~\cite{CCM2025}.
-Dividing out the ceiling (Section~\ref{sec:primes}), write the ramp ratio
+This is the convergence rate in $N$ --- the open problem of~\cite{CCM2025}. In
+the intrinsic form it is the mode channel $\varepsilon_{\mathrm{modes}}$; as a
+digit count it is the rising transition of the equilibrium-measure edge
+(Section~\ref{sec:equilibrium}), climbing toward the prime ceiling.
+Dividing out that ceiling (Section~\ref{sec:primes}), write the ramp ratio
 $g=D_{\mathrm{nModes}}/D_{\mathrm{Primes}}\in[0,1]$. We claim
 \begin{equation}\label{eq:nmodes}
   D_{\mathrm{nModes}}(N,\lambda^2)=D_{\mathrm{Primes}}(\lambda^2)\cdot
@@ -433,6 +463,56 @@ Stirling. Hence the strip half-width is
   \delta=\pi/4 .
 \end{equation}
 
+This value has a clean structural origin, one that also shows why the scales
+$\tfrac12$ and $\pi/4$ both attach to the same archimedean factor. On the
+critical line the archimedean log-derivative has the large-$z$ expansion
+\begin{equation}\label{eq:digamma-split}
+  \psi\!\left(\tfrac14+\tfrac{iz}{2}\right)=\log\frac{z}{2}
+  +i\,\frac{\pi}{2}+o(1),\qquad z\to+\infty,
+\end{equation}
+since the argument $\tfrac14+\tfrac{iz}{2}$ runs in the imaginary
+(critical-line) direction, so $\arg\bigl(\tfrac14+\tfrac{iz}{2}\bigr)\to\pi/2$.
+Its real and imaginary parts carry the two scales:
+\begin{itemize}
+\item the \emph{real} part $\operatorname{Re}\psi(\tfrac14+\tfrac{iz}{2})\to
+  \log(z/2)$ is the symbol, Suzuki's $\log|z|$ multiplier~\cite{Suzuki2026},
+  whose analyticity strip has half-width $\tfrac12$ (the digamma poles at
+  $z=\pm i/2$);
+\item the \emph{imaginary} part $\operatorname{Im}\psi(\tfrac14+\tfrac{iz}{2})\to
+  \tfrac{\pi}{2}$ sets the envelope, through
+  \[
+    \frac{d}{dz}\log\bigl|\Gamma_\mathbb{R}(\tfrac12+iz)\bigr|
+    =-\tfrac12\operatorname{Im}\psi\!\left(\tfrac14+\tfrac{iz}{2}\right)
+    \longrightarrow-\tfrac12\cdot\tfrac{\pi}{2}=-\tfrac{\pi}{4}.
+  \]
+\end{itemize}
+The strip half-width and the envelope rate are therefore the real and imaginary
+parts of the \emph{one} analytic function $\log\Gamma_\mathbb{R}(\tfrac12+iz)$,
+a Hilbert (Kramers--Kronig) conjugate pair since $\Gamma_\mathbb{R}$ is zero-free
+(minimum phase): its log-magnitude and phase determine each other. In one
+identity,
+\begin{equation}\label{eq:pi4}
+  \delta=\frac{\pi}{4}=\frac12\cdot\frac{\pi}{2}=\tfrac12\arg(i),
+\end{equation}
+half the right angle of the critical-line direction. The two scales $\tfrac12$
+and $\pi/4$ are thus not independent constants but conjugate parts of the single
+factor $\Gamma_\mathbb{R}$: the strip half-width $\tfrac12$ and its harmonic
+conjugate $\pi/4$.
+
+Two points delimit what this establishes. It fixes the \emph{value}
+$\delta=\pi/4$ as a property of the limiting $\Gamma_\mathbb{R}$ factor: $\delta$
+is the half-width of the strip carrying the zeros of the limiting Fourier--Mellin
+function, and governs the zero convergence $\nu_1\to\gamma_1$ (with the squaring
+of Thm.~\ref{thm:stretched}(ii)); it is not the decay rate of the finite
+eigenvector's Galerkin coefficients, a distinct band-limited, prime-modulated
+quantity ($\approx0.71$ at $\lambda^2=100$), and the finite $\widehat\xi$, of
+exponential type $L/2$ via its $\sin(zL/2)$ factor, is not literally the completed
+$\xi$. And it is structural motivation rather than a full derivation: obtaining
+$\pi/4$ from the symbol alone would require its conjugate part, which appears only
+through the analytic completion $\Gamma_\mathbb{R}$, that is, through the finite
+ground-state transform inheriting that factor, the realization step that remains
+open. \emph{Status: T3.}
+
 \begin{lemma}[Lattice sampling of the coefficients]\label{lem:sampling}
 The Fourier--Mellin transform of the $N$-mode eigenvector has the closed
 form $\widehat\xi_N(z)=2L^{-1/2}\sin(zL/2)\sum_{|j|\le N}\xi_j/(z-2\pi j/L)$
@@ -467,26 +547,6 @@ $q\approx1$, \eqref{eq:slope} gives $2.203$ against a measured small-$N$ slope
 of $2.264$ --- agreement to $3\%$ with no free parameters. At larger $\lambda^2$
 the measured early slope runs above~\eqref{eq:slope} exactly as the $q<1$
 concavity (below) requires.
-
-\begin{remark}[On the status of \eqref{eq:delta}]\label{rem:bandlimited}
-The value $\delta=\pi/4$ is data-confirmed (eq.~\eqref{eq:slope}) and
-structurally motivated by the $\Gamma_\mathbb{R}$ factor, but its derivation is
-not yet rigorous, and two cautions pin down what $\delta$ is. First, $\delta$ is
-the half-width of the strip carrying the zeros of the limiting Fourier--Mellin
-function---it governs the convergence of the zero $\nu_1\to\gamma_1$ (with the
-squaring of Thm.~\ref{thm:stretched}(ii))---and is \emph{not} the decay rate of the
-finite eigenvector's Galerkin coefficients. The latter is a distinct,
-band-limited and prime-modulated quantity (measured $\approx0.71$ at
-$\lambda^2=100$, $\neq\pi/4$); identifying $\delta$ with it would predict the
-wrong digit slope. Second, the finite $\widehat\xi$ is of exponential type $L/2$
-(via its $\sin(zL/2)$ factor) and so is not literally the completed Riemann
-$\xi$; the $\pi/4$ is the $\Gamma_\mathbb{R}$ strip of the limit object.
-Lemma~\ref{lem:sampling} fixes the lattice spacing $2\pi/L$ and the interval
-$L=\ln\lambda^2$ exactly, so beyond it~\eqref{eq:delta} supplies only the
-\emph{value} of the rate $\delta$. The remaining lemma is to derive the
-zero-convergence rate from the
-$\Gamma_\mathbb{R}$-weighted form. \emph{Status: T3.}
-\end{remark}
 
 \subsection{The prime correction: $q(\lambda^2)$}\label{ssec:prime}
 
@@ -574,14 +634,27 @@ data-pinned.}
 \section{The prime ceiling $D_{\mathrm{Primes}}$}\label{sec:primes}
 %==============================================================================
 
-The prime ceiling is the accuracy at infinite $N$ and $P$, set solely by which
-primes $p\le\lambda^2$ enter the form. Two floors must be separated. The
-\emph{eigenvalue floor} $D_{\mathrm{eig}}=-\log_{10}\varepsilon^\infty(\lambda)$
-is the digit value of the plunge eigenvalue. The CCM construction ties
-$\varepsilon^\infty$ to the principal prolate spheroidal eigenvalue at bandwidth
-$\lambda$; the prolate eigenvalue asymptotic (Connes~\cite{Connes2026}, \S6.4;
-Fuchs~\cite{Fuchs1964}; cf.\ Connes~\cite{ConnesProlate} and
-Hedenmalm~\cite{Hedenmalm2026}) gives, for the relevant index,
+The prime channel of the intrinsic law~\eqref{eq:main-intrinsic} is the accuracy
+at infinite $N$ and $P$, set solely by which primes $p\le\lambda^2$ enter the
+form. It is the relative error of the first zero at the cutoff,
+\begin{equation}\label{eq:epsprimes}
+  \varepsilon_{\mathrm{primes}}(\lambda^2)
+  =\frac{|\nu_1(\infty,\lambda^2)-\gamma_1|}{|\gamma_1|},
+\end{equation}
+with $\nu_1(\infty,\lambda^2)$ the first zero at infinite basis size and fixed
+$\lambda^2$: it is what remains once modes and precision are exhausted, and its
+digit measurement $D_{\mathrm{Primes}}=-\log_{10}\varepsilon_{\mathrm{primes}}$ is
+the ceiling the minimum~\eqref{eq:main} consumes. We fix its leading rate through
+the plunge \emph{eigenvalue}, the tractable route, kept here in digit space to
+reinforce the intrinsic statement with the measured quantity.
+
+The plunge eigenvalue gives an \emph{eigenvalue floor}
+$D_{\mathrm{eig}}=-\log_{10}\varepsilon^\infty(\lambda)$, the digit value of the
+smallest eigenvalue. The CCM construction ties $\varepsilon^\infty$ to the
+principal prolate spheroidal eigenvalue at bandwidth $\lambda$; the prolate
+eigenvalue asymptotic (Connes~\cite{Connes2026}, \S6.4; Fuchs~\cite{Fuchs1964};
+cf.\ Connes~\cite{ConnesProlate} and Hedenmalm~\cite{Hedenmalm2026}) gives, for
+the relevant index,
 \[
   1-\chi(\lambda)\sim \frac{2^{14}\sqrt{2}\,\pi^5}{3}\,
   \exp\!\bigl(-4\pi\lambda^2+\tfrac92\ln\lambda^2\bigr),
@@ -596,22 +669,29 @@ rendering of the $e^{-4\pi\lambda^2}$ prolate decay rate that appears in Connes'
 own framework, the $\tfrac92$ subleading-log coefficient is the Fuchs index, and
 $C_0=\log_{10}\!\bigl(2^{14}\sqrt{2}\,\pi^5/3\bigr)=6.3736\ldots$ follows from the
 prolate asymptotic (Groskin~\cite{Groskin2026} independently evaluates the same
-\S6.4 prefactor and obtains $\log_{10}\approx6.37$, in agreement).
+\S6.4 prefactor and obtains $\log_{10}\approx6.37$, in agreement). This fixes the
+leading rate of $\varepsilon_{\mathrm{primes}}$: the plunge sets $K\lambda^2$.
 
-The quantity the minimum~\eqref{eq:main} actually consumes is the
-\emph{matching floor} $D_{\mathrm{Primes}}$ --- the ceiling on matching digits,
-which sits a few digits below the eigenvalue floor:
+The eigenvalue depth is a scaffold, not the object. What the law consumes is the
+zero error $\varepsilon_{\mathrm{primes}}$, which sits a few digits below the
+eigenvalue floor: converting the plunge depth $\varepsilon^\infty$ into the zero
+displacement $|\nu_1-\gamma_1|$, and normalizing by $|\gamma_1|$ (the
+$\log_{10}|\gamma_1|\approx1.15$ digits of the relative error), gives the matching
+floor
 \begin{equation}\label{eq:primes}
   D_{\mathrm{Primes}}(\lambda^2)=K\lambda^2-P_m\log_{10}\lambda^2-c_m,
   \qquad P_m\approx5,\quad c_m\approx9.5.
 \end{equation}
-Their difference is the \emph{conversion gap}
+The leading $K\lambda^2$ is shared with the eigenvalue floor, the same plunge
+rate, so the intrinsic content is a \emph{single} channel, not two competing
+ceilings; the subleading $P_m,c_m$ are the eigenvalue-to-zero conversion together
+with the $|\gamma_1|$ normalization. Equivalently the \emph{conversion gap}
 $\mathrm{conv}(\lambda^2):=D_{\mathrm{eig}}-D_{\mathrm{Primes}}
-=(P_m-\tfrac92)\log_{10}\lambda^2+(c_m-C_0)\approx\tfrac12\log_{10}\lambda^2+3$,
-a slowly growing offset of a few digits that converts the eigenvalue-plunge floor
-into the matching-digit floor. The eigenvalue-floor constants $K,\tfrac92,C_0$
-are derived (prolate transfer); the matching offset $P_m,c_m$ (equivalently
-$\mathrm{conv}$) is empirical.
+=(P_m-\tfrac92)\log_{10}\lambda^2+(c_m-C_0)\approx\tfrac12\log_{10}\lambda^2+3$
+is that conversion, read in digit space. The leading rate $K$ is derived (prolate
+transfer); the conversion, hence $P_m$ and $c_m$, is empirical --- of it, the
+$\approx1.15$-digit part of $c_m$ is the explicit $|\gamma_1|$ normalization and
+the remainder is the depth-to-zero factor.
 
 The arithmetic does not move the eigenvalue-floor slope. At the scale the
 operator resolves, the prime part of the Weil form has large-$|t|$ behavior
@@ -634,7 +714,8 @@ change in the asymptotic slope.
 
 \emph{Status: the leading coefficient $K$ and the eigenvalue-floor slope $\tfrac92$
 ride the prolate transfer (T2), and the arithmetic is provably inert on the slope;
-only the matching-floor offset ($P_m$, $c_m$) is empirical (T4).}
+only the matching-floor offset ($P_m$, $c_m$), the eigenvalue-to-zero conversion,
+is empirical (T4).}
 
 \paragraph{The floor is smooth, not a prime staircase.}
 A natural hypothesis --- that $D_{\mathrm{Primes}}$ steps at prime entries ---
@@ -653,19 +734,111 @@ matching floor $K\cdot200-5\log_{10}200-9.5=1070.5$, confirming the two-floor
 structure at the largest cutoff measured.
 
 %==============================================================================
+\section{The equilibrium-measure edge}\label{sec:equilibrium}
+%==============================================================================
+
+Sections~\ref{sec:nmodes} and~\ref{sec:primes} derived the mode ramp and the
+prime ceiling by two separate classical routes: the Landau--Widom transition
+width for the ramp, and the Fuchs prolate tail for the ceiling. This section
+states the structural fact that ties them together --- both are features of a
+single spectral edge --- so the intrinsic law~\eqref{eq:main-intrinsic} is one
+edge rather than two coincident mechanisms. It adds no new constant; it is the
+reason the two budgets share a form.
+
+\subsection{The archimedean equilibrium measure}\label{ssec:eqmeasure}
+
+Treat the limiting ordinates $\{\nu_k\}$ as a unit charge in the external field
+set by the archimedean weight of the Weil form. As $\lambda^2\to\infty$ the
+macroscopic distribution is the equilibrium measure $\mu_Q$ minimizing the
+weighted logarithmic energy
+\[
+  I[\mu]=\iint\log\frac{1}{|s-t|}\,d\mu(s)\,d\mu(t)+2\int Q(t)\,d\mu(t),
+  \qquad \mu\ge0,\ \textstyle\int d\mu=1,
+\]
+with external field $Q$ the archimedean potential whose derivative is the phase
+rate $Q'(t)=\tfrac12\log(t/2\pi)$ of Section~\ref{ssec:arch}. That a limiting
+spectral or zero density is the equilibrium measure of such a weighted energy
+problem is classical (Saff--Totik~\cite{SaffTotik1997}; in the
+orthogonal-polynomial and random-matrix setting, Deift~\cite{Deift1999}); we
+invoke it here as a known tool. The Euler--Lagrange condition
+$2\int\log|s-t|\,d\mu(t)=2Q(s)+\mathrm{const}$ on $\operatorname{supp}\mu$ fixes
+the density; with this field it is
+\begin{equation}\label{eq:rvm}
+  \rho_Q(t)=\frac{1}{2\pi}\log\frac{t}{2\pi},
+\end{equation}
+the Riemann--von Mangoldt zero-counting density
+($\int_0^T\rho_Q=\tfrac{T}{2\pi}\log\tfrac{T}{2\pi e}$). The smooth backbone of
+the spectrum is thus the equilibrium measure of the archimedean field, recovered
+without reference to the primes and independent of RH. \emph{Status: T3 --- the
+density~\eqref{eq:rvm} is the standard archimedean main term and the variational
+identification is structural; a rigorous equilibrium-measure limit for the
+truncated operator is the open step.}
+
+\subsection{One edge, two scales}\label{ssec:oneedge}
+
+The equilibrium measure has a lower band edge: the eigenvalues descend from the
+$O(1)$ bulk into the deep, positive plunge (positivity forced by the Weil form).
+That edge is a single object, and the two budgets are its two scales:
+\begin{itemize}
+\item \emph{the transition is the mode ramp} --- the width of the crossover from
+  bulk to plunge, as the resolved dimension crosses the Shannon number
+  $\lambda^2\ln\lambda^2$, is the Landau--Widom log-width~\cite{LandauWidom1980},
+  which is the $\tanh$ ramp of $D_{\mathrm{nModes}}$ (Section~\ref{sec:nmodes});
+\item \emph{the extreme tail is the prime ceiling} --- the depth past the edge is
+  the Fuchs extreme-value asymptotic~\cite{Fuchs1964}, which is
+  $D_{\mathrm{Primes}}$ (Section~\ref{sec:primes}).
+\end{itemize}
+So the Landau--Widom width and the Fuchs tail, invoked separately above, are the
+transition and the tail of the \emph{same} band edge. This is the mechanism
+behind the algebra $D_{\mathrm{nModes}}=D_{\mathrm{Primes}}\cdot g$ of
+Section~\ref{ssec:twoforms}: $D_{\mathrm{nModes}}$ and $D_{\mathrm{Primes}}$ are
+one edge $D_{\mathrm{edge}}$ read at two resolutions, and the intrinsic
+error~\eqref{eq:main-intrinsic} is correspondingly one edge --- its
+finite-$N$ transition $\varepsilon_{\mathrm{modes}}$ and its extreme tail
+$\varepsilon_{\mathrm{primes}}$ are the ramp and the ceiling of $\mu_Q$'s lower
+edge. The unification is conceptual, not a new estimate: the microscopic
+universality class of the edge (Airy, Bessel, or a Landau--Widom band edge) and
+the exact deep-edge constant remain open, the latter being the same
+archimedean--prime cancellation left open for $D_{\mathrm{Primes}}$ in
+Section~\ref{sec:primes}. The equilibrium-measure framework itself is classical
+(above); to the best of the author's knowledge, its application to the
+Connes--Consani--Moscovici / Connes--van Suijlekom Weil form --- identifying the
+zero-counting backbone as the archimedean equilibrium measure, and the mode ramp
+and prime ceiling as the transition and extreme tail of that measure's lower
+edge --- is new here. \emph{Status: T3 --- structural unification riding the
+prolate transfer already used for both budgets; the framework is classical and
+no new constant is claimed.}
+
+%==============================================================================
 \section{The complete formula}\label{sec:complete}
 %==============================================================================
 
-Collecting Sections~\ref{sec:wprec}--\ref{sec:primes}:
+Collecting Sections~\ref{sec:wprec}--\ref{sec:equilibrium}, the law stands in the
+two forms of the introduction. \emph{Intrinsically} it is the single edge of
+Section~\ref{sec:equilibrium}: the relative error is the two-channel quantity
+\begin{equation}\label{eq:complete-intrinsic}
+  E(N,\lambda^2)=\varepsilon_{\mathrm{modes}}(N,\lambda^2)
+                +\varepsilon_{\mathrm{primes}}(\lambda^2),
+\end{equation}
+equivalently, in digit units, the edge function
+$D_{\mathrm{edge}}(N,\lambda^2)=D_{\mathrm{Primes}}(\lambda^2)\cdot
+\tanh\!\bigl((c\,N/(\lambda^2\ln\lambda^2))^{q}\bigr)$, whose $N\to\infty$ ceiling
+$D_{\mathrm{edge}}(\infty,\lambda^2)=D_{\mathrm{Primes}}$ is the prime floor and
+whose finite-$N$ transition is the mode ramp $D_{\mathrm{nModes}}$.
+\emph{Observed} at working precision $P$, it is that one edge capped by the
+instrument resolution:
 \begin{equation}\label{eq:complete}
   D(\lambda^2,N,P)=\min\!\Bigl(
   \underbrace{P+O(1)}_{D_{\mathrm{Wprec}}},\;
-  \underbrace{D_{\mathrm{Primes}}\tanh\!\bigl((c\,N/(\lambda^2\ln\lambda^2))^{q}\bigr)}_{D_{\mathrm{nModes}}},\;
-  \underbrace{K\lambda^2-P_m\log_{10}\lambda^2-c_m}_{D_{\mathrm{Primes}}}
+  \underbrace{D_{\mathrm{Primes}}\tanh\!\bigl((c\,N/(\lambda^2\ln\lambda^2))^{q}\bigr)}_{D_{\mathrm{nModes}}\;=\;D_{\mathrm{edge}}},\;
+  \underbrace{K\lambda^2-P_m\log_{10}\lambda^2-c_m}_{D_{\mathrm{Primes}}\;=\;D_{\mathrm{edge}}(\infty)}
   \Bigr),
 \end{equation}
 with $K=4\pi/\ln10$ exact, $q=2/(2\gamma+\ln\ln\lambda^2)$, and $c\approx4/\pi$.
-This is the Andrews CCM Convergence Law. Of its parts, the minimum
+The last two entries are the one edge $D_{\mathrm{edge}}$ at finite $N$ and at
+$N\to\infty$, so the operative law is $D=\min(D_{\mathrm{Wprec}},
+D_{\mathrm{edge}})+O(1)$: a single spectral edge, capped by precision. This is
+the Andrews CCM Convergence Law. Of its parts, the minimum
 structure, the precision slope, and the stretched-exponential convergence and
 rate unification (Thm.~\ref{thm:stretched}) are rigorous (T1); the Shannon coordinate and the prime
 leading coefficient are derived modulo a stated lemma (T2); the archimedean rate,
@@ -677,8 +850,9 @@ To the best of the author's knowledge, the complete convergence model
 of~\eqref{eq:complete} is novel, meaningful, and has not been previously
 published: the assembly of the three budgets into a single law, the closed-form
 mode exponent $q(\lambda^2)=2/(2\gamma+\ln\ln\lambda^2)$, the Shannon coordinate
-$\lambda^2\ln\lambda^2$, and the stretched-exponential identification of the mode
-budget appear here for the first time. The rate it characterizes is precisely the
+$\lambda^2\ln\lambda^2$, the stretched-exponential identification of the mode
+budget, and the recognition of the mode ramp and prime ceiling as one
+equilibrium-measure edge appear here for the first time. The rate it characterizes is precisely the
 problem named open in~\cite{CCM2025}: Groskin~\cite{Groskin2026} measures a
 Galerkin exponent but disclaims deriving it, and \'Sliwi\'nski~\cite{Sliwinski2026}
 establishes only a lower bound, so no prior work supplies the functional form
@@ -824,6 +998,7 @@ $D_{\mathrm{Primes}}$ leading $K=4\pi/\ln10$ & \textbf{T2} & prolate asymptotic 
 $D_{\mathrm{Primes}}$ floor slope $9/2$ & \textbf{T2} & prolate transfer; primes provably inert \\
 $D_{\mathrm{Primes}}$ matching offset ($P_m,c_m$) & \textbf{T4} & empirically pinned \\
 Shannon coordinate $\lambda^2\ln\lambda^2$ & \textbf{T2} & ceiling/slope (Lem.~\ref{lem:coord}) \\
+Equilibrium-measure edge (one edge, two scales) & \textbf{T3} & equilibrium limit; edge universality class \\
 Archimedean rate $\delta=\pi/4$ & \textbf{T3} & zero-convergence from $\Gamma_\mathbb{R}$ \\
 Exponent $q=2/(2\gamma+\ln\ln\lambda^2)$ & \textbf{T3} & variance$\to$exponent map \\
 Onset constant $c$ ($\sim 4/\pi$) & \textbf{T3} & exact rational \\
@@ -841,7 +1016,10 @@ ceiling has the exact
 leading coefficient $4\pi/\ln10$, and the mode budget --- the convergence rate
 named open in~\cite{CCM2025} --- is the logarithm of a stretched-exponential
 whose exponent is the eigenvector's analyticity class, derived end to end as
-$q=2/(2\gamma+\ln\ln\lambda^2)$. Read as a convergence statement, the law says
+$q=2/(2\gamma+\ln\ln\lambda^2)$. The mode ramp and the prime ceiling are not two
+mechanisms but one object --- the lower edge of the archimedean equilibrium
+measure, whose bulk density is the Riemann--von Mangoldt law --- seen at two
+scales (Section~\ref{sec:equilibrium}). Read as a convergence statement, the law says
 $\nu_1\to\gamma_1$ exactly when all three budgets diverge, giving an explicit
 rate $D\sim(4\pi/\ln10)\lambda^2$ along $\lambda^2\to\infty$
 (Prop.~\ref{prop:limit}). Each claim is stated with an explicit rigor
@@ -972,6 +1150,17 @@ H.~J.~Landau, H.~O.~Pollak,
 \emph{Prolate spheroidal wave functions, Fourier analysis and uncertainty ---
 III: the dimension of the space of essentially time- and band-limited signals},
 Bell Syst. Tech. J. \textbf{41} (1962), 1295--1336.
+
+\bibitem{SaffTotik1997}
+E.~B.~Saff, V.~Totik,
+\emph{Logarithmic Potentials with External Fields},
+Grundlehren der mathematischen Wissenschaften \textbf{316}, Springer, 1997.
+
+\bibitem{Deift1999}
+P.~Deift,
+\emph{Orthogonal Polynomials and Random Matrices: A Riemann--Hilbert Approach},
+Courant Lecture Notes in Mathematics \textbf{3}, American Mathematical Society,
+1999.
 
 \bibitem{BabuskaOsborn1991}
 I.~Babu\v{s}ka, J.~Osborn,
