@@ -15,6 +15,7 @@
 \newtheorem{theorem}{Theorem}
 \newtheorem{proposition}{Proposition}
 \newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
 \newtheorem{conjecture}{Conjecture}
 \newtheorem{remark}{Remark}
 \newtheorem{definition}{Definition}
@@ -680,10 +681,75 @@ structure underlying the de~Branges-space treatment of the Weil
 form~\cite{SuzukiHilbert,SuzukiJLMS}) and $G=\widehat\xi_N$, the lemma converts
 uniform convergence on a neighborhood of $\gamma_1$ inside the strip into zero
 displacement with the explicit constant $2/|\widehat\xi_\infty'(\gamma_1)|$.
-The entire open content of the archimedean rate is thereby confined to one
-statement. We record it formally, in three clauses that separate the objects
-involved: the eigenvector tail of the full form, the archimedean
-identification of its rate, and the transfer to the zero.
+
+A second transfer can be made rigorous as well: from the coefficient tail to
+the transform. The subtlety is that the finite-section eigenvector is not the
+truncation of the limit eigenvector, so the transform difference carries a
+retained-coefficient error in addition to the discarded tail; both pieces are
+controlled by the tail alone.
+
+\begin{lemma}[Tail-to-transform transfer]\label{lem:tail}
+Fix $\lambda^2$, assume the ground state of the continuum form $QW_\lambda$ is
+simple with spectral gap $g(\lambda^2)>0$, and suppose the limit eigenvector
+satisfies $|\xi^{(\infty)}_j|\le C\exp(-c\,j^{q})$ for some $c>0$,
+$0<q\le1$. Let $r>0$ be small enough that
+$\overline{D}(\gamma_1,r)$ has positive distance $d(\lambda^2,r)$ from the
+frequency lattice $\{2\pi j/L\}$. Normalize the eigenvectors and fix phases by
+$\langle\xi^{(N)},\xi^{(\infty)}\rangle\ge0$. Then
+\[
+  \sup_{|z-\gamma_1|\le r}\bigl|\widehat\xi_N(z)-\widehat\xi_\infty(z)\bigr|
+  \;\le\;\exp\!\bigl(-c\,N^{q}(1+o(1))\bigr),\qquad N\to\infty .
+\]
+\end{lemma}
+\begin{proof}
+Write $P_N$ for the projection onto $\mathrm{span}\{V_j:|j|\le N\}$ and
+$Q_N=I-P_N$. With $\ell^1$ coefficients the closed form of
+Lemma~\ref{lem:sampling} extends to the limit: the series
+$\widehat\xi_\infty(z)=2L^{-1/2}\sin(zL/2)\sum_j\xi_j/(z-2\pi j/L)$ converges
+locally uniformly (lattice poles removable as before) and defines an entire
+function. Split
+$\widehat\xi_N-\widehat\xi_\infty=\widehat{T}[\xi^{(N)}-P_N\xi^{(\infty)}]
+-\widehat{T}[Q_N\xi^{(\infty)}]$, with $\widehat T$ the linear
+coefficients-to-function map. \emph{Tail piece:} on the disc
+$|\sin(zL/2)|\le\cosh(rL/2)$ and $|z-2\pi j/L|\ge\pi|j|/L$ for $|j|$ large,
+so $|\widehat T[Q_N\xi^{(\infty)}]|\le
+C_1\sum_{|j|>N}e^{-cj^{q}}/|j|\le C_2N^{-q}e^{-cN^{q}}(1+o(1))$, by comparison
+with $\int_N^\infty e^{-ct^{q}}\,dt$. \emph{Head piece:} the Galerkin residual
+collapses to the tail,
+\[
+  \bigl(QW^N_\lambda-\varepsilon^\infty\bigr)\bigl(P_N\xi^{(\infty)}\bigr)
+  =P_NQW_\lambda\xi^{(\infty)}-P_NQW_\lambda Q_N\xi^{(\infty)}
+   -\varepsilon^\infty P_N\xi^{(\infty)}
+  =-P_NQW_\lambda Q_N\xi^{(\infty)},
+\]
+using $QW_\lambda\xi^{(\infty)}=\varepsilon^\infty\xi^{(\infty)}$. Row bounds
+for the form (diagonal $O(\log j)$ from the archimedean symbol, off-diagonal
+rows uniformly $\ell^2$, prime part bounded) give
+$\|QW_\lambda Q_N\xi^{(\infty)}\|_2\le
+C_3\sum_{|j|>N}e^{-cj^{q}}\log j$, the same exponential up to a logarithm.
+The section's gap persists, $g_N\ge g/2$ for $N$ large, by standard Galerkin
+spectral approximation for operators with discrete
+spectrum~\cite{BabuskaOsborn1991} together with the monotone convergence of
+\cite[Prop.~3.4]{CCM2025}; the residual bound then yields
+$\|\xi^{(N)}-P_N\xi^{(\infty)}\|_2\le 2\|P_NQW_\lambda
+Q_N\xi^{(\infty)}\|_2/g_N$ up to a normalization correction of order
+$\|Q_N\xi^{(\infty)}\|_2^2$. Finally
+$|\widehat T[e]|\le C_4\sqrt{2N{+}1}\,\|e\|_2$ on the disc, using the lattice
+distance $d(\lambda^2,r)$. All polynomial and logarithmic factors are absorbed
+into the $(1+o(1))$ in the exponent.
+\end{proof}
+
+\begin{corollary}\label{cor:single}
+Under the hypotheses of Lemma~\ref{lem:tail},
+$|\nu_1(N,\lambda^2)-\nu_1(\infty,\lambda^2)|\le\exp(-c\,N^{q}(1+o(1)))$: the
+coefficient tail alone forces the zero displacement at the single exponent,
+by Lemma~\ref{lem:tail} followed by Lemma~\ref{lem:rouche}.
+\end{corollary}
+
+The open content of the archimedean rate is thereby confined to the following
+statement, recorded in three clauses that separate the objects involved: the
+eigenvector tail of the full form, the archimedean identification of its rate,
+and the doubling beyond Corollary~\ref{cor:single}.
 
 \begin{conjecture}[Coefficient decay and zero displacement]\label{conj:decay}
 Fix $\lambda^2$, let $q=q(\lambda^2)$ be the exponent of
@@ -695,11 +761,11 @@ eigenvector at cutoff $\lambda^2$.
   \[
     |\xi^{(\infty)}_k|\;\le\;C\,\exp\!\bigl(-c(\lambda^2)\,k^{q}\bigr).
   \]
-\item[(ii)] \emph{(Archimedean identification.)} For the archimedean-only
-  localized form the tail is purely exponential ($q=1$) with rate
-  $\delta\cdot(2\pi/L)$, $\delta=\pi/4$; equivalently,
-  $c(\lambda^2)\,L/(2\pi)\to\delta$ and $q\to1$ as the prime content is
-  removed.
+\item[(ii)] \emph{(Leading rate.)} $c(\lambda^2)\,L/(2\pi)\to\delta=\pi/4$
+  as $\lambda^2\to\infty$, with $\delta$ the $\Gamma_\mathbb{R}$ envelope
+  rate of Section~\ref{ssec:arch}. The approach is from below: at finite
+  cutoff the small-$k$ rate sits under $\delta$ and the deficit shrinks as
+  the cutoff grows.
 \item[(iii)] \emph{(Doubling at the zero.)} The first-zero displacement obeys
   \[
     |\nu_1(N,\lambda^2)-\nu_1(\infty,\lambda^2)|
@@ -714,12 +780,15 @@ Section~\ref{ssec:prime} read per coefficient. Clauses (ii) and (iii) together
 recover the parameter-free slope~\eqref{eq:slope} at $q\approx1$, the
 prediction validated to $3\%$ at $\lambda^2=7$; the finite-$\lambda^2$
 coefficient rate ($\approx0.71$ at $\lambda^2=100$, against
-$\delta\approx0.785$) is then the first data point for the prime modulation
-that clause (ii) asserts, not a discrepancy. Clause (iii) carries the doubling:
-summing the tail of clause (i) over the discarded modes bounds the transform
-difference near $\gamma_1$ only at the single exponent $c(\lambda^2)N^{q}$,
-and Lemma~\ref{lem:rouche} then moves the zero at that same rate, while the
-observed displacement decays at twice it. The mechanism, whether first-order
+$\delta\approx0.785$) is then a data point for the finite-cutoff deficit
+that clause (ii) asserts, not a discrepancy. The author's coefficient-level
+measurements across $\lambda^2=13$--$200$ show the small-$k$ rate climbing
+toward $\pi/4$ as the cutoff grows, with the mid-band rate below it. What
+controls the full profile is open and under study. Clause (iii) carries the doubling, and its
+open content is now exactly the factor $2$: by Lemma~\ref{lem:tail} and
+Corollary~\ref{cor:single}, clause (i) already implies the displacement bound
+at the single exponent $c(\lambda^2)N^{q}$, rigorously, while the observed
+displacement decays at twice it. The mechanism, whether first-order
 smallness of the transform difference at the zero itself or the second-order
 eigenvalue identity of Prop.~\ref{prop:stretched}(ii) transported through the
 spectrum--zeros identification, is part of what must be proven. None of the
@@ -894,21 +963,60 @@ form domain; any admissible trial vector bounds the infimum from above.
 \end{proof}
 
 \noindent The proposition is the variational principle verbatim, and is T1
-with no caveat. The content lies in the expected size of the right-hand side:
-evaluating $R[k_\lambda]$ through the semilocal trace formula, with the
-uniform prolate estimates of Meixner--Sch\"afke as used in
-\cite[Lem.~7.2]{CCM2025} and the Fuchs asymptotic~\cite{Fuchs1964}, is
-expected to yield $R[k_\lambda]\le C\,\lambda^{9}e^{-4\pi\lambda^2}(1+o(1))$,
-hence
+with no caveat. The content is the size of the right-hand side, which we now
+bound. Take $k_\lambda=\psi_0$, the principal prolate spheroidal mode at
+time--bandwidth $c=2\pi\lambda^2$ transferred into the $V_n$ basis. On the
+localized form's split $QW_\lambda=A_{\mathrm{arch}}-A_{\mathrm{prime}}$
+(archimedean part $w_{02}-w_r$, prime part the prime-power sum $w_p$;
+\cite[\S6]{CCM2025}) the quotient separates,
+\begin{equation}\label{eq:Rsplit}
+  R[k_\lambda]
+   =\underbrace{\frac{\langle A_{\mathrm{arch}}\psi_0,\psi_0\rangle}{\|\psi_0\|^2}}
+     _{=\,1-\chi_0(c)}
+   -\underbrace{\frac{\langle A_{\mathrm{prime}}\psi_0,\psi_0\rangle}{\|\psi_0\|^2}}
+     _{=\,\rho_p(\lambda)} ,
+\end{equation}
+where the archimedean term equals the prolate \emph{deficiency} $1-\chi_0(c)$
+under the band-restricted identification of \cite[\S6.4]{CCM2025}, which we
+take as a hypothesis alongside the sign condition below, and
+$\rho_p(\lambda)$ is the prime Rayleigh quotient on $\psi_0$.
+
+\begin{lemma}[Prolate floor bound]\label{lem:floorbound}
+If the prime Rayleigh quotient on the principal prolate mode is non-negative,
+$\rho_p(\lambda)\ge0$, then
+\[
+  \varepsilon^\infty(\lambda)\;\le\;1-\chi_0(2\pi\lambda^2).
+\]
+\end{lemma}
+\begin{proof}
+By Prop.~\ref{prop:variational} and~\eqref{eq:Rsplit},
+$\varepsilon^\infty(\lambda)\le R[k_\lambda]=(1-\chi_0(c))-\rho_p(\lambda)
+\le 1-\chi_0(c)$, the last step by $\rho_p\ge0$.
+\end{proof}
+
+\noindent The hypothesis $\rho_p\ge0$ is a single sign, far weaker than
+evaluating $\rho_p$, and it is the natural one: the plunge decomposition
+$\varepsilon^\infty=(1-\chi_0)-\rho_p$ with $\varepsilon^\infty>0$ already
+forces $\rho_p\le1-\chi_0$, and the paper's measured prime contributions on the
+ground state are positive and $O(1)$ (Section~\ref{sec:discussion}). With the
+Fuchs asymptotic~\cite{Fuchs1964} for the principal deficiency,
+\[
+  1-\chi_0(2\pi\lambda^2)
+   =\tfrac{2^{14}}{3}\sqrt2\,\pi^5\,
+     \exp\!\bigl(-4\pi\lambda^2+\tfrac92\ln\lambda^2\bigr)(1+o(1)),
+\]
+Lemma~\ref{lem:floorbound} yields the one-sided floor bound
 \[
   D_{\mathrm{eig}}(\lambda^2)\;\ge\;K\lambda^2-\frac{9}{2\ln10}\ln\lambda^2
-  -\log_{10}C
+  -C_0 ,\qquad K=\frac{4\pi}{\ln10},\quad
+  C_0=\log_{10}\!\bigl(\tfrac{2^{14}}{3}\sqrt2\,\pi^5\bigr),
 \]
-whenever $\varepsilon^\infty(\lambda)>0$ so that the digit reading
-$D_{\mathrm{eig}}=-\log_{10}\varepsilon^\infty$ is defined. That evaluation
-is the \emph{named} open lemma behind the floor's leading rate; each
-ingredient (variational principle, Meixner--Sch\"afke, Fuchs) is classical,
-and this is the precise sense in which the rate is T2. The reverse inequality,
+whenever $\varepsilon^\infty(\lambda)>0$. This is now a proof, not a stated
+expectation: the leading coefficient $K$ and the subleading Fuchs slope
+$\tfrac92$ are \emph{rigorously bounded from below} on the floor, modulo only
+the sign hypothesis $\rho_p\ge0$ (checkable directly through the archimedean/
+prime Rayleigh split of \cite[\S6]{CCM2025}) and the classical Fuchs asymptotic.
+The reverse inequality,
 that the ceiling cannot be beaten, i.e.\ a \emph{lower} bound on
 $\varepsilon^\infty$ and on $|\nu_1(\infty,\lambda^2)-\gamma_1|$ of the same
 exponential order, remains open, and is the archimedean--prime cancellation
@@ -1283,7 +1391,11 @@ band-concentrated prolate modes, where Connes--Consani establish archimedean Wei
 positivity~\cite{ConnesConsaniSelecta} (surveyed in~\cite{Connes2026}),
 restores positivity, but only as an $O(1)$ gap:
 the smallest Sonin eigenvalue is $2.26$, $2.28$, $2.57$ at $\lambda^2=5,8,13$,
-essentially flat in $\lambda^2$, against a floor $K\lambda^2=27,44,71$.
+essentially flat in $\lambda^2$, against a floor $K\lambda^2=27,44,71$. A
+direct diagonalization of the archimedean-only form at $\lambda^2=13$--$50$
+finds the same structure from the eigenvector side: the lowest even mode is a
+delocalized Sonin-type state with an $O(1)$ eigenvalue, so the
+band-concentrated plunge eigenvector exists only for the full form.
 Archimedean positivity and the plunge are therefore \emph{decoupled}: the place
 at infinity supplies an $O(1)$ spectral gap, while the exponentially small
 $\varepsilon^\infty\sim e^{-4\pi\lambda^2}$ is produced by the cancellation
@@ -1327,10 +1439,11 @@ Minimum structure, matching upper bound & \textbf{T1}$^\ast$ & cancellation excl
 $D_{\mathrm{Wprec}}=P+O(1)$, slope $1$ & \textbf{T1} & implementation offset & --- \\
 Stretched-exp rate unification (Prop.~\ref{prop:stretched}) & \textbf{T1} & --- & --- \\
 Zero-displacement transfer (Lem.~\ref{lem:rouche}) & \textbf{T1} & --- & --- \\
+Tail-to-transform transfer (Lem.~\ref{lem:tail}, Cor.~\ref{cor:single}) & \textbf{T1} & --- & --- \\
 Convergence criterion (Prop.~\ref{prop:limit}) & \textbf{T1}$\,|\,(\mathrm{H}_\lambda)$ & positivity beyond Yoshida range & new analysis \\
-$D_{\mathrm{Primes}}$ leading $K$: floor lower bound & \textbf{T2} & evaluation of $R[k_\lambda]$ (Prop.~\ref{prop:variational}) & named lemma \\
+$D_{\mathrm{Primes}}$ leading $K$: floor lower bound & \textbf{T2} & prime sign $\rho_p\ge0$ (Lem.~\ref{lem:floorbound}) & named lemma \\
 $D_{\mathrm{Primes}}$ leading $K$: ceiling unbeatable & open & archimedean--prime cancellation & new analysis \\
-$D_{\mathrm{Primes}}$ floor slope $9/2$ & \textbf{T2} & same $R[k_\lambda]$ evaluation; primes provably inert & named lemma \\
+$D_{\mathrm{Primes}}$ floor slope $9/2$ & \textbf{T2} & Fuchs index (Lem.~\ref{lem:floorbound}); primes provably inert & named lemma \\
 $D_{\mathrm{Primes}}$ matching offset ($P_m,c_m$) & \textbf{T4} & $\lambda$-scaling of $\eta_\lambda/|\widehat\xi'(\gamma_1)|$, route named & named lemma \\
 Shannon coordinate $\lambda^2\ln\lambda^2$ & \textbf{T2} & ceiling/slope (Lem.~\ref{lem:coord}) & named lemma \\
 Equilibrium-measure bulk (RvM density) & \textbf{T2} & first-order Szeg\H{o} for the log symbol & named lemma \\
@@ -1368,12 +1481,14 @@ rate $D\sim(4\pi/\ln10)\lambda^2$ along $\lambda^2\to\infty$
 (Prop.~\ref{prop:limit}). Each claim is stated with an explicit rigor
 level. The rigorous core (the minimum bound, the precision slope, the
 stretched-exponential convergence proposition~\ref{prop:stretched} (which unifies the
-digit- and eigenvalue-space rates), and the zero-displacement transfer of
-Lemma~\ref{lem:rouche}) stands on its own; the variational bound of
+digit- and eigenvalue-space rates), and the zero-displacement and
+tail-to-transform lemmas~\ref{lem:rouche} and~\ref{lem:tail}) stands on its
+own; the variational bound of
 Prop.~\ref{prop:variational} anchors one side of the prime floor; and the
 remaining open items are typed in Table~\ref{tab:tiers}. Of these, the
-\emph{named lemmas} (the trace-formula evaluation of
-$R[k_\lambda]$ and the first-order Szeg\H{o} asymptotics for the log symbol)
+\emph{named lemmas} (the prime-sign hypothesis $\rho_p\ge0$ behind the
+floor bound of Lem.~\ref{lem:floorbound} and the first-order Szeg\H{o}
+asymptotics for the log symbol)
 are precisely posed inside classical theories and are the natural next
 steps; the \emph{new-analysis} items (the coefficient-decay estimate for
 the $\Gamma_\mathbb{R}$-weighted form (Conjecture~\ref{conj:decay}), the
