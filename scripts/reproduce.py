@@ -54,11 +54,11 @@ DEFAULT_BIN = os.path.join(REPO_ROOT, "target", "release", "ccm-convergence-rate
 # Derived quantities (closed forms from the paper)
 # --------------------------------------------------------------------------
 def matching_floor(lsq):
-    """Matching floor D_match = K L2 - P_m log10 L2 - c_m  (eq. 8, the floor min() consumes)."""
+    """Matching floor D_match = K L2 - P_m log10 L2 - c_m  (paper eq:primes, the floor min() consumes)."""
     return K * lsq - P_M * math.log10(lsq) - C_M
 
 def eigenvalue_floor(lsq):
-    """Eigenvalue floor = K L2 - (9/2) log10 L2 - C0  (eq. 7, the prolate asymptotic)."""
+    """Eigenvalue floor = K L2 - (9/2) log10 L2 - C0  (paper eq:eigfloor, the prolate asymptotic)."""
     return K * lsq - 4.5 * math.log10(lsq) - C0
 
 def shannon_number(lsq):
@@ -66,11 +66,11 @@ def shannon_number(lsq):
     return lsq * math.log(lsq)
 
 def q_formula(lsq):
-    """Closed-form mode exponent q(L2) = 2 / (2 gamma + ln ln L2)  (eq. 6)."""
+    """Closed-form mode exponent q(L2) = 2 / (2 gamma + ln ln L2)  (paper eq:q)."""
     return 2.0 / (2.0 * GAMMA + math.log(math.log(lsq)))
 
 def archimedean_slope(lsq):
-    """Predicted leading digit slope, pi^2 / (ln10 ln L2)  (eq. 5)."""
+    """Predicted leading digit slope, pi^2 / (ln10 ln L2)  (paper eq:slope)."""
     return math.pi**2 / (LN10 * math.log(lsq))
 
 # --------------------------------------------------------------------------
@@ -180,10 +180,10 @@ def dstr(d, prec=3):
     """Format a possibly-None D value for a table cell."""
     return "N/A" if d is None else f"{d:.{prec}f}"
 
-def banner(title, claim, section, tier):
+def banner(title, claim, section):
     print("=" * 74)
     print(f"  {claim}  |  {title}")
-    print(f"  paper {section}   rigor tier {tier}")
+    print(f"  paper: {section}")
     print("=" * 74)
 
 def server_note(desc):
@@ -195,7 +195,7 @@ def server_note(desc):
 # --------------------------------------------------------------------------
 def c2_precision_slope(quick):
     banner("Precision budget: D_Wprec = P + O(1), slope exactly 1",
-           "C2", "Section 4", "T1")
+           "C2", '"The precision budget"')
     lsq, n = 50, 400
     ps = [50, 100, 150, 200]
     print(f"  Isolating the precision budget at L2={lsq}, N={n} "
@@ -214,7 +214,7 @@ def c2_precision_slope(quick):
 
 def c1_budget_switch(quick):
     banner("The minimum is forced: budgets switch as P grows (demo)",
-           "C1", "Section 3 (Prop. 1)", "T1")
+           "C1", '"The three-budget skeleton" (Prop. "The minimum is forced")')
     lsq, n = 13, 80
     ceil = matching_floor(lsq)
     ps = [30, 45, 90, 180]
@@ -233,7 +233,7 @@ def c1_budget_switch(quick):
 
 def c3_floor_artifact(quick):
     banner("Sub-floor results are precision-limited; raising P recovers truth",
-           "C3", "Section 4.1", "(empirical; evenness: see the independent reproduction)")
+           "C3", '"Symmetry, positivity, and the precision floor"')
     lsq, n = 50, 400
     ceil = matching_floor(lsq)
     ps = [50, 150, 300]
@@ -255,7 +255,7 @@ def c3_floor_artifact(quick):
 
 def c7_archimedean_slope(quick):
     banner("Archimedean leading rate: slope = pi^2 / (ln10 ln L2) at L2=7",
-           "C7", "Section 5.2", "T3")
+           "C7", '"The archimedean leading rate"')
     lsq = 7
     # Initial-slope window matching the paper: N in [2, 0.25*Shannon], min 8.
     S = shannon_number(lsq)
@@ -301,13 +301,13 @@ _RAMP_GRID = [
     (50,  [40, 70, 105, 140, 175, 210, 240, 260],  500, True),
     (100, [90, 170, 250, 330, 410, 490, 560, 620], 700, True),
 ]
-# Paper Table 1 reference values
+# Paper fit-table (tab:q) reference values
 _TABLE1_Q = {7: 1.185, 13: 0.985, 20: 0.900, 25: 0.880, 50: 0.835, 100: 0.785, 150: 0.760}
 _TABLE1_C = {7: 1.20, 13: 1.25, 20: 1.28, 25: 1.29, 50: 1.31, 100: 1.28, 150: 1.26}
 
 def c4_nmode_ramp(quick):
     banner("Mode budget: tanh ramp, exponent q(L2), onset c ~ 4/pi",
-           "C4 / C8 / C9", "Section 5", "T3")
+           "C4 / C8 / C9", '"The mode budget"')
     rows = []
     for lsq, ns, p, server in _RAMP_GRID:
         if quick and server:
@@ -322,13 +322,13 @@ def c4_nmode_ramp(quick):
         rows.append((lsq, q, c))
         # Incremental result: print each L2's fit as it completes (flushed), so a
         # long run shows progress live and partial output survives interruption.
-        print(f"     -> q={q:.3f} (Tab.1 {_TABLE1_Q.get(lsq, float('nan')):.3f}, "
+        print(f"     -> q={q:.3f} (paper {_TABLE1_Q.get(lsq, float('nan')):.3f}, "
               f"formula {q_formula(lsq):.3f}),  c={c:.3f}  (4/pi={4/math.pi:.3f})",
               flush=True)
     if not rows:
         return
-    print(f"\n  {'L2':>5}  {'q meas':>8}  {'q Tab.1':>8}  {'q form':>8}  "
-          f"{'c meas':>8}  {'c Tab.1':>8}")
+    print(f"\n  {'L2':>5}  {'q meas':>8}  {'q paper':>8}  {'q form':>8}  "
+          f"{'c meas':>8}  {'c paper':>8}")
     for lsq, q, c in rows:
         print(f"  {lsq:>5}  {q:>8.3f}  {_TABLE1_Q.get(lsq, float('nan')):>8.3f}  "
               f"{q_formula(lsq):>8.3f}  {c:>8.3f}  {_TABLE1_C.get(lsq, float('nan')):>8.3f}")
@@ -351,7 +351,7 @@ def c4_nmode_ramp(quick):
 
 def c10_shannon(quick):
     banner("Shannon coordinate: saturation at N/(L2 ln L2) ~ 2.0-2.3",
-           "C10", "Section 5.4 (Lem. 2)", "T2")
+           "C10", '"The Shannon coordinate" (Lem. "Coordinate from ceiling over slope")')
     if quick:
         server_note("L2=100 ramp to saturation (N up to ~1200, HP-700).")
         return
@@ -378,7 +378,7 @@ def c10_shannon(quick):
 
 def c11_prime_anchor(quick):
     banner("Prime ceiling anchor: D_Primes(100) = 526.08",
-           "C11", "Section 6", "T2")
+           "C11", '"The prime ceiling"')
     if quick:
         server_note("single saturated floor run at L2=100, N=1000, HP-700 (~20-40 min).")
         return
@@ -393,7 +393,7 @@ def c11_prime_anchor(quick):
 
 def c12_matching_floor(quick):
     banner("Matching floor / two-floor structure: D_Primes(200) ~ 1070.4",
-           "C12", "Section 6", "T4")
+           "C12", '"The prime ceiling"')
     if quick:
         server_note("L2=200, N>=2400, HP-1250 -- multi-hour, large memory.")
         return
@@ -414,7 +414,7 @@ def c12_matching_floor(quick):
 
 def c13_prime_smooth(quick):
     banner("Prime ceiling is smooth, not a staircase (~5.3 digits / unit L2)",
-           "C13", "Section 6", "T2")
+           "C13", '"The prime ceiling"')
     n, p = 300, 200
     hi = 16 if quick else 31
     lsqs = list(range(4, hi))
@@ -442,7 +442,7 @@ def c13_prime_smooth(quick):
 
 def c14_bottleneck(quick):
     banner("Prime bottleneck: sup over N,P at fixed L2 = the prime ceiling",
-           "C14", "Section 7 (Prop. 2)", "T1")
+           "C14", '"The complete formula" (Prop. "Convergence criterion and the prime bottleneck")')
     lsq = 13
     ceil = matching_floor(lsq)
     grid = [(40, 100), (80, 200), (120, 400), (200, 800)]
