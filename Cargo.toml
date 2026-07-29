@@ -1,6 +1,6 @@
 [package]
 name = "ccm-convergence-rate"
-version = "0.1.0"
+version = "1.1.0"
 edition = "2021"
 description = "A quantitative convergence law for the CCM Zeta Spectral Triple, with defined rigor levels per component (arXiv:2511.22755)"
 authors = ["Ronnie Andrews, Jr. <5178942+TeamXceleratorDev@users.noreply.github.com>"]
@@ -16,12 +16,16 @@ hp = ["xc-spectral/hp", "xc-zeta/hp", "xc-numerics/hp", "dep:rug"]
 [dependencies]
 anyhow = "1.0"
 clap = { version = "4.5", features = ["derive"] }
+rayon = "1.10"
 rug = { version = "1.30", optional = true, default-features = false, features = ["float", "integer"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
 
-# Xcelerator Toolkit — pinned for reproducibility.
-xc-spectral = { git = "https://github.com/TeamXcelerator/xcelerator-toolkit", tag = "v0.12.1" }
-xc-zeta     = { git = "https://github.com/TeamXcelerator/xcelerator-toolkit", tag = "v0.12.1" }
-xc-numerics = { git = "https://github.com/TeamXcelerator/xcelerator-toolkit", tag = "v0.12.1" }
+# Xcelerator Toolkit — immutable release tag plus exact Cargo.lock commit.
+xc-cache    = { git = "https://github.com/TeamXcelerator/xcelerator-toolkit", tag = "v0.13.3" }
+xc-spectral = { git = "https://github.com/TeamXcelerator/xcelerator-toolkit", tag = "v0.13.3" }
+xc-zeta     = { git = "https://github.com/TeamXcelerator/xcelerator-toolkit", tag = "v0.13.3" }
+xc-numerics = { git = "https://github.com/TeamXcelerator/xcelerator-toolkit", tag = "v0.13.3" }
 
 [profile.release]
 opt-level = 3

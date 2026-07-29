@@ -30,13 +30,5 @@ __pycache__/
 *.pyc
 outputs/
 
-# Cached toolkit artifacts — regeneratable fixtures, ignored but layout preserved.
-data/gl_cache/**
-data/tau_cache/**
-data/prolate_eigvals_cache/**
-data/weil_eigvec_cache/**
-# ...except the .gitkeep placeholders that preserve the directories.
-!data/gl_cache/.gitkeep
-!data/tau_cache/.gitkeep
-!data/prolate_eigvals_cache/.gitkeep
-!data/weil_eigvec_cache/.gitkeep
+# Paper projects do not own toolkit cache layouts or reference-zero datasets.
+data/

@@ -60,7 +60,10 @@ of independent errors, so the largest binds), which is why earlier
 single-expression digit fits fail.
 
 This repository contains the paper, its source, and a one-command driver that
-reproduces each empirical claim.
+reproduces each empirical claim. The v1.1 driver retains a configurable window
+of zero ordinals in every measurement. The published scalar fits remain
+zero-1 baselines; selecting a higher ordinal supports the ongoing extension of
+the convergence law without discarding the other roots.
 
 > This README is a guide to the claims and how to reproduce them. It is **not**
 > a substitute for the paper, which carries the derivations, proofs, and the
@@ -124,9 +127,11 @@ the artifacts.
 python3 scripts/reproduce.py floor-artifact
 ```
 The full even-symmetry reproduction (38 configurations, natural vs forced-even
-eigenvector, bit-identical above floor) is documented in the independent
+eigenvector, numerically equivalent above floor) is documented in the independent
 reproduction (doi:10.5281/zenodo.20427499):
 [ccm-reproduction-and-convergence](https://github.com/TeamXcelerator/ccm-reproduction-and-convergence).
+The command above now also records the natural and forced-even eigenvalues,
+their signs, and the reflection deviation at every tested precision.
 
 ### C4 — Mode budget is a `tanh` ramp (§5) · **T3** · *empirical*
 
@@ -254,7 +259,7 @@ not supported by the GMP/MPFR bindings). On Linux/WSL:
 
 ```bash
 sudo apt install build-essential m4 libgmp-dev libmpfr-dev libmpc-dev
-cargo build --release --features hp
+cargo build --release --features hp --locked
 ```
 
 ### Running
@@ -270,7 +275,35 @@ python3 scripts/reproduce.py all --quick
 python3 scripts/reproduce.py all
 ```
 
-Each command prints a compact **measured vs expected** verdict.
+Each command streams the complete toolkit output, stores a log and structured
+JSON for every numerical point under `outputs/`, and prints a compact
+**measured vs expected** verdict.
+
+By default, ordinals 1 through 5 are retained and zero 1 supplies the paper's
+scalar fit. To study convergence beyond the first zero, retain any consecutive
+window and select one ordinal for the scalar fit:
+
+```bash
+python3 scripts/reproduce.py nmode-ramp \
+  --first-zero-index 21 \
+  --zero-count 10 \
+  --analysis-zero-index 25 \
+  --resume
+```
+
+All ten roots—including status, value, absolute and relative error, matching
+digits, iteration count, correction, and residual—are retained in each JSON
+measurement. A higher-ordinal verdict is labeled `EXPLORATORY`, because the
+values printed in the current paper were fitted to zero 1.
+
+`--numerical-profile paper` is the default and preserves the historical
+adaptive-even/legacy-inverse-iteration semantics used for the paper. The
+explicit `current` profile uses the toolkit's optimized even-sector/automatic
+solver route and receives a distinct cache identity:
+
+```bash
+python3 scripts/reproduce.py precision-slope --numerical-profile current
+```
 
 ### Compute tiers
 
@@ -284,13 +317,27 @@ are skipped.
 
 ### Notes
 
-- `D` is read as the matching-digit count of the **first** eigenvalue versus the
-  reference `γ₁` in `data/zeta_zeros.json` (≈2500 digits).
-- High-precision quadrature/eigenvector fixtures are cached; by default the
-  binary fetches them (`XC_CACHE_MODE=fetch`). Set `XC_CACHE_MODE=off` for pure
-  compute or `local` for disk-only.
-- The per-λ² `q`/`c` fit is a small grid search over the `tanh` ramp; values
-  reproduce Table 1 to within fit scatter on sparse sweeps.
+- The integrity-bound high-precision zero dataset is owned by the toolkit; this
+  paper repository no longer carries a duplicate.
+- An end-user run needs no cache environment setup. The toolkit defaults to
+  local reuse plus public remote fetch. Current explicit modes are
+  `XC_CACHE_MODE=reuse|refresh|require_reuse` and
+  `XC_CACHE_REMOTE=none|public|private|private_public`.
+- Author publication is controlled by the toolkit's normal author-profile and
+  publication variables. During a sweep, computations stage artifacts with
+  remote mutation suppressed; the driver performs one publication
+  finalization after the entire claim succeeds.
+- `--resume` accepts a prior JSON result only when its complete numerical
+  identity matches the requested cutoff, mode count, precision, zero window,
+  and numerical profile.
+- `P` remains the requested decimal precision. Toolkit v0.13.3 derives its
+  MPFR working precision from `P` and adds 64 guard bits; both values are
+  reported, and the qualified working precision is part of artifact identity.
+- Root records distinguish `converged`, `stagnated`, `approximate`, and
+  `failed`. Stagnated values are retained with their achieved digits and
+  diagnostics rather than silently promoted to converged results.
+- The full `q`/`c` run includes every cutoff shown in Table 1, including the
+  displayed but regression-excluded λ²=200 row.
 
 ---
 
@@ -302,8 +349,8 @@ paper_v1.1.tex / .pdf       frozen v1.1 snapshot (this release)
 paper_v1.0.pdf              frozen snapshot matching the Zenodo v1.0 deposit
 src/main.rs                 the `measure` binary (CCM construction + matching digits)
 scripts/reproduce.py        one-command claim reproduction driver
-data/zeta_zeros.json        reference Riemann zeros (~2500 digits)
-data/*_cache/               cached HP fixtures (regeneratable; .gitkeep preserved)
+tests/integration.rs        toolkit wiring and bundled-dataset checks
+outputs/                    ignored live logs and structured results
 ```
 
 ## Related work
