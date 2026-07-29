@@ -266,13 +266,13 @@ cargo build --release --features hp --locked
 
 ```bash
 # one claim
-python3 scripts/reproduce.py precision-slope
+bash scripts/claim2_precision_slope.sh
 
 # everything, light configs only (minutes on a laptop / WSL2)
-python3 scripts/reproduce.py all --quick
+bash scripts/retest_all_claims.sh --quick
 
 # everything, including server-grade claims (hours, large memory)
-python3 scripts/reproduce.py all
+bash scripts/retest_all_claims.sh
 ```
 
 Each command streams the complete toolkit output, stores a log and structured
@@ -284,7 +284,7 @@ scalar fit. To study convergence beyond the first zero, retain any consecutive
 window and select one ordinal for the scalar fit:
 
 ```bash
-python3 scripts/reproduce.py nmode-ramp \
+bash scripts/claim4_8_9_nmode_ramp.sh \
   --first-zero-index 21 \
   --zero-count 10 \
   --analysis-zero-index 25 \
@@ -296,14 +296,29 @@ digits, iteration count, correction, and residual—are retained in each JSON
 measurement. A higher-ordinal verdict is labeled `EXPLORATORY`, because the
 values printed in the current paper were fitted to zero 1.
 
-`--numerical-profile paper` is the default and preserves the historical
-adaptive-even/legacy-inverse-iteration semantics used for the paper. The
-explicit `current` profile uses the toolkit's optimized even-sector/automatic
-solver route and receives a distinct cache identity:
+Like Paper 1, every claim exposes the numerical policies independently. The
+modern defaults are reference-seeded acquisition, direct even-sector parity,
+the automatic eigenstate solver, and balanced research capture:
 
 ```bash
-python3 scripts/reproduce.py precision-slope --numerical-profile current
+bash scripts/claim2_precision_slope.sh \
+  --root-acquisition independent \
+  --parity-policy natural \
+  --eigenstate-solver shift-invert-krylov \
+  --research-capture maximum \
+  --research-sector-eigenpairs 8
 ```
+
+Supported parity policies are `natural`, `adaptive-even`, and `even-sector`.
+Supported solvers are `legacy-inverse-iteration`, `shift-invert-krylov`, and
+`auto`. Capture levels are `claim`, `research`, `gap`, and `maximum`.
+These choices are independent and participate in structured-result and cache
+identity; there is no bundled historical "paper profile."
+
+In independent mode, Paper 3 compares returned positive CCM roots with
+reference zeros by ordinal position and records that comparison semantics.
+Displacement and signed-root classification remain the purpose of Paper 1's
+root-ordering experiments.
 
 ### Compute tiers
 
@@ -329,7 +344,7 @@ are skipped.
   finalization after the entire claim succeeds.
 - `--resume` accepts a prior JSON result only when its complete numerical
   identity matches the requested cutoff, mode count, precision, zero window,
-  and numerical profile.
+  acquisition, parity policy, eigenstate solver, and capture level.
 - `P` remains the requested decimal precision. Toolkit v0.13.3 derives its
   MPFR working precision from `P` and adds 64 guard bits; both values are
   reported, and the qualified working precision is part of artifact identity.
@@ -349,6 +364,8 @@ paper_v1.1.tex / .pdf       frozen v1.1 snapshot (this release)
 paper_v1.0.pdf              frozen snapshot matching the Zenodo v1.0 deposit
 src/main.rs                 the `measure` binary (CCM construction + matching digits)
 scripts/reproduce.py        one-command claim reproduction driver
+scripts/claim*.sh           readable, individually runnable claim definitions
+scripts/claim_common.sh      shared modern policy controls and build launcher
 tests/integration.rs        toolkit wiring and bundled-dataset checks
 outputs/                    ignored live logs and structured results
 ```

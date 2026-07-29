@@ -8,9 +8,9 @@
 //! CCM Zeta Spectral Triple — Convergence Formula
 //!
 //! Measures the convergence of an explicitly indexed window of CCM roots
-//! against the toolkit-owned high-precision reference-zero dataset. The
-//! historical paper route and the current optimized route are separate,
-//! explicit numerical profiles and therefore receive distinct cache identities.
+//! against the toolkit-owned high-precision reference-zero dataset. Root
+//! acquisition, parity, eigenstate solver, and research capture are explicit
+//! and independently represented in artifact and result provenance.
 
 use anyhow::{Context, Result};
 use clap::{Parser, Subcommand, ValueEnum};
@@ -22,18 +22,72 @@ use xc_spectral::ccm::{self, CcmParams};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize, ValueEnum)]
 #[serde(rename_all = "kebab-case")]
-enum NumericalProfile {
-    /// Original paper semantics: adaptive even projection and legacy inverse iteration.
-    Paper,
-    /// Current optimized semantics: reduced even sector and automatic solver selection.
-    Current,
+enum ParityPolicy {
+    Natural,
+    AdaptiveEven,
+    EvenSector,
 }
 
-impl NumericalProfile {
+impl ParityPolicy {
     fn as_str(self) -> &'static str {
         match self {
-            Self::Paper => "paper",
-            Self::Current => "current",
+            Self::Natural => "natural",
+            Self::AdaptiveEven => "adaptive-even",
+            Self::EvenSector => "even-sector",
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize, ValueEnum)]
+#[serde(rename_all = "kebab-case")]
+enum EigenstateSolver {
+    LegacyInverseIteration,
+    ShiftInvertKrylov,
+    Auto,
+}
+
+impl EigenstateSolver {
+    fn as_str(self) -> &'static str {
+        match self {
+            Self::LegacyInverseIteration => "legacy-inverse-iteration",
+            Self::ShiftInvertKrylov => "shift-invert-krylov",
+            Self::Auto => "auto",
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize, ValueEnum)]
+#[serde(rename_all = "kebab-case")]
+enum RootAcquisition {
+    Seeded,
+    Independent,
+}
+
+impl RootAcquisition {
+    fn as_str(self) -> &'static str {
+        match self {
+            Self::Seeded => "seeded",
+            Self::Independent => "independent",
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize, ValueEnum)]
+#[serde(rename_all = "kebab-case")]
+enum ResearchCapture {
+    Claim,
+    Research,
+    Gap,
+    Maximum,
+}
+
+impl ResearchCapture {
+    fn as_str(self) -> &'static str {
+        match self {
+            Self::Claim => "claim",
+            Self::Research => "research",
+            Self::Gap => "gap",
+            Self::Maximum => "maximum",
         }
     }
 }
@@ -77,9 +131,25 @@ enum Command {
         #[arg(long, default_value_t = 16)]
         display_digits: usize,
 
-        /// Numerical route used for the eigenstate calculation.
-        #[arg(long, value_enum, default_value_t = NumericalProfile::Paper)]
-        numerical_profile: NumericalProfile,
+        /// Root acquisition policy.
+        #[arg(long, value_enum, default_value_t = RootAcquisition::Seeded)]
+        root_acquisition: RootAcquisition,
+
+        /// Eigenstate parity policy.
+        #[arg(long, value_enum, default_value_t = ParityPolicy::EvenSector)]
+        parity_policy: ParityPolicy,
+
+        /// Eigenstate algorithm.
+        #[arg(long, value_enum, default_value_t = EigenstateSolver::Auto)]
+        eigenstate_solver: EigenstateSolver,
+
+        /// Supplemental artifact capture level.
+        #[arg(long, value_enum, default_value_t = ResearchCapture::Claim)]
+        research_capture: ResearchCapture,
+
+        /// Low eigenpairs retained per parity sector in maximum capture.
+        #[arg(long, default_value_t = 8)]
+        research_sector_eigenpairs: usize,
 
         /// Optional structured result file. Parent directories are created.
         #[arg(long)]
@@ -100,8 +170,8 @@ enum Command {
         #[arg(long, default_value_t = 16)]
         display_digits: usize,
 
-        #[arg(long, value_enum, default_value_t = NumericalProfile::Paper)]
-        numerical_profile: NumericalProfile,
+        #[arg(long, value_enum, default_value_t = EigenstateSolver::Auto)]
+        eigenstate_solver: EigenstateSolver,
 
         #[arg(long)]
         json_output: Option<PathBuf>,
@@ -125,7 +195,11 @@ fn main() -> Result<()> {
             first_zero_index,
             zero_count,
             display_digits,
-            numerical_profile,
+            root_acquisition,
+            parity_policy,
+            eigenstate_solver,
+            research_capture,
+            research_sector_eigenpairs,
             json_output,
         } => run_measure(MeasureRequest {
             lambda_sq,
@@ -134,7 +208,11 @@ fn main() -> Result<()> {
             first_zero_index,
             zero_count,
             display_digits,
-            numerical_profile,
+            root_acquisition,
+            parity_policy,
+            eigenstate_solver,
+            research_capture,
+            research_sector_eigenpairs,
             json_output,
         }),
         Command::MeasureEvenness {
@@ -142,14 +220,14 @@ fn main() -> Result<()> {
             n_modes,
             precision_digits,
             display_digits,
-            numerical_profile,
+            eigenstate_solver,
             json_output,
         } => run_measure_evenness(
             lambda_sq,
             n_modes,
             precision_digits,
             display_digits,
-            numerical_profile,
+            eigenstate_solver,
             json_output,
         ),
         Command::FinalizePublication => finalize_publication(),
@@ -163,7 +241,11 @@ struct MeasureRequest {
     first_zero_index: usize,
     zero_count: usize,
     display_digits: usize,
-    numerical_profile: NumericalProfile,
+    root_acquisition: RootAcquisition,
+    parity_policy: ParityPolicy,
+    eigenstate_solver: EigenstateSolver,
+    research_capture: ResearchCapture,
+    research_sector_eigenpairs: usize,
     json_output: Option<PathBuf>,
 }
 
@@ -173,7 +255,12 @@ struct MeasurementReport {
     application: &'static str,
     application_version: &'static str,
     toolkit_version: String,
-    numerical_profile: NumericalProfile,
+    root_acquisition: RootAcquisition,
+    parity_policy: ParityPolicy,
+    eigenstate_solver: EigenstateSolver,
+    research_capture: ResearchCapture,
+    research_sector_eigenpairs: usize,
+    comparison_semantics: &'static str,
     lambda_sq: u64,
     n_modes: usize,
     matrix_size: usize,
@@ -221,7 +308,7 @@ struct EvennessReport {
     application: &'static str,
     application_version: &'static str,
     toolkit_version: String,
-    numerical_profile: NumericalProfile,
+    eigenstate_solver: EigenstateSolver,
     lambda_sq: u64,
     n_modes: usize,
     matrix_size: usize,
@@ -237,21 +324,24 @@ struct EvennessReport {
 #[cfg(feature = "hp")]
 fn high_prec_config(
     precision_digits: u32,
-    profile: NumericalProfile,
+    parity_policy: ParityPolicy,
+    eigenstate_solver: EigenstateSolver,
     zero_count: usize,
 ) -> ccm::hp::HighPrecConfig {
     let mut cfg = ccm::hp::HighPrecConfig::for_decimal_digits(precision_digits);
     cfg.n_eigenvalues = zero_count;
-    match profile {
-        NumericalProfile::Paper => {
-            cfg.set_parity_policy(ccm::hp::CcmParityPolicy::AdaptiveEven);
-            cfg.eigenstate_solver = ccm::hp::CcmEigenstateSolver::LegacyInverseIteration;
+    cfg.set_parity_policy(match parity_policy {
+        ParityPolicy::Natural => ccm::hp::CcmParityPolicy::Natural,
+        ParityPolicy::AdaptiveEven => ccm::hp::CcmParityPolicy::AdaptiveEven,
+        ParityPolicy::EvenSector => ccm::hp::CcmParityPolicy::EvenSector,
+    });
+    cfg.eigenstate_solver = match eigenstate_solver {
+        EigenstateSolver::LegacyInverseIteration => {
+            ccm::hp::CcmEigenstateSolver::LegacyInverseIteration
         }
-        NumericalProfile::Current => {
-            cfg.set_parity_policy(ccm::hp::CcmParityPolicy::EvenSector);
-            cfg.eigenstate_solver = ccm::hp::CcmEigenstateSolver::Auto;
-        }
-    }
+        EigenstateSolver::ShiftInvertKrylov => ccm::hp::CcmEigenstateSolver::ShiftInvertKrylov,
+        EigenstateSolver::Auto => ccm::hp::CcmEigenstateSolver::Auto,
+    };
     cfg
 }
 
@@ -277,6 +367,9 @@ fn run_measure(request: MeasureRequest) -> Result<()> {
     if request.display_digits == 0 {
         anyhow::bail!("display-digits must be positive");
     }
+    if request.research_sector_eigenpairs == 0 {
+        anyhow::bail!("research-sector-eigenpairs must be positive");
+    }
     let last_zero_index = request
         .first_zero_index
         .checked_add(request.zero_count - 1)
@@ -286,7 +379,8 @@ fn run_measure(request: MeasureRequest) -> Result<()> {
     let prime_powers = ccm::prime_powers_up_to(params.lambda_sq_int());
     let cfg = high_prec_config(
         request.precision_digits,
-        request.numerical_profile,
+        request.parity_policy,
+        request.eigenstate_solver,
         request.zero_count,
     );
     let dataset = xc_zeta::zeros::bundled_dataset_identity()?;
@@ -330,32 +424,88 @@ fn run_measure(request: MeasureRequest) -> Result<()> {
         request.precision_digits, cfg.precision_bits
     );
     println!(
-        "  root window: reference-seeded ordinals {}..={} ({} roots)",
-        request.first_zero_index, last_zero_index, request.zero_count
+        "  root acquisition: {}; requested ordinals {}..={} ({} roots)",
+        request.root_acquisition.as_str(),
+        request.first_zero_index,
+        last_zero_index,
+        request.zero_count
     );
+    println!("  parity policy: {}", request.parity_policy.as_str());
     println!(
-        "  numerical profile: {} (parity={}, eigenstate solver={:?})",
-        request.numerical_profile.as_str(),
-        cfg.effective_parity_policy().as_str(),
-        cfg.eigenstate_solver
+        "  eigenstate solver: {}",
+        request.eigenstate_solver.as_str()
     );
+    println!("  research capture: {}", request.research_capture.as_str());
     println!(
         "  reference dataset: {} (sha256={})",
         dataset.resource_id,
         &dataset.content_sha256[..12]
     );
+    let comparison_semantics = match request.root_acquisition {
+        RootAcquisition::Seeded => "reference-seeded-indexed-refinement",
+        RootAcquisition::Independent => "independent-positive-ordinal-comparison",
+    };
+    if request.root_acquisition == RootAcquisition::Independent {
+        println!(
+            "  comparison: independently discovered positive roots are compared by ordinal \
+             position; this is not a displacement classification"
+        );
+    }
     println!(
         "  runtime parallelism: Rayon workers={}, available CPUs={}",
         rayon_workers, available_cpus
     );
 
-    let hp_result = ccm::hp::run_indexed_seeded(
-        &params,
-        &cfg,
-        request.first_zero_index,
-        &zero_seeds,
-        &dataset,
-    )?;
+    let sector_count = match request.research_capture {
+        ResearchCapture::Claim | ResearchCapture::Research => None,
+        ResearchCapture::Gap => Some(2.min(request.n_modes)),
+        ResearchCapture::Maximum => Some(request.research_sector_eigenpairs.min(request.n_modes)),
+    };
+    if sector_count == Some(0) {
+        anyhow::bail!("sector research capture requires N >= 1");
+    }
+    let sector_analysis = sector_count.map(|count| match request.research_capture {
+        ResearchCapture::Maximum => ccm::hp::CcmSectorAnalysisOptions::maximum(count),
+        _ => ccm::hp::CcmSectorAnalysisOptions::selected(count),
+    });
+    let capture_options = ccm::hp::CcmResearchCaptureOptions {
+        capture_evenness: sector_analysis.is_some(),
+        sector_analysis,
+        root_certification: None,
+    };
+    let capture_requested = !matches!(
+        request.research_capture,
+        ResearchCapture::Claim | ResearchCapture::Research
+    );
+    let target = ccm::window::ZeroTarget::IndexRange {
+        first: request.first_zero_index,
+        last: last_zero_index,
+    };
+    let hp_result = match (request.root_acquisition, capture_requested) {
+        (RootAcquisition::Seeded, false) => ccm::hp::run_indexed_seeded(
+            &params,
+            &cfg,
+            request.first_zero_index,
+            &zero_seeds,
+            &dataset,
+        )?,
+        (RootAcquisition::Seeded, true) => {
+            ccm::hp::run_indexed_seeded_with_research_capture(
+                &params,
+                &cfg,
+                request.first_zero_index,
+                &zero_seeds,
+                &dataset,
+                capture_options,
+            )?
+            .primary
+        }
+        (RootAcquisition::Independent, false) => ccm::hp::run_independent(&params, &cfg, &target)?,
+        (RootAcquisition::Independent, true) => {
+            ccm::hp::run_independent_with_research_capture(&params, &cfg, &target, capture_options)?
+                .primary
+        }
+    };
     if hp_result.first_positive_root_index != request.first_zero_index {
         anyhow::bail!(
             "toolkit returned first root index {}, expected {}",
@@ -427,7 +577,12 @@ fn run_measure(request: MeasureRequest) -> Result<()> {
         application: "ccm-convergence-rate",
         application_version: env!("CARGO_PKG_VERSION"),
         toolkit_version: xc_cache::current_toolkit_version()?.to_string(),
-        numerical_profile: request.numerical_profile,
+        root_acquisition: request.root_acquisition,
+        parity_policy: request.parity_policy,
+        eigenstate_solver: request.eigenstate_solver,
+        research_capture: request.research_capture,
+        research_sector_eigenpairs: request.research_sector_eigenpairs,
+        comparison_semantics,
         lambda_sq: request.lambda_sq,
         n_modes: request.n_modes,
         matrix_size: params.matrix_size(),
@@ -538,7 +693,7 @@ fn run_measure_evenness(
     n_modes: usize,
     precision_digits: u32,
     display_digits: usize,
-    numerical_profile: NumericalProfile,
+    eigenstate_solver: EigenstateSolver,
     json_output: Option<PathBuf>,
 ) -> Result<()> {
     use xc_numerics::fmt::{display_hp, sign_of};
@@ -550,12 +705,17 @@ fn run_measure_evenness(
         anyhow::bail!("n-modes, precision-digits, and display-digits must be positive");
     }
     let params = CcmParams::from_lambda_sq_integer(lambda_sq, n_modes);
-    let cfg = high_prec_config(precision_digits, numerical_profile, 1);
+    let cfg = high_prec_config(
+        precision_digits,
+        ParityPolicy::EvenSector,
+        eigenstate_solver,
+        1,
+    );
     println!(
         "Measuring evenness: lambda^2={}, N={}, requested precision={} digits ({} working bits)",
         lambda_sq, n_modes, precision_digits, cfg.precision_bits
     );
-    println!("  numerical profile: {}", numerical_profile.as_str());
+    println!("  eigenstate solver: {}", eigenstate_solver.as_str());
     let result = ccm::hp::measure_evenness(&params, &cfg)?;
     let natural_sign = sign_of(&result.natural_eigenvalue).as_str().to_owned();
     let forced_even_sign = sign_of(&result.forced_eigenvalue).as_str().to_owned();
@@ -582,7 +742,7 @@ fn run_measure_evenness(
             application: "ccm-convergence-rate",
             application_version: env!("CARGO_PKG_VERSION"),
             toolkit_version: xc_cache::current_toolkit_version()?.to_string(),
-            numerical_profile,
+            eigenstate_solver,
             lambda_sq,
             n_modes,
             matrix_size: params.matrix_size(),
@@ -606,7 +766,7 @@ fn run_measure_evenness(
     _n_modes: usize,
     _precision_digits: u32,
     _display_digits: usize,
-    _numerical_profile: NumericalProfile,
+    _eigenstate_solver: EigenstateSolver,
     _json_output: Option<PathBuf>,
 ) -> Result<()> {
     anyhow::bail!(
@@ -667,18 +827,24 @@ mod tests {
     use clap::Parser;
 
     #[test]
-    fn measure_defaults_to_five_roots_and_paper_profile() {
+    fn measure_defaults_to_modern_paper_one_policies() {
         let cli = Cli::try_parse_from(["ccm-convergence-rate", "measure"]).unwrap();
         match cli.command {
             Command::Measure {
                 first_zero_index,
                 zero_count,
-                numerical_profile,
+                root_acquisition,
+                parity_policy,
+                eigenstate_solver,
+                research_capture,
                 ..
             } => {
                 assert_eq!(first_zero_index, 1);
                 assert_eq!(zero_count, 5);
-                assert_eq!(numerical_profile, NumericalProfile::Paper);
+                assert_eq!(root_acquisition, RootAcquisition::Seeded);
+                assert_eq!(parity_policy, ParityPolicy::EvenSector);
+                assert_eq!(eigenstate_solver, EigenstateSolver::Auto);
+                assert_eq!(research_capture, ResearchCapture::Claim);
             }
             _ => panic!("expected measure command"),
         }
@@ -693,20 +859,32 @@ mod tests {
             "21",
             "--zero-count",
             "12",
-            "--numerical-profile",
-            "current",
+            "--root-acquisition",
+            "independent",
+            "--parity-policy",
+            "natural",
+            "--eigenstate-solver",
+            "shift-invert-krylov",
+            "--research-capture",
+            "maximum",
         ])
         .unwrap();
         match cli.command {
             Command::Measure {
                 first_zero_index,
                 zero_count,
-                numerical_profile,
+                root_acquisition,
+                parity_policy,
+                eigenstate_solver,
+                research_capture,
                 ..
             } => {
                 assert_eq!(first_zero_index, 21);
                 assert_eq!(zero_count, 12);
-                assert_eq!(numerical_profile, NumericalProfile::Current);
+                assert_eq!(root_acquisition, RootAcquisition::Independent);
+                assert_eq!(parity_policy, ParityPolicy::Natural);
+                assert_eq!(eigenstate_solver, EigenstateSolver::ShiftInvertKrylov);
+                assert_eq!(research_capture, ResearchCapture::Maximum);
             }
             _ => panic!("expected measure command"),
         }

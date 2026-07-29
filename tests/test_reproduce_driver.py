@@ -20,7 +20,10 @@ class MultiZeroDriverTests(unittest.TestCase):
             reproduce._FIRST_ZERO_INDEX,
             reproduce._ZERO_COUNT,
             reproduce._ANALYSIS_ZERO_INDEX,
-            reproduce._NUMERICAL_PROFILE,
+            reproduce._ROOT_ACQUISITION,
+            reproduce._PARITY_POLICY,
+            reproduce._EIGENSTATE_SOLVER,
+            reproduce._RESEARCH_CAPTURE,
         )
 
     def tearDown(self):
@@ -28,7 +31,10 @@ class MultiZeroDriverTests(unittest.TestCase):
             reproduce._FIRST_ZERO_INDEX,
             reproduce._ZERO_COUNT,
             reproduce._ANALYSIS_ZERO_INDEX,
-            reproduce._NUMERICAL_PROFILE,
+            reproduce._ROOT_ACQUISITION,
+            reproduce._PARITY_POLICY,
+            reproduce._EIGENSTATE_SOLVER,
+            reproduce._RESEARCH_CAPTURE,
         ) = self.original
 
     def test_selected_digits_uses_requested_ordinal(self):
@@ -51,11 +57,19 @@ class MultiZeroDriverTests(unittest.TestCase):
         }
         self.assertIsNone(reproduce._selected_digits(report))
 
-    def test_measurement_identity_contains_window_and_profile(self):
+    def test_measurement_identity_contains_all_numerical_policies(self):
         reproduce._FIRST_ZERO_INDEX = 21
-        reproduce._NUMERICAL_PROFILE = "current"
+        reproduce._ROOT_ACQUISITION = "independent"
+        reproduce._PARITY_POLICY = "natural"
+        reproduce._EIGENSTATE_SOLVER = "shift-invert-krylov"
+        reproduce._RESEARCH_CAPTURE = "maximum"
         path = reproduce._measurement_path(50, 400, 700, 10)
-        self.assertTrue(path.endswith("l2-50-n-400-p-700-z-21-10-current.json"))
+        self.assertTrue(
+            path.endswith(
+                "l2-50-n-400-p-700-z-21-10-independent-natural-"
+                "shift-invert-krylov-maximum-e8.json"
+            )
+        )
 
     def test_higher_ordinal_verdict_is_exploratory(self):
         reproduce._ANALYSIS_ZERO_INDEX = 2

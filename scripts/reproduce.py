@@ -13,7 +13,10 @@ result; one selected ordinal supplies D to the paper's scalar fits. The
 published fits concern zero 1, while other ordinals are intentionally
 reported as exploratory extensions of the convergence law.
 
-    python3 scripts/reproduce.py <claim> [--quick] [--bin PATH]
+This module is the structured analysis backend. Most users should run the
+readable `scripts/claim*.sh` launchers; direct invocation remains supported:
+
+    python3 scripts/reproduce.py <claim> [options]
 
 Claims (paper order):
     precision-slope     C2   D_Wprec slope = 1
@@ -82,7 +85,11 @@ _BIN = DEFAULT_BIN
 _FIRST_ZERO_INDEX = 1
 _ZERO_COUNT = 5
 _ANALYSIS_ZERO_INDEX = 1
-_NUMERICAL_PROFILE = "paper"
+_ROOT_ACQUISITION = "seeded"
+_PARITY_POLICY = "even-sector"
+_EIGENSTATE_SOLVER = "auto"
+_RESEARCH_CAPTURE = "research"
+_RESEARCH_SECTOR_EIGENPAIRS = 8
 _RESULTS_DIR = os.path.join(REPO_ROOT, "outputs")
 _RESUME = False
 _MEASUREMENTS = []
@@ -90,7 +97,9 @@ _MEASUREMENTS = []
 def _measurement_path(lsq, n, p, zero_count):
     name = (
         f"l2-{lsq}-n-{n}-p-{p}-"
-        f"z-{_FIRST_ZERO_INDEX}-{zero_count}-{_NUMERICAL_PROFILE}.json"
+        f"z-{_FIRST_ZERO_INDEX}-{zero_count}-"
+        f"{_ROOT_ACQUISITION}-{_PARITY_POLICY}-{_EIGENSTATE_SOLVER}-"
+        f"{_RESEARCH_CAPTURE}-e{_RESEARCH_SECTOR_EIGENPAIRS}.json"
     )
     return os.path.join(_RESULTS_DIR, "measurements", name)
 
@@ -103,7 +112,16 @@ def _load_measurement(path, lsq, n, p, zero_count):
         "precision_digits_requested": p,
         "first_zero_index": _FIRST_ZERO_INDEX,
         "zero_count_requested": zero_count,
-        "numerical_profile": _NUMERICAL_PROFILE,
+        "root_acquisition": _ROOT_ACQUISITION,
+        "parity_policy": _PARITY_POLICY,
+        "eigenstate_solver": _EIGENSTATE_SOLVER,
+        "research_capture": _RESEARCH_CAPTURE,
+        "research_sector_eigenpairs": _RESEARCH_SECTOR_EIGENPAIRS,
+        "comparison_semantics": (
+            "reference-seeded-indexed-refinement"
+            if _ROOT_ACQUISITION == "seeded"
+            else "independent-positive-ordinal-comparison"
+        ),
     }
     for field, value in expected.items():
         if report.get(field) != value:
@@ -152,7 +170,11 @@ def measure(lsq, n, p, top=None):
            "--first-zero-index", str(_FIRST_ZERO_INDEX),
            "--zero-count", str(effective_zero_count),
            "--display-digits", "16",
-           "--numerical-profile", _NUMERICAL_PROFILE,
+           "--root-acquisition", _ROOT_ACQUISITION,
+           "--parity-policy", _PARITY_POLICY,
+           "--eigenstate-solver", _EIGENSTATE_SOLVER,
+           "--research-capture", _RESEARCH_CAPTURE,
+           "--research-sector-eigenpairs", str(_RESEARCH_SECTOR_EIGENPAIRS),
            "--json-output", result_path]
     child_env = os.environ.copy()
     # Stage every artifact during a sweep, but execute remote publication only
@@ -206,7 +228,7 @@ def measure(lsq, n, p, top=None):
 
 def measure_evenness(lsq, n, p):
     """Measure natural-vs-forced evenness and return its structured record."""
-    name = f"evenness-l2-{lsq}-n-{n}-p-{p}-{_NUMERICAL_PROFILE}.json"
+    name = f"evenness-l2-{lsq}-n-{n}-p-{p}-{_EIGENSTATE_SOLVER}.json"
     result_path = os.path.join(_RESULTS_DIR, "measurements", name)
     log_path = os.path.splitext(result_path)[0] + ".log"
     os.makedirs(os.path.dirname(result_path), exist_ok=True)
@@ -219,7 +241,7 @@ def measure_evenness(lsq, n, p):
                 report.get("lambda_sq") == lsq
                 and report.get("n_modes") == n
                 and report.get("precision_digits_requested") == p
-                and report.get("numerical_profile") == _NUMERICAL_PROFILE
+                and report.get("eigenstate_solver") == _EIGENSTATE_SOLVER
             ):
                 print(f"  [resume] evenness L2={lsq}, N={n}, P={p}", flush=True)
                 _MEASUREMENTS.append(result_path)
@@ -234,7 +256,7 @@ def measure_evenness(lsq, n, p):
         "--n-modes", str(n),
         "--precision-digits", str(p),
         "--display-digits", "16",
-        "--numerical-profile", _NUMERICAL_PROFILE,
+        "--eigenstate-solver", _EIGENSTATE_SOLVER,
         "--json-output", result_path,
     ]
     child_env = os.environ.copy()
@@ -697,7 +719,11 @@ def _write_claim_summary(claim, started_at, succeeded):
         "first_zero_index": _FIRST_ZERO_INDEX,
         "zero_count": _ZERO_COUNT,
         "analysis_zero_index": _ANALYSIS_ZERO_INDEX,
-        "numerical_profile": _NUMERICAL_PROFILE,
+        "root_acquisition": _ROOT_ACQUISITION,
+        "parity_policy": _PARITY_POLICY,
+        "eigenstate_solver": _EIGENSTATE_SOLVER,
+        "research_capture": _RESEARCH_CAPTURE,
+        "research_sector_eigenpairs": _RESEARCH_SECTOR_EIGENPAIRS,
         "measurement_files": list(dict.fromkeys(_MEASUREMENTS)),
     }
     stamp = time.strftime("%Y%m%dT%H%M%SZ", time.gmtime(started_at))
@@ -749,8 +775,23 @@ def main():
                     help="number of consecutive zero ordinals retained (default: 5)")
     ap.add_argument("--analysis-zero-index", type=int, default=1,
                     help="ordinal used by the scalar convergence fits (default: 1)")
-    ap.add_argument("--numerical-profile", choices=["paper", "current"], default="paper",
-                    help="paper preserves the historical route; current uses optimized defaults")
+    ap.add_argument("--root-acquisition", choices=["seeded", "independent"],
+                    default="seeded",
+                    help="seeded reproduction or independent finite-source discovery")
+    ap.add_argument("--parity-policy",
+                    choices=["natural", "adaptive-even", "even-sector"],
+                    default="even-sector",
+                    help="eigenstate parity policy")
+    ap.add_argument("--eigenstate-solver",
+                    choices=["legacy-inverse-iteration", "shift-invert-krylov", "auto"],
+                    default="auto",
+                    help="eigenstate algorithm")
+    ap.add_argument("--research-capture",
+                    choices=["claim", "research", "gap", "maximum"],
+                    default="research",
+                    help="supplemental artifact capture level")
+    ap.add_argument("--research-sector-eigenpairs", type=int, default=8,
+                    help="low eigenpairs retained per sector in maximum mode")
     ap.add_argument("--results-dir", default=os.path.join(REPO_ROOT, "outputs"),
                     help="structured measurement, log, and claim-summary directory")
     ap.add_argument("--resume", action="store_true",
@@ -758,12 +799,18 @@ def main():
     args = ap.parse_args()
 
     global _BIN, _FIRST_ZERO_INDEX, _ZERO_COUNT, _ANALYSIS_ZERO_INDEX
-    global _NUMERICAL_PROFILE, _RESULTS_DIR, _RESUME
+    global _ROOT_ACQUISITION, _PARITY_POLICY, _EIGENSTATE_SOLVER
+    global _RESEARCH_CAPTURE, _RESEARCH_SECTOR_EIGENPAIRS
+    global _RESULTS_DIR, _RESUME
     _BIN = args.bin
     _FIRST_ZERO_INDEX = args.first_zero_index
     _ZERO_COUNT = args.zero_count
     _ANALYSIS_ZERO_INDEX = args.analysis_zero_index
-    _NUMERICAL_PROFILE = args.numerical_profile
+    _ROOT_ACQUISITION = args.root_acquisition
+    _PARITY_POLICY = args.parity_policy
+    _EIGENSTATE_SOLVER = args.eigenstate_solver
+    _RESEARCH_CAPTURE = args.research_capture
+    _RESEARCH_SECTOR_EIGENPAIRS = args.research_sector_eigenpairs
     _RESULTS_DIR = os.path.abspath(args.results_dir)
     _RESUME = args.resume
 
@@ -771,6 +818,8 @@ def main():
         ap.error("--first-zero-index must be positive")
     if _ZERO_COUNT < 1:
         ap.error("--zero-count must be positive")
+    if _RESEARCH_SECTOR_EIGENPAIRS < 1:
+        ap.error("--research-sector-eigenpairs must be positive")
     last_zero_index = _FIRST_ZERO_INDEX + _ZERO_COUNT - 1
     if not _FIRST_ZERO_INDEX <= _ANALYSIS_ZERO_INDEX <= last_zero_index:
         ap.error(
