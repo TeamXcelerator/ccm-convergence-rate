@@ -1,8 +1,11 @@
 """Unit tests for the non-numerical reproduction-driver behavior."""
 
 import importlib.util
+import io
 import pathlib
 import unittest
+from contextlib import redirect_stdout
+from unittest import mock
 
 
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -75,6 +78,35 @@ class MultiZeroDriverTests(unittest.TestCase):
         reproduce._ANALYSIS_ZERO_INDEX = 2
         self.assertEqual(reproduce.verdict(True), "EXPLORATORY")
         self.assertEqual(reproduce.verdict(False), "EXPLORATORY")
+
+    def test_small_n_mode_ramp_requests_only_the_first_root(self):
+        grid = [(7, [3, 5], 200, False)]
+        with (
+            mock.patch.object(reproduce, "_RAMP_GRID", grid),
+            mock.patch.object(reproduce, "measure", return_value=3.0) as measure,
+            mock.patch.object(
+                reproduce, "fit_tanh_ramp", return_value=(1.2, 1.0, 0.01)
+            ),
+            redirect_stdout(io.StringIO()),
+        ):
+            reproduce.c4_nmode_ramp(quick=False)
+
+        self.assertEqual(measure.call_count, 2)
+        for call in measure.call_args_list:
+            self.assertEqual(call.kwargs, {"zero_count": 1})
+
+    def test_mode_ramp_claims_have_distinct_reports(self):
+        self.assertIs(reproduce.CLAIMS["nmode-ramp"], reproduce.c4_nmode_ramp)
+        self.assertIs(reproduce.CLAIMS["mode-exponent"], reproduce.c8_mode_exponent)
+        self.assertIs(
+            reproduce.CLAIMS["onset-constant"], reproduce.c9_onset_constant
+        )
+
+    def test_mode_ramp_grid_excludes_unproven_extrapolations(self):
+        self.assertEqual(
+            [lambda_sq for lambda_sq, _, _, _ in reproduce._RAMP_GRID],
+            [7, 13, 20, 25, 50, 100],
+        )
 
 
 if __name__ == "__main__":

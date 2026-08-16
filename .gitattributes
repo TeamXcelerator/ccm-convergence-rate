@@ -8,6 +8,4 @@
 *.md text
 *.py text
 
-# Reference data files — leave as-is, never normalize.
-data/*.json -text
 *.pdf binary

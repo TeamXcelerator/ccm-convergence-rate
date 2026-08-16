@@ -10,7 +10,14 @@ Companion repository for the paper
 **Author:** Ronnie Andrews, Jr.  
 **ORCID:** [0009-0003-9724-3104](https://orcid.org/0009-0003-9724-3104)  
 **Contact:** randrewsmath@gmail.com  
-**Version:** 1.1 (July 2026)
+**Release:** v1.2 (August 2026)
+**Toolkit:** Xcelerator Toolkit v0.13.5
+
+> **New in v1.2.** This release adds the exact finite-band reach
+> `T_max = 2πN/ln(λ²)`, its Riemann–von Mangoldt zero-capacity estimate,
+> configurable multi-zero measurement windows, independently runnable claim
+> scripts, and Toolkit v0.13.5 integration. Historical v1.1 manuscript files
+> remain frozen snapshots.
 
 > **New in v1.1.** The convergence law is now stated in two equivalent forms: an
 > *intrinsic* two-channel spectral error (modes and primes), which carries the
@@ -60,10 +67,18 @@ of independent errors, so the largest binds), which is why earlier
 single-expression digit fits fail.
 
 This repository contains the paper, its source, and a one-command driver that
-reproduces each empirical claim. The v1.1 driver retains a configurable window
-of zero ordinals in every measurement. The published scalar fits remain
+reproduces each empirical claim. The reproduction driver retains a configurable
+window of zero ordinals in every measurement. The published scalar fits remain
 zero-1 baselines; selecting a higher ordinal supports the ongoing extension of
 the convergence law without discarding the other roots.
+
+The current manuscript also separates convergence quality from finite spectral
+reach. The retained basis has exact outer frequency
+`T_max = 2πN/ln(λ²)`. Substitution into the Riemann–von Mangoldt law gives a
+geometric zero-capacity estimate
+`K_max^(0) = (N/ln(λ²))[ln(N/ln(λ²)) − 1] + 7/8`. These quantities describe
+which ordinates fit inside the finite band; they do not guarantee accurate or
+correctly ordered recovery.
 
 > This README is a guide to the claims and how to reproduce them. It is **not**
 > a substitute for the paper, which carries the derivations, proofs, and the
@@ -73,13 +88,15 @@ the convergence law without discarding the other roots.
 
 | Quantity | Value | Configuration |
 |---|---|---|
-| Precision slope `∂D/∂P` | `1.000 ± 0.001` | λ²=100, N=1000, P swept |
+| Precision slope `∂D/∂P` | `1.00205` (`R²=0.99994`; predicted `1`) | λ²=50, N=400, P swept |
 | Prime ceiling `D_Primes(100)` | `526.08` digits | λ²=100, N=1000, HP-700 |
 | Prime ceiling `D_Primes(200)` | `≈ 1070.4` digits | λ²=200, N≥2400, HP-1250 |
 | Leading coefficient `K` | `4π/ln10 = 5.45750…` (exact) | prolate asymptotic |
 | Archimedean slope (λ²=7) | predicted `2.203`, measured `2.264` (≈3%) | small-N regime |
 | Mode exponent `q(λ²)` | `2/(2γ + ln ln λ²)`, crosses 1 near λ²≈13 | per-λ² ramp fits |
 | Onset constant `c` | `≈ 4/π = 1.273` | per-λ² ramp fits |
+| Finite-band edge `T_max` | `2πN/ln(λ²)` | exact basis identity |
+| Geometric zero capacity `K_max^(0)` | `(N/ln(λ²))[ln(N/ln(λ²))−1] + 7/8` | Riemann–von Mangoldt estimate at `T_max` |
 
 ---
 
@@ -104,7 +121,7 @@ cap, not mathematics; removing it leaves the single intrinsic two-channel edge
 
 Low-scale demonstration of the budget switching:
 ```bash
-python3 scripts/reproduce.py budget-switch
+bash scripts/claim1_budget_switch.sh
 ```
 
 ### C2 — Precision budget `D_Wprec = P + O(1)`, slope exactly 1 (§4) · **T1** · *empirical*
@@ -113,18 +130,19 @@ Finite precision `P` introduces relative round-off `~10⁻ᴾ`, amplified by a
 `P`-independent condition number, so `D_Wprec(P) = P − log₁₀κ = P + O(1)` with
 leading coefficient exactly 1.
 ```bash
-python3 scripts/reproduce.py precision-slope
+bash scripts/claim2_precision_slope.sh
 ```
-Expected: `∂D/∂P = 1.000 ± 0.001`.
+Expected: `|∂D/∂P − 1| ≤ 0.005`. The current reproduction gives
+`1.00205` with `R²=0.99994`.
 
-### C3 — Symmetry, positivity, and the precision floor (§4.1) · *empirical*
+### C3 — Symmetry, positivity, and the precision floor (§4.1) · **T4** · *empirical*
 
 Above the precision floor the smallest eigenvalue is even and positive — a
 genuine feature of the operator, not of the regime. Below the floor, results are
 precision-starved (spurious symmetry/sign); raising `P` past the floor dissolves
 the artifacts.
 ```bash
-python3 scripts/reproduce.py floor-artifact
+bash scripts/claim3_floor_artifact.sh
 ```
 The full even-symmetry reproduction (38 configurations, natural vs forced-even
 eigenvector, numerically equivalent above floor) is documented in the independent
@@ -138,10 +156,12 @@ their signs, and the reflection deviation at every tested precision.
 ```
 D_nModes(N, λ²) = D_Primes(λ²) · tanh( (c·N/(λ²·ln λ²))^q ),   q = 2/(2γ + ln ln λ²)
 ```
-Reproduced together with C8 and C9 by the per-λ² ramp fits:
+Claim 4 reports the normalized ramp fit and its residual separately:
 ```bash
-python3 scripts/reproduce.py nmode-ramp           # add --quick for λ²≤25 only
+bash scripts/claim4_nmode_ramp.sh                 # add --quick for λ²≤25 only
 ```
+Expected: each cutoff follows the normalized `tanh` transition with maximum
+normalized RMSE no greater than `0.05`.
 
 ### C5 — Stretched-exponential identity (§5.1, Thm. 1(i)) · **T1** · *derived*
 
@@ -166,7 +186,7 @@ archimedean `Γ_ℝ` factor;
 `|Γ(¼+iz/2)| ~ exp(−π|z|/4)` by Stirling gives `δ = π/4`, hence the
 parameter-free leading digit slope `∂D/∂N = π²/(ln10·ln λ²)`.
 ```bash
-python3 scripts/reproduce.py archimedean-slope
+bash scripts/claim7_archimedean_slope.sh
 ```
 Expected (λ²=7): predicted `2.203`, measured `≈ 2.264` (agreement ≈3%, no free
 parameters).
@@ -178,15 +198,22 @@ exponent as `1/q = c₀ + c₁·ln ln λ²` with `c₀ = γ` (archimedean baseli
 `c₁ = ½` (Mertens variance prefactor) gives the closed form. A regression that
 does **not** assume `γ` recovers it as the intercept.
 ```bash
-python3 scripts/reproduce.py nmode-ramp
+bash scripts/claim8_mode_exponent.sh
 ```
 Expected: per-λ² `q` tracking Table 1, and `c₀ ≈ γ = 0.577`, `c₁ ≈ ½`,
 `R² ≈ 0.98`.
 
 ### C9 — Onset constant `c ≈ 4/π` (§5.3) · **T3** · *empirical*
 
-Across the per-λ² fits the onset constant clusters near `4/π = 1.273`. Produced
-by the same `nmode-ramp` run as C8 (column `c meas`).
+Across the per-λ² fits the onset constant clusters near `4/π = 1.273`.
+```bash
+bash scripts/claim9_onset_constant.sh
+```
+Expected: the mean fitted onset constant lies within `0.1` of `4/π`.
+
+Claims 4, 8, and 9 intentionally use the same numerical grid. Run Claim 4
+first, retain its `RESULTS_DIR`, and pass `--resume` to Claims 8 and 9 to reuse
+the structured measurements without repeating the expensive sweep.
 
 ### C10 — Shannon coordinate `λ²·ln λ²` (§5.4, Lem. 2) · **T2** · *derived + validated*
 
@@ -194,7 +221,7 @@ The ramp meets its ceiling at `N* = D_Primes / (∂D/∂N) = (4/π)·λ²·ln λ
 time–frequency Shannon number of the box (Landau–Pollak; Slepian–Pollak;
 Landau–Widom). The coordinate is forced, not posited.
 ```bash
-python3 scripts/reproduce.py shannon          # server-grade (λ²=100 to saturation)
+bash scripts/claim10_shannon.sh               # server-grade (λ²=100 to saturation)
 ```
 Expected: saturation at `N/(λ²·ln λ²) ≈ 2.0–2.3`.
 
@@ -206,7 +233,7 @@ with `K = 4π/ln10` exact and parameter-free, `9/2` the Fuchs index, and
 `C₀ = log₁₀(2¹⁴√2·π⁵/3) = 6.3736…`. The matching floor the law consumes sits a
 few digits below (C12).
 ```bash
-python3 scripts/reproduce.py prime-anchor     # server-grade (~20-40 min)
+bash scripts/claim11_prime_anchor.sh          # server-grade (~20-40 min)
 ```
 Expected: `D_Primes(100) = 526.08`.
 
@@ -218,7 +245,7 @@ eigenvalue floor `D_eig`; the difference is the *conversion gap*
 `conv = D_eig − D_Primes`. At λ²=200 the saturated measurement sits at the
 matching floor, confirming the two-floor structure at the largest cutoff measured.
 ```bash
-python3 scripts/reproduce.py matching-floor   # server-grade (multi-hour, HP-1250)
+bash scripts/claim12_matching_floor.sh        # server-grade (multi-hour, HP-1250)
 ```
 Expected: `D_Primes(200) ≈ 1070.4`; matching floor `1070.5`; eigenvalue floor
 `1074.77`; gap ≈ 4.3.
@@ -229,7 +256,7 @@ Sweeping `λ²` in unit steps (`N`, `P` above floor) gives a smooth rise of
 `≈ 5.3` digits per unit `λ²`; prime-power entries are statistically
 indistinguishable from non-prime entries.
 ```bash
-python3 scripts/reproduce.py prime-smooth     # add --quick for λ²∈[4,15]
+bash scripts/claim13_prime_smooth.sh          # add --quick for λ²∈[4,15]
 ```
 
 ### C14 — Convergence criterion and the prime bottleneck (§7, Prop. 2) · **T1** · *derived*
@@ -238,7 +265,7 @@ For every fixed `λ²`, `sup_{N,P} D = D_Primes(λ²) < ∞`: no basis size or
 precision reaches the zero, so convergence to `γ₁` forces `λ² → ∞`. And
 `ν₁ → γ₁` iff all three budgets diverge. *Proof: §7.* Demonstration:
 ```bash
-python3 scripts/reproduce.py bottleneck
+bash scripts/claim14_bottleneck.sh
 ```
 Expected: at fixed λ²=13, `D` plateaus at the ceiling regardless of `N`, `P`.
 
@@ -279,12 +306,15 @@ Each command streams the complete toolkit output, stores a log and structured
 JSON for every numerical point under `outputs/`, and prints a compact
 **measured vs expected** verdict.
 
-By default, ordinals 1 through 5 are retained and zero 1 supplies the paper's
-scalar fit. To study convergence beyond the first zero, retain any consecutive
-window and select one ordinal for the scalar fit:
+Most claims retain ordinals 1 through 5 while zero 1 supplies the paper's
+scalar fit. The small-`N` Claim 4/8/9 ramp and Claim 7 initial-slope sweep
+request only zero 1 because their first configurations cannot resolve a
+distinct multi-root window. To study convergence beyond the first zero, use a
+claim whose `N` range supports the requested window and select one ordinal
+for the scalar fit:
 
 ```bash
-bash scripts/claim4_8_9_nmode_ramp.sh \
+bash scripts/claim2_precision_slope.sh \
   --first-zero-index 21 \
   --zero-count 10 \
   --analysis-zero-index 25 \
@@ -296,9 +326,9 @@ digits, iteration count, correction, and residual—are retained in each JSON
 measurement. A higher-ordinal verdict is labeled `EXPLORATORY`, because the
 values printed in the current paper were fitted to zero 1.
 
-Like Paper 1, every claim exposes the numerical policies independently. The
-modern defaults are reference-seeded acquisition, direct even-sector parity,
-the automatic eigenstate solver, and balanced research capture:
+Every claim exposes the numerical policies independently. The modern defaults
+are reference-seeded acquisition, direct even-sector parity, the automatic
+eigenstate solver, and balanced research capture:
 
 ```bash
 bash scripts/claim2_precision_slope.sh \
@@ -315,10 +345,10 @@ Supported solvers are `legacy-inverse-iteration`, `shift-invert-krylov`, and
 These choices are independent and participate in structured-result and cache
 identity; there is no bundled historical "paper profile."
 
-In independent mode, Paper 3 compares returned positive CCM roots with
+In independent mode, this repository compares returned positive CCM roots with
 reference zeros by ordinal position and records that comparison semantics.
-Displacement and signed-root classification remain the purpose of Paper 1's
-root-ordering experiments.
+Detailed displacement and signed-root classification are covered by the
+companion independent-reproduction project linked below.
 
 ### Compute tiers
 
@@ -345,14 +375,16 @@ are skipped.
 - `--resume` accepts a prior JSON result only when its complete numerical
   identity matches the requested cutoff, mode count, precision, zero window,
   acquisition, parity policy, eigenstate solver, and capture level.
-- `P` remains the requested decimal precision. Toolkit v0.13.3 derives its
+- `P` remains the requested decimal precision. Toolkit v0.13.5 derives its
   MPFR working precision from `P` and adds 64 guard bits; both values are
   reported, and the qualified working precision is part of artifact identity.
 - Root records distinguish `converged`, `stagnated`, `approximate`, and
   `failed`. Stagnated values are retained with their achieved digits and
   diagnostics rather than silently promoted to converged results.
-- The full `q`/`c` run includes every cutoff shown in Table 1, including the
-  displayed but regression-excluded λ²=200 row.
+- The executable `q`/`c` reproduction grid currently stops at `λ²=100`.
+  Table 1's `λ²=150` and `λ²=200` values remain manuscript reference values;
+  their exact source configurations must be established before they are added
+  to a full-grid reproduction.
 
 ---
 
@@ -360,12 +392,11 @@ are skipped.
 
 ```
 paper.tex / paper.pdf       the manuscript (current source + build)
-paper_v1.1.tex / .pdf       frozen v1.1 snapshot (this release)
+paper_v1.1.tex / .pdf       frozen historical v1.1 snapshot
 paper_v1.0.pdf              frozen snapshot matching the Zenodo v1.0 deposit
 src/main.rs                 the `measure` binary (CCM construction + matching digits)
-scripts/reproduce.py        one-command claim reproduction driver
-scripts/claim*.sh           readable, individually runnable claim definitions
-scripts/claim_common.sh      shared modern policy controls and build launcher
+scripts/claim*.sh           readable, independently runnable claim definitions
+scripts/reproduce.py        sweep, structured-result, and fit analysis backend
 tests/integration.rs        toolkit wiring and bundled-dataset checks
 outputs/                    ignored live logs and structured results
 ```

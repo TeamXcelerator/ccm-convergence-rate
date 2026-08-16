@@ -528,9 +528,8 @@ fn run_measure(request: MeasureRequest) -> Result<()> {
 
     let cmp_prec = hp_result.precision_bits.saturating_mul(2);
     let mut roots = Vec::with_capacity(request.zero_count);
-    for offset in 0..request.zero_count {
+    for (offset, reference_string) in reference_strings.iter().enumerate() {
         let reference_index = request.first_zero_index + offset;
-        let reference_string = reference_strings[offset].clone();
         let outcome = hp_result.eigenvalues_pos.get(offset).ok_or_else(|| {
             anyhow::anyhow!(
                 "toolkit returned only {} roots for a {}-root request",
@@ -538,7 +537,12 @@ fn run_measure(request: MeasureRequest) -> Result<()> {
                 request.zero_count
             )
         })?;
-        let measurement = root_measurement(reference_index, outcome, &reference_string, cmp_prec)?;
+        let measurement = root_measurement(
+            reference_index,
+            outcome,
+            reference_string.as_str(),
+            cmp_prec,
+        )?;
 
         let computed_display = outcome
             .value()
@@ -546,7 +550,7 @@ fn run_measure(request: MeasureRequest) -> Result<()> {
             .unwrap_or_else(|| "N/A".to_owned());
         let reference_value = Float::with_val(
             cmp_prec,
-            Float::parse(&reference_string)
+            Float::parse(reference_string.as_str())
                 .map_err(|error| anyhow::anyhow!("invalid reference zero: {error}"))?,
         );
         let matching_display = measurement
@@ -827,7 +831,7 @@ mod tests {
     use clap::Parser;
 
     #[test]
-    fn measure_defaults_to_modern_paper_one_policies() {
+    fn measure_defaults_to_modern_policies() {
         let cli = Cli::try_parse_from(["ccm-convergence-rate", "measure"]).unwrap();
         match cli.command {
             Command::Measure {
