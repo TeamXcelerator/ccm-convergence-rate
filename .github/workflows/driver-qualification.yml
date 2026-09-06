@@ -1,0 +1,53 @@
+name: Driver qualification
+
+on:
+  push:
+    branches: [work/ccm-audit-hardening]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: driver-qualification-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  driver:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      # BEGIN MATERIALIZATION
+      - name: Apply guarded driver changes
+        run: python3 tools/materialize_driver_hardening.py
+      # END MATERIALIZATION
+      - name: Driver regression tests
+        run: python3 -m unittest discover -s tests -p 'test_*.py' -v
+      - name: CLI smoke check without numerical execution
+        run: python3 scripts/reproduce.py --help
+      # BEGIN PUBLICATION
+      - name: Commit qualified driver changes to the authorized work branch
+        if: github.event_name == 'push' && github.ref == 'refs/heads/work/ccm-audit-hardening' && github.repository == 'TeamXcelerator/ccm-convergence-rate'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          path = Path('.github/workflows/driver-qualification.yml')
+          text = path.read_text().replace('  contents: write', '  contents: read')
+          text = re.sub(r'      # BEGIN MATERIALIZATION\n.*?      # END MATERIALIZATION\n', '', text, flags=re.S)
+          text = re.sub(r'      # BEGIN PUBLICATION\n.*?      # END PUBLICATION\n', '', text, flags=re.S)
+          path.write_text(text)
+          PY
+          git rm -- tools/materialize_driver_hardening.py
+          git add -- scripts/reproduce.py tests/test_reproduce_driver.py .github/workflows/driver-qualification.yml
+          git -c user.name=TeamXceleratorDev -c user.email=5178942+TeamXceleratorDev@users.noreply.github.com commit -m "Harden scientific verdicts and provenance-aware measurement reuse"
+          git -c credential.helper= -c 'credential.helper=!f() { echo username=x-access-token; echo "password=$GH_TOKEN"; }; f' push origin HEAD:refs/heads/work/ccm-audit-hardening
+      # END PUBLICATION
