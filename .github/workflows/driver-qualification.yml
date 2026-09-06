@@ -25,7 +25,17 @@ jobs:
           persist-credentials: false
       # BEGIN MATERIALIZATION
       - name: Apply guarded driver changes
-        run: python3 tools/materialize_driver_hardening.py
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path('tools/materialize_driver_hardening.py')
+          text = path.read_text()
+          old = 's = once(s, "_MEASUREMENTS = []\\n", """_MEASUREMENTS = []'
+          new = 's = once(s, "\\n_MEASUREMENTS = []\\n", """\\n_MEASUREMENTS = []'
+          assert text.count(old) == 1
+          path.write_text(text.replace(old, new))
+          PY
+          python3 tools/materialize_driver_hardening.py
       # END MATERIALIZATION
       - name: Driver regression tests
         run: python3 -m unittest discover -s tests -p 'test_*.py' -v
@@ -46,7 +56,7 @@ jobs:
           text = re.sub(r'      # BEGIN PUBLICATION\n.*?      # END PUBLICATION\n', '', text, flags=re.S)
           path.write_text(text)
           PY
-          git rm -- tools/materialize_driver_hardening.py
+          git rm -f -- tools/materialize_driver_hardening.py
           git add -- scripts/reproduce.py tests/test_reproduce_driver.py .github/workflows/driver-qualification.yml
           git -c user.name=TeamXceleratorDev -c user.email=5178942+TeamXceleratorDev@users.noreply.github.com commit -m "Harden scientific verdicts and provenance-aware measurement reuse"
           git -c credential.helper= -c 'credential.helper=!f() { echo username=x-access-token; echo "password=$GH_TOKEN"; }; f' push origin HEAD:refs/heads/work/ccm-audit-hardening
