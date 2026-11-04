@@ -1,0 +1,118 @@
+\subsection{The monic pencil polynomial and a cutoff discriminator}
+\label{ssec:monic-pencil-cutoff}
+
+The zero-shift pencil supplies a monic extremal problem that is different
+from the ground-state Rayleigh quotient and the bordering evaluation
+constraint. In the squared coordinate $t=(\nu/\beta)^2$, write
+\[
+ Q_N(t)=\prod_{j=1}^N(t-j^2),\qquad
+ P_a(t)=a_0Q_N(t)+\sum_{j=1}^Nw_jv_j
+                \frac{tQ_N(t)}{t-j^2},\qquad w_j=\sqrt2.
+\]
+This polynomial map from the even coefficient vector $a=(a_0,v)$ is
+invertible. Its leading coefficient is $\ell^Ta$, where $\ell=(1,w)$.
+Thus degree at most $N-1$ is exactly the endpoint-vanishing space
+$a=\mathcal Jx$ used above.
+
+\begin{proposition}[Monic characterization of the zero-shift pencil]
+\label{prop:monic-pencil}
+Suppose the finite even matrix $A$ is positive definite. In the induced
+polynomial inner product $\langle P_a,P_b\rangle=a^TAb$, the degree-$N$
+monic orthogonal polynomial has coefficient vector
+\[
+ a_{\rm OP}=\frac{A^{-1}\ell}{\ell^TA^{-1}\ell}.
+\]
+Where the central-normalized virtual vector in
+Proposition~\ref{prop:arbitrary-shift-pencil} exists at $z=0$, its
+polynomial is a nonzero multiple of this monic polynomial.
+\end{proposition}
+\begin{proof}
+The leading-coefficient constraint is $\ell^Ta=1$.
+Strict positivity makes its quadratic minimizer unique, with Euler
+equation $Aa=\eta\ell$. Every lower-degree polynomial has coefficient
+vector in $\ker\ell^T$, proving orthogonality. For the zero-shift
+variables, $Bv=-c$, $Bq=w$ and $c^Tq=1-W$ give exactly
+\[
+ A\binom{1}{v+(\sigma/W)q}=\frac{\sigma}{W}\ell.
+\]
+After leading-coefficient normalization this is the same minimizer.
+\end{proof}
+The expression through $A^{-1}\ell$ also avoids dividing by a possibly
+vanishing central coordinate. This is a finite algebraic statement;
+it does not require RH. It gives the correct monic object for studying
+the zero-shift channel, without reinterpreting the ground polynomial
+as an ordinary monic minimizer.
+
+\paragraph{The varying measure and its limitation.}
+The Gamma-transform identity gives, under a positive real atomic Weil
+representation, the explicit measure
+\[
+ d\mu_{C,N}(t)=\sum_m
+ \frac{2L\,m_m\,\delta_{(\gamma_m/\beta)^2}(dt)}
+ {\Gamma(N+1+\gamma_m/\beta)^2
+  \Gamma(N+1-\gamma_m/\beta)^2},
+\]
+where $m_m$ is the multiplicity and reciprocal Gamma factors are
+interpreted by entire continuation. It represents the polynomial
+inner product above. Without the positive real hypothesis, the full
+signed-complex Weil functional remains the moment source; finite
+matrix positivity alone does not identify it with this positive
+zeta-atomic measure. Moments through degree $2N$ converge, which is
+all that is needed here. No all-degree finite-moment assumption is made.
+
+In the degree-$(N-1)$ space the pair $H_0,T_0$ is precisely the moment
+pair for multiplication by $t$. Its eigenvalues are therefore the
+zeros of the degree-$N$ orthogonal polynomial. With distinct ordered
+positive-weight atoms $t_k$, min--max gives $\theta_k\ge t_k$;
+infinite nondegenerate support gives strictness. Coincident carrier
+zeros can remove weights and must not be silently counted. Repeated
+ordinates contribute weights rather than independent scalar coordinates.
+Thus comparison with a zero list counted with multiplicity needs its
+own matching convention.
+
+Factoring $\pi_N(t)=(t-\theta_k)q_k(t)$ and using orthogonality gives
+the exact indexed identity
+\[
+ \theta_k-t_k=
+ \frac{\int(t-t_k)q_k(t)^2\,d\mu_{C,N}(t)}
+      {\int q_k(t)^2\,d\mu_{C,N}(t)}.
+\]
+Multiplication by $\beta^2/(\nu_k(0)+\gamma_k)$ converts it to ordinate
+error. It exposes the weighted contribution away from the target atom,
+but estimating that contribution uniformly is still necessary.
+The Gamma weight has the previously derived interior potential
+$2N[(1+\tau)\log(1+\tau)+(1-\tau)\log(1-\tau)]$,
+$\tau=\gamma\log C/(2\pi N)$. There is now a legitimate monic
+object to analyze with that potential. Its varying discrete measure
+cannot be replaced by a fixed-measure or Gaussian model without proof.
+Rational Ritz convergence through constrained logarithmic potentials
+provides relevant methods~\cite{BGV2010}; its asymptotic hypotheses
+and individual-index implications remain to be checked here.
+The finite polynomial, moment-pencil and virtual-vector identities
+pass 283 exact rational checks on positive atomic fixtures.
+
+\paragraph{A new cutoff at the same mode count.}
+An independently assembled $C=125,N=1500$ case uses 2300 decimal
+assembly digits and 2000 point-solve digits. A 3000-digit prefix control
+lies inside all 84 corresponding generator intervals. All first 1000
+reference windows are requested before the results are seen, using
+the unchanged nearest-three-root predictor and its $1\%$ gate.
+Interval roots of the serialized point state and an exact polynomial
+upper count give a complete matched prefix of 1000, with no carriers
+below its counting threshold. Every prediction passes.
+\begin{center}\small
+\begin{tabular}{r|rrr}
+$C$ ($N=1500$)&$D_1$&$D_{1000}$&Worst relative prediction error\\
+\hline
+125&662.16446&21.94445&$2.49960\cdot10^{-6}$\\
+250&1175.39874&305.89872&$1.69115\cdot10^{-7}$
+\end{tabular}
+\end{center}
+The $C=125$ thousandth zero has more Fourier-band headroom
+($\tau\simeq0.72717$, against $0.83156$ at $C=250$), yet far fewer
+accurate digits. Mode headroom alone therefore does not determine
+accuracy. The cutoff and indexed mode budgets must be distinguished.
+The new state has an enclosed matrix residual, but this experiment
+does not certify every tiny displacement of the analytic ground
+transform. Neither the fixed-parameter successes nor the finite monic
+identity close the uniform $C,N,P,k$ law.

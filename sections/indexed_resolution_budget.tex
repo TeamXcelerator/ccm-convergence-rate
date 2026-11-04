@@ -1,0 +1,182 @@
+\subsection{An indexed minimum budget and a mode-resolution criterion}
+\label{ssec:indexed-resolution-budget}
+
+Write $C=\lambda^2$ in this subsection, reserving $c$ for the historical
+argument coefficient of the scalar ramp model. The target is one law in
+$(C,N,P,k)$ for $1\le k\le1000$, with the first-zero law as its $k=1$
+specialization. This is a research target, not a claim of validation over
+that complete range. A finite root must first be associated with the
+requested ordinal; an unresolved ordinal is an outcome, not a zero-digit
+observation.
+
+\paragraph{The indexed minimum.}
+For a specified finite branch $\nu_{N,C,k}$, its fixed-cutoff limit
+$\nu_{\infty,C,k}$, and the computed root $\widetilde\nu_{N,C,P,k}$, use
+the exact signed decomposition
+\begin{align}
+ e_{\mathrm{num},k}&=(\widetilde\nu_{N,C,P,k}-\nu_{N,C,k})/\gamma_k,\nonumber\\
+ e_{\mathrm{mode},k}&=(\nu_{N,C,k}-\nu_{\infty,C,k})/\gamma_k,\nonumber\\
+ e_{\mathrm{cut},k}&=(\nu_{\infty,C,k}-\gamma_k)/\gamma_k.
+ \label{eq:indexed-signed-channels}
+\end{align}
+Let $B_{j,k}$ be upper bounds on the absolute values of these three
+channels and $D_{j,k}=-\log_{10}B_{j,k}$. Then
+\begin{equation}\label{eq:indexed-min-budget}
+ D_k\ge-\log_{10}\!\left(\sum_j10^{-D_{j,k}}\right)
+ \ge\min\{D_{\mathrm{num},k}(C,N,P),D_{\mathrm{mode},k}(C,N),
+                   D_{\mathrm{cut},k}(C)\}-\log_{10}3.
+\end{equation}
+The first expression is the exact logarithm of the summed upper bounds,
+not a fitted smoothing of the minimum. Equality to a minimum up to a
+uniformly bounded offset requires two-sided channel estimates and a
+quantitative noncancellation condition. Numerical assembly error belongs
+in $B_{\mathrm{num},k}$ unless it is separately bounded and counted.
+
+Insufficient $N$ enters through the \emph{indexed mode budget} and through
+branch validity. A fourth ``resolution budget'' must not count the same
+mode error twice. The finite-parent identity in
+Section~\ref{ssec:thousand-zero-campaign} separates eigenvalue, indexed
+transfer and remainder increments. If its limiting branches and uniform
+bounds are established, their sum supplies a derived inner minimum for
+the mode budget. Those estimates have not been proved here.
+
+\paragraph{An exact dual representation of the mode channel.}
+The following specialization of goal-oriented Galerkin duality
+\cite{IndexedBeckerRannacher} gives a precise object to estimate. At fixed
+$C$, let the real self-adjoint operator $A_C$ have a normalized simple
+isolated ground state $u$, eigenvalue $\varepsilon_\infty$, and next
+spectral point $\lambda_2>\varepsilon_\infty$. Let $P_N$ be the orthogonal
+Fourier projection and $u_N$ an exact unit Ritz vector, in the operator
+domain, with eigenvalue $\varepsilon_N<\lambda_2$. Choose its sign so
+$s_N=\langle u,u_N\rangle>0$. Define
+\begin{align*}
+ r_N&=(A_C-\varepsilon_N)u_N, &P_Nr_N&=0,\\
+ Q&=I-|u\rangle\langle u|,
+ &R_N&=Q(A_C|_{u^\perp}-\varepsilon_N)^{-1}Q.
+\end{align*}
+Here $\|R_N\|\le(\lambda_2-\varepsilon_N)^{-1}$. For real $t$, let
+$b(t)$ be the vector representing finite-interval Fourier-transform
+evaluation, $F_a(t)=\langle b(t),a\rangle$, and set $z_N(t)=R_Nb(t)$.
+For complex $t$ use the analytic coefficient extension and the bilinear
+transpose pairing. The apparent lattice poles in the coefficient formula
+for $b$ are removable.
+
+\begin{proposition}[Indexed dual mode identity]
+\label{prop:indexed-dual-mode}
+Under these hypotheses,
+\begin{equation}\label{eq:indexed-dual-functional}
+ F_{u_N}(t)=s_NF_u(t)
+       +\langle (I-P_N)z_N(t),r_N\rangle.
+\end{equation}
+If $\nu_{N,C,k}$ and $\nu_{\infty,C,k}$ are associated real roots, then
+for some real $\xi$ between them,
+\begin{equation}\label{eq:indexed-dual-displacement}
+ \nu_{N,C,k}-\nu_{\infty,C,k}
+ =-\frac{\langle(I-P_N)z_N(\nu_{N,C,k}),r_N\rangle}
+              {s_NF_u'(\xi)},
+\end{equation}
+provided the denominator is nonzero.
+\end{proposition}
+\begin{proof}
+Write $u_N=s_Nu+e$ with $e\perp u$. Projection of the residual onto
+$u^\perp$ gives $e=R_Nr_N$. Apply the linear evaluation functional and
+use $P_Nr_N=0$ to prove~\eqref{eq:indexed-dual-functional}. At the finite
+root this gives $F_u(\nu_{N,C,k})$; the real mean-value theorem between
+the associated roots proves~\eqref{eq:indexed-dual-displacement}.
+\end{proof}
+
+\begin{proposition}[Sufficient mode-resolution condition]
+\label{prop:indexed-resolution-disc}
+Let a disc of radius $r$ about a finite simple real root $\nu_{N,C,k}$
+contain exactly one zero of $F_{u_N}$, counting multiplicity, and no zero
+on its boundary. If
+\begin{equation}\label{eq:indexed-resolution-disc}
+ \|r_N\|\sup_{|t-\nu_{N,C,k}|=r}\|(I-P_N)z_N(t)\|
+  <\min_{|t-\nu_{N,C,k}|=r}|F_{u_N}(t)|,
+\end{equation}
+then $F_u$ also has exactly one zero in that disc. It is real and simple.
+\end{proposition}
+\begin{proof}
+Apply Rouche's theorem to~\eqref{eq:indexed-dual-functional}; the nonzero
+constant $s_N$ does not change zeros. Reality under conjugation forces the
+unique zero in a disc centered on the real line to be real.
+\end{proof}
+If $|F_{u_N}''|\le M_2$ throughout the disc, a usable lower bound for
+the right side is
+$r|F_{u_N}'(\nu_{N,C,k})|-M_2r^2/2$, when positive. This condition
+identifies a limiting-transform root, not its zeta ordinal or the cutoff
+error. Disjoint discs and complete root counts are needed for a prefix.
+
+\paragraph{What would justify doubled convergence.}
+Suppose $\|r_N\|\le a_N$, $\|(I-P_N)z_N(\nu_{N,C,k})\|\le b_{N,k}$,
+$s_N\ge s_*>0$, $|F_u'|\ge m_{N,k}>0$ on the established root interval,
+and $0<\Gamma_k\le\gamma_k$. Then
+\begin{equation}\label{eq:indexed-dual-budget}
+ B_{\mathrm{mode},k}\le\frac{a_Nb_{N,k}}{s_*m_{N,k}\Gamma_k}.
+\end{equation}
+In particular, conditional envelopes
+\[
+ a_N\le A(C)e^{-a(C)\Phi(N)},\qquad
+ \frac{b_{N,k}}{s_*m_{N,k}\Gamma_k}
+       \le B(C,k)e^{-b(C,k)\Phi(N)}
+\]
+give
+\begin{equation}\label{eq:indexed-dual-depth}
+ D_{\mathrm{mode},k}\ge
+ \frac{[a(C)+b(C,k)]\Phi(N)-\log[A(C)B(C,k)]}{\log10}.
+\end{equation}
+The exponent doubles only if the dual factor supplies the same decay rate
+with controlled constants and domain. Those CCM rates remain open. This
+identity does not promote a finite-ramp stretched exponent to an
+infinite-$N$ coefficient asymptotic.
+
+\paragraph{Minimum required basis size.}
+For requested depth $D_*$, allocate each channel at most
+$10^{-D_*}/3$. A sufficient mode threshold is the first $N$ in a proved
+envelope domain for which the branch condition above holds and
+\begin{equation}\label{eq:indexed-N-res}
+ [a(C)+b(C,k)]\Phi(N)
+ \ge \log[A(C)B(C,k)]+(D_*+\log_{10}3)\log10.
+\end{equation}
+This defines a conditional $N_{\mathrm{res}}(C,k,D_*)$; the required
+functions are not yet an evaluated closed law. A monotone envelope would
+make it a threshold for all larger $N$, whereas an isolated measured
+success can result from signed cancellation.
+
+The count, band and accuracy constraints are different. A consecutive
+prefix of $K$ movable positive nonlattice roots requires $K\le N$ by the
+degree-$N$ secular representation. Thus a movable first-1000 prefix
+requires $N\ge1000$. Geometric inclusion below
+$2\pi N/\log C$ neither guarantees accuracy nor is necessary for an
+isolated accurate match: retained data include successful matches above
+that band. Neither count nor band placement supplies
+\eqref{eq:indexed-N-res}.
+
+\paragraph{Precision also depends on the selected root.}
+Writing $r_u(t)=u\cdot v_N(t)$, where
+$v_0(t)=1/t$ and $v_j(t)=\sqrt2\,t/(t^2-\alpha_j^2)$, implicit
+differentiation at a simple nonlattice root gives
+\begin{equation}\label{eq:indexed-root-condition}
+ \mathrm d\nu[u](e)=-\frac{e\cdot v_N(\nu)}{r_u'(\nu)},\qquad
+ \chi_N(\nu)=\frac{\|v_N(\nu)\|}{|\nu r_u'(\nu)|},\qquad
+ \|v_N(\nu)\|^2=\frac1{\nu^2}
+       +2\nu^2\sum_{j=1}^N\frac1{(\nu^2-\alpha_j^2)^2}.
+\end{equation}
+Because $u\cdot v_N(\nu)=0$, the worst direction is tangent to the
+unit-state sphere. If a state error were bounded by $C_0 10^{-P}$,
+the local precision depth would be approximately
+$P-\log_{10}C_0-\log_{10}\chi_N$; a finite error bound needs interval
+derivative and evaluation-vector bounds. Requested digits and matrix bits
+do not automatically provide that state-error premise. The point
+sensitivities in the tested high-index stencils have
+$\log_{10}\chi_N\simeq672.6$--$676.2$ at $(C,N)=(1000,890)$ and
+$734.0$--$745.8$ at $(1200,970)$. They describe arbitrary coefficient
+perturbations, not measured corruption or the structured mode error.
+
+\paragraph{Status.}
+The identities and implications above have explicit spectral and branch
+hypotheses. Twenty-eight exact rational self-adjoint fixture checks verify
+their finite algebra. Uniform arithmetic residual, dual-tail, derivative
+and cutoff bounds, with validation across independently qualified source families,
+remain proof and data targets. Section~\ref{ssec:thousand-zero-campaign}
+now supplies a complete counted first-1000 test on one stored state.

@@ -1,0 +1,145 @@
+\subsection{A correction from a second divided form}
+\label{ssec:dividedcorrection}
+
+The same finite eigenstate supplies an error predictor for every simple
+nonlattice transform root. The first zero is a special case; uniform
+accuracy in a growing root index requires an additional remainder estimate.
+The following construction uses finite operator data and no reference-zero
+errors or fitted conversion constant.
+
+Write $L=\log\lambda^2$, $\alpha_j=2\pi j/L$, and let $a$ be a real even
+unit eigenvector of the full finite matrix $A$, with $Aa=\varepsilon_N a$.
+Set
+\[
+ F(z)=\frac{2}{\sqrt L}\sin(zL/2)
+       \sum_{|j|\le N}\frac{a_j}{z-\alpha_j}.
+\]
+At a simple nonlattice root $\nu>0$ of $F$, define
+\begin{equation}\label{eq:divided-observables}
+ b_j=\frac{a_j}{\alpha_j-\nu},\quad
+ S=a^Tb,\quad J=b^TAb,\quad f=F'(\nu),\quad
+ h=\frac{F''(\nu)}{F'(\nu)},\quad \kappa=1-\nu h.
+\end{equation}
+For $\kappa\ne0$, the corrected signed displacement estimate is
+\begin{equation}\label{eq:divided-predictor}
+ \boxed{\widehat\delta=
+   \frac{\nu(J-f^2)-\varepsilon_N S}{\kappa f^2}.}
+\end{equation}
+Its relative-error estimate is $|\widehat\delta|/\nu$; a known zeta zero
+enters only the subsequent scoring. The bare local estimate is
+$-\varepsilon_NS/f^2$. All terms in~\eqref{eq:divided-predictor} must use
+the same normalization, and the subtraction $J-f^2$ needs sufficient
+source and working precision.
+
+\begin{proposition}[Finite corrected-displacement identity]
+\label{prop:divided-correction}
+Let $\gamma>0$ be a correctly matched simple real zeta ordinate and put
+$d=\gamma-\nu$ and $B=F(\gamma)/d$, with $B=f$ at $d=0$.
+Over the full multiset $z_\rho=(\rho-1/2)/i$ of nontrivial zeta zeros,
+define
+\[
+ R(\nu)=\sum_{z_\rho\ne\pm\gamma}
+         \frac{F(z_\rho)^2}{z_\rho-\nu},\qquad
+ R'(\nu)=\sum_{z_\rho\ne\pm\gamma}
+         \frac{F(z_\rho)^2}{(z_\rho-\nu)^2}.
+\]
+The prime differentiates the rational weights with $F$ and the excluded
+pair fixed. Set
+\begin{align}
+ E_{\rm loc}={}&\frac{2\nu dB^2}{2\nu+d}
+   -\nu\left\{B^2\left(1+\frac{d^2}{(2\nu+d)^2}\right)-f^2\right\}
+   -\kappa f^2d.\label{eq:divided-local}
+\end{align}
+Then, without assuming RH,
+\begin{equation}\label{eq:divided-remainder}
+ \widehat\delta-(\nu-\gamma)
+ =\frac{\nu R'(\nu)-R(\nu)-E_{\rm loc}}{\kappa f^2}.
+\end{equation}
+For fixed nonzero $f,\nu$, one has $E_{\rm loc}=O(d^2)$.
+\end{proposition}
+\begin{proof}
+The secular root condition gives
+$F_b(z)=F(z)/(z-\nu)$ by partial fractions. The general Weil Hermitian
+identity~\cite[Section~1.2]{AlpogeFurman2026}, applied to real-type transforms,
+therefore gives
+\[
+ \varepsilon_NS=\frac{2\nu d B^2}{2\nu+d}+R(\nu),\qquad
+ J=B^2\left(1+\frac{d^2}{(2\nu+d)^2}\right)+R'(\nu).
+\]
+Both sums converge absolutely for these finite Fourier transforms. At an
+off-line zero the summand is a square, not an absolute square; conjugate
+pairs make the total real. The analytic divided transform supplies the
+displayed value at coincidence. Substitution gives
+\eqref{eq:divided-remainder}. Finally,
+$B=f+\tfrac12F''(\nu)d+O(d^2)$, so the constant and linear terms in
+$E_{\rm loc}$ cancel.
+\end{proof}
+
+\paragraph{Computing the second form.}
+The rank-two commutator, with $D=\operatorname{diag}(\alpha_j)$,
+is $[D,A]=g\mathbf1^T-\mathbf1g^T$. Its generator can be recovered from
+one column: $g_j=\alpha_jA_{j0}$, $g_0=0$. Since $\mathbf1^Tb=0$,
+\begin{equation}\label{eq:divided-fastform}
+ J=\varepsilon_N\|b\|^2+(g^Tb)r'(\nu),\qquad
+ r(z)=\sum_j\frac{a_j}{z-\alpha_j}.
+\end{equation}
+Indeed $(D-\nu I)Ab=\varepsilon_Na-\mathbf1(g^Tb)$; multiply by
+$(D-\nu I)^{-1}$ and pair with $b$. Thus evaluation costs $O(N)$ per
+root once the generator and eigenstate are available. The full matrix is
+still needed to determine that eigenstate: the commutator does not fix
+the diagonal or the eigenvalue decay.
+
+\paragraph{Why the correction helps, and its limit.}
+Under RH, put $E_m=2F(\gamma_m)^2$. Pairing remote zeros yields
+\begin{equation}\label{eq:divided-secondweight}
+ \nu R'-R=2\nu^3\sum_{m\ne k}
+       \frac{E_m}{(\gamma_m^2-\nu^2)^2}\ge0.
+\end{equation}
+The contribution with $\gamma_m>H>\nu$ is at most
+$2\nu^3E_{>H}/(H^2-\nu^2)^2$. The bare estimate instead has a
+remote bound $\nu E_{>H}/(H^2-\nu^2)$ before division by $f^2$.
+The correction cancels the leading behavior $R(\nu)\approx\nu M_2$ of
+a distant spectral distribution. An unconditional bound needs the
+absolute size of the signed-complex sum, and finite positive matrices
+do not supply that bound. The identities above are unconditional; smallness
+of their remainder uniformly in $\lambda^2,N,k$ remains open.
+The denominator $\kappa$, local curvature, correct root matching and
+numerical assembly error must also be controlled.
+
+\paragraph{Retained-data test, 10 September 2026.}
+The first twenty converged stored roots in each of five configurations
+give Table~\ref{tab:divided-test}. All 100 signs agree. The reported
+errors compare error magnitudes, not percentages of large digit depths.
+The source eigenvectors, root records and matrix ingredients are linked
+by their artifact identities; the postprocessing was repeated with 100
+fewer decimal digits, giving identical exported 32-significant-digit
+prediction results. This is point arithmetic on common retained sources,
+not independent assembly or interval certification.
+
+\begin{table}[htbp]
+\centering\small
+\begin{tabular}{@{}rrrr@{}}
+\toprule
+$\lambda^2$ & $N$ & source bits & maximum relative prediction error \\
+\midrule
+13 & 120 & 3386 & $0.348670\%$ \\
+100 & 500 & 3386 & $0.000275\%$ \\
+1000 & 800 & 6708 & $0.000061\%$ \\
+1000 & 890 & 6708 & $0.000047\%$ \\
+1200 & 970 & 6708 & $0.000035\%$ \\
+\bottomrule
+\end{tabular}
+\caption{Unfitted corrected error estimates, first twenty converged roots
+per configuration. Reference ordinates enter scoring, not the predictor.}
+\label{tab:divided-test}
+\end{table}
+
+At $(\lambda^2,N)=(1000,890)$, selected higher-root diagnostics reduce
+the error-estimate discrepancy from $46.10\%$ to $0.00790\%$ at $k=500$.
+It is $0.03039\%$ at $k=575$, but rises to $1.41441\%$ at $k=600$ and
+$2.23735\%$ at $k=610$. Those last two fail a one-percent accuracy gate.
+These higher roots use reference-seeded Newton refinement of the retained
+transform, not independent discovery or a root-counting certificate; the
+selected tests do not prove every intervening index passes. The result
+advances the root-conversion channel. A formula predicting the eigenvalue
+and eigenvector from cutoff and resolution alone is still required.

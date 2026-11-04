@@ -1,0 +1,84 @@
+\subsection{A positive pencil for the exact finite ground source}
+\label{ssec:ground-regularization}
+
+The full matrix $A-\varepsilon I$ is singular at the ground eigenvalue.
+A positive rank-one lifting removes this obstacle without changing
+the monic ground transform or its root pencil. Write
+$D=\operatorname{diag}(j^2)$ and $[D,A]=rw^T-wr^T$, with
+$w=(1,\sqrt2,\ldots)^T$.
+
+\begin{proposition}[Ground-pencil preserving regularization]
+\label{prop:ground-regularization}
+For $\rho>0$, set
+\[
+ B_\rho(z)=A-zI+\rho ww^T,\qquad r_\rho=r+\rho Dw,\qquad
+ S_\rho(z)=B_\rho(z)D+r_\rho w^T.
+\]
+If $J$ spans $\ker w^T$, then
+\[
+ J^TB_\rho(z)J=J^T(A-zI)J,\qquad
+ J^TS_\rho(z)J=J^T((A-zI)D+rw^T)J.
+\]
+If $\varepsilon$ is a simple ground eigenvalue and
+$w^Tv_g\ne0$, then $B_\rho(\varepsilon)>0$. Its monic minimizer
+is $v_g/(w^Tv_g)$, and its compressed pencil is exactly the ground-root
+pencil, independently of $\rho$.
+\end{proposition}
+\begin{proof}
+The displaced commutator has generator $r_\rho$. The added term in
+$S_\rho$ is $\rho(ww^TD+Dww^T)$, which vanishes after compression,
+as does the added term in $B_\rho$. The form $A-\varepsilon I$ is
+positive semidefinite with nullspace spanned by $v_g$. Its rank-one
+addition is strictly positive because $w^Tv_g\ne0$. Under the monic
+constraint $w^Ta=1$ it adds the constant $\rho$ to the energy, so the
+minimizer is unchanged and equals the normalized null vector.
+\end{proof}
+
+Put $y(z)=B_\rho(z)^{-1}w$ and $H(z)=w^Ty(z)$. Where $B_\rho(z)>0$,
+\[
+ H'(z)=\|y(z)\|^2>0,\qquad H(\varepsilon)=\rho^{-1}.
+\]
+The leading-functional solve and the natural positive factors therefore
+give a scalar refinement step
+$(\rho^{-1}-H)/\|y\|^2$. This point step is followed by an analytic
+certificate, rather than interpreted as one.
+
+Specifically, an interval residual for an explicitly serialized vector
+and shift $z$ gives some analytic eigenvalue in $[z-R,z+R]$. If
+$B_\rho(z)\succeq gI$ with $g>R$, rank-one interlacing gives
+$\lambda_2(A-zI)\ge g$. The residual interval then contains the unique
+ground eigenvalue. Including $R$ as a scalar diagonal operator error
+transfers the positive surrogate to $B_\rho(\varepsilon)$ and hence
+to the unchanged analytic ground-root pencil. A scalar shift error
+has operator norm $R$; it does not acquire a factor $\sqrt{N+1}$.
+
+The lifting, compression and leading solve pass 3241 exact rational
+checks on 240 fixtures, including singular sources. A multiple ground
+eigenvalue, or a ground vector orthogonal to $w$, is not repaired by
+this rank-one update and must fail the positivity condition explicitly.
+
+\input{sections/ground_regularization_results.tex}
+
+\paragraph{Exact transport of the ground correction.}
+For fixed $N$, let $a(z)=Jq(z)$ be a simple positive generalized-root
+branch of $(T(z),H(z))$, where here
+$T(z)=J^T((A-zI)D+rw^T)J$ and $H(z)=J^T(A-zI)J$.
+Differentiation and symmetry cancel the eigenvector derivatives:
+\[
+ \theta_k'(z)=
+ \frac{\theta_k(z)\|a(z)\|^2-a(z)^TDa(z)}
+ {a(z)^T(A-zI)a(z)},\qquad
+ \nu_k(\varepsilon)-\nu_k(0)
+ =\int_0^\varepsilon\frac{\beta^2\theta_k'(z)}{2\nu_k(z)}\,dz.
+\]
+Positivity and simple-branch continuation must hold throughout this
+interval. Positivity alone does not fix the numerator's sign: for
+$D=\operatorname{diag}(0,1)$, $w=(1,1)^T$, $r=0$ and
+$A=\operatorname{diag}(a,d)$, the scalar root is
+$\theta(z)=(d-z)/(a+d-2z)$ and
+$\theta'(z)=(d-a)/(a+d-2z)^2$, which admits both signs.
+There are 302 exact scalar derivative and sign checks. This is not
+a CCM monotonicity counterexample; it explains why the zero-shift
+nested-pencil proof cannot simply be applied with a changing ground
+shift $\varepsilon_N$. A uniform indexed estimate of this integral,
+and of the mode, cutoff and finite-$P$ channels, is still required.

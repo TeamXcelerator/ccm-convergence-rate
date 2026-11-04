@@ -1,0 +1,135 @@
+\subsection{The exact Fourier boundary and a saturation control}
+\label{sec:discrete-amplitude-control}
+
+The next discriminator retains the exact Gamma carrier instead of its
+leading interior approximation. Let $y=x/\beta$, $\tau=y/N$, and
+\begin{align*}
+ V_N(y)&=(N+y)\log\frac{N+y}{N}
+            +(N-y)\log\frac{|N-y|}{N},\\
+ J_N(y)&=\left|\frac{\Gamma(N+1)^2}
+ {\Gamma(N+1+y)\Gamma(N+1-y)}\right|e^{V_N(y)}.
+\end{align*}
+Here $0\log0=0$ and reciprocal Gamma is continued through its zeros.
+Inside $y<N$, Stirling's leading factor is $(1-\tau^2)^{-1/2}$,
+which loses uniformity at the last retained Fourier mode. The exact
+factor has a finite transition there.
+
+\begin{proposition}[Uniform factorization of the known carrier]
+\label{prop:uniform-carrier-factor}
+Define the exact positive-real Stirling remainder by
+\[
+ R(u)=\log\Gamma(u+1)-(u+\tfrac12)\log u+u-\tfrac12\log(2\pi).
+\]
+For $N\geq1$, $y\geq0$, $h=y-N$, put
+$\Phi(h)=e^{h-h\log|h|}|1/\Gamma(1-h)|$, with $\Phi(0)=1$.
+Then, including carrier zeros by continuity,
+\[
+ J_N(y)=\sqrt{\pi N}\,\Phi(h)
+       \left(1+\frac{h}{2N}\right)^{-1/2}
+       e^{2R(N)-R(N+y)}.
+\]
+Away from those exact zeros, omitting the final exponential incurs
+relative error below $1/(6N)$, uniformly for $y\geq0$.
+\end{proposition}
+\begin{proof}
+Substitute the defining remainder identity at the two positive arguments
+$N$ and $N+y$. All large logarithmic terms cancel to give the displayed
+factorization. Binet's formula\cite{DLMFGamma} implies that $R$ is positive and decreasing,
+with $R(u)<1/(12u)$. Therefore
+$0<2R(N)-R(N+y)<1/(6N)$, and the relative error is
+$1-e^{-[2R(N)-R(N+y)]}<1/(6N)$. At a carrier zero both expressions
+vanish, so no relative error is assigned.
+\end{proof}
+At $y=N$ the leading size is $\sqrt{\pi N}$; at
+$y=N+1,N+2,\ldots$ the forced carrier zeros remain exact.
+For the interior remainder
+$E=2R(N)-R(N+y)-R(N-y)$, Binet's integral also gives
+\[
+ -\frac{y^2}{6N(N^2-y^2)}\leq E\leq0,\qquad 0\leq y<N.
+\]
+These are estimates of a known factor, not a CCM error bound. The
+factorization and signed bounds pass 693 Arb checks at 150 digits,
+including both sides of the boundary and exact carrier zeros.
+
+\paragraph{Improved exploratory curves, followed by a failed control.}
+Multiplying the previous trial transform by the exact signed Gamma
+factor and recomputing its finite lattice sums reduces the five-case
+RMS depth errors to $0.216,0.183,0.188,0.114,0.059$ digits, in the
+same configuration order as the preceding subsection. Nevertheless,
+only 386/4373 displacements pass the unchanged $1\%$ gate.
+A separate imaginary-order Bessel transport hypothesis raises this
+to 700/4373, still insufficient. It replaces a leading quarter-power
+amplitude by
+\[
+ Q_B(a,x)=\frac{e^{-\pi x/2}\operatorname{Re}I_{ix}(a)}{I_0(a)}
+                  e^{-S_a(x)+a},\qquad
+ S_a(x)=\sqrt{a^2-x^2}-x\arccos(x/a).
+\]
+The candidate divides the Gamma-corrected bare displacement by $Q_B$.
+The Bessel definition is standard\cite{DLMFImaginaryBessel}; no CCM
+differential equation identifying that counterpart is established. Its evaluation
+required adaptive precision, reaching 1600 digits. Earlier 90-digit
+results with inadequate ball widths are retained as unqualified attempts.
+
+A new control holds $C=125$ fixed and raises $N$ from 1500 to 2000,
+keeping the same 2300-digit assembly, 2000-digit point solve, reference
+targets and operator-predictor rule. All 1000 point-state roots have
+disjoint enclosures in their requested reference windows and a matching
+exact polynomial upper count. No carrier lies below the counting
+threshold. All 1000 unchanged operator predictions pass; their worst
+relative error is $2.51079\cdot10^{-6}$.
+\begin{center}\small
+\begin{tabular}{r|rrr}
+\toprule
+$N$ at $C=125$&Eigenvalue depth&$D_1$&$D_{1000}$\\
+\midrule
+1500&665.08700647&662.16445877&21.94444762\\
+2000&665.19096739&662.26841961&22.01817255\\
+\bottomrule
+\end{tabular}
+\end{center}
+The isolated Gamma correction predicts a \emph{loss} of $0.06942$
+digits at $k=1000$, whereas the measured depth \emph{gains} $0.07372$.
+Its mode-change prediction passes only 133/1000 ratio tests. The full
+Gamma and Gamma--Bessel trials pass only 53/1000 and 64/1000 on the new
+state. Thus the improved earlier curves do not justify transferring
+that isolated factor into a uniform convergence law. The polynomial
+amplitude must also be controlled. The new state has an interval matrix
+residual, with residual/eigenvalue below $3.252\cdot10^{-179}$; this is
+not a certificate for every tiny analytic ground-transform displacement.
+
+\paragraph{A sharper model statement about the minimum mode budget.}
+For $x>4\pi$ and $C>x/(4\pi)$, write $\ell_x=\log(x/(4\pi))$.
+Equation~\eqref{eq:action-mode-threshold} becomes
+\[
+ N_{\rm turn}(C,x)=\frac{x\ell_x}{4}\frac{\sin u}{u},
+ \qquad u=\frac{\pi\ell_x}{2\log C}.
+\]
+It increases with $C$, from $x\ell_x/(2\pi)$ at the cutoff boundary
+to $x\ell_x/4$ as $C\to\infty$. At fixed $N$, the largest model
+endpoint occurs at
+\[
+ C_* =\frac{N}{2W(N/2)},\qquad
+ a_{\max}=\frac{2\pi N}{W(N/2)},
+\]
+where $W$ is the positive Lambert function. These follow from the
+explicit endpoint equation; they are not CCM capacity theorems.
+The degree requirement $N\geq k$ remains separate. In the mode-limited
+branch, putting $s=\sqrt{a^2-x^2}$ and $b=\sqrt{a^2-A^2}$ gives
+\[
+ \partial_N\mathcal S=2\log\left|\frac{s+b}{s-b}\right|>0,
+ \qquad x<a,\quad x\ne A.
+\]
+Yet its $C$-derivative need not be positive. Close to the model endpoint,
+with $\delta=a-x\ll a-A$,
+\[
+ \mathcal S(a-\delta)\sim
+ \frac{2\sqrt2}{3\sqrt a}
+ \left(1+\frac{2LA}{\pi b}\right)\delta^{3/2}.
+\]
+The cutoff-limited coefficient has bracket one; this expansion is not
+uniform when the two boundaries coalesce. Fifty-one independent point
+checks verify these model identities. They explain why a useful indexed
+minimum must account for distance from the resolution boundary, rather
+than merely clip an inaccurate depth to zero. Uniform prefactor,
+source-transfer and arithmetic estimates are still required.

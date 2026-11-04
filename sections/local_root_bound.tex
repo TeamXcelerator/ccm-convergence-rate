@@ -1,0 +1,131 @@
+\subsection{Local rational root bounds near the indexed resolution edge}
+\label{ssec:local-rational-root-bound}
+
+The global Fourier derivative bound in
+Section~\ref{ssec:quantitative-mode-transfer} is deliberately conservative.
+It can fail to establish a useful neighborhood when the transform and its
+derivatives are small together. The following local bound retains that
+cancellation in the Taylor coefficients. It is elementary rational-function
+analysis, not a new asymptotic formula for the arithmetic ground state.
+
+For an even finite state, set $F_u(t)=p(t)R_u(t)$, with
+$p(t)=2L^{-1/2}\sin(tL/2)$. Away from the Fourier lattice,
+\[
+ R_u(t)=\frac{u_0}{t}+\frac1{\sqrt2}\sum_{j=1}^N u_j
+ \left\{\frac1{t-\alpha_j}+\frac1{t+\alpha_j}\right\},
+ \qquad \alpha_j=2\pi j/L.
+\]
+Here $u_j$ are orthonormal even-sector coefficients. Let
+$R(t)=\sum_i w_i/(t-p_i)$, fix a real center $x$ off its poles, and put
+\[
+ c_m=(-1)^m\sum_i\frac{w_i}{(x-p_i)^{m+1}},\qquad
+ d_i=|x-p_i|,\qquad q_i=r/d_i<1.
+\]
+For an integer $M\ge1$ define
+\begin{align*}
+ V_M(r)&=\sum_{m=2}^M m|c_m|r^{m-1}+T_M(r),\\
+ T_M(r)&=\sum_i\frac{|w_i|}{d_i^2}\,
+ \frac{q_i^M\{(M+1)-Mq_i\}}{(1-q_i)^2}.
+\end{align*}
+
+\begin{proposition}[Local derivative margin and displacement enclosure]
+\label{prop:local-rational-root-bound}
+For $|h|\le r<\min_i d_i$,
+$|R'(x+h)-c_1|\le V_M(r)$. If
+\[
+ a:=|c_1|>V_M(r),\qquad |c_0|<\{a-V_M(r)\}r,
+\]
+then $R$ has exactly one real root $x+h_*$ in $(x-r,x+r)$, and
+\[
+ \left|h_*+\frac{c_0}{c_1}\right|\le\frac{V_M(r)}a\,r.
+\]
+If this interval also excludes every zero of $\sin(tL/2)$, the same
+existence and uniqueness hold for the finite transform in that interval.
+\end{proposition}
+\begin{proof}
+Expand each simple fraction geometrically. The differentiated tail is
+bounded by
+\[
+ \frac{|w_i|}{d_i^2}\sum_{m=M+1}^\infty m q_i^{m-1}
+ =\frac{|w_i|}{d_i^2}
+ \frac{q_i^M\{(M+1)-Mq_i\}}{(1-q_i)^2}.
+\]
+Keep the cancellations in the finitely many $c_m$ before taking absolute
+values. The derivative has constant sign and magnitude at least
+$a-V_M(r)$ throughout the interval. The strict residual inequality
+gives opposite endpoint signs and therefore one root. Integrating
+$R'(x+h)-c_1$ from zero to that root gives the displacement bound.
+The last assertion follows because the sine factor never vanishes there.
+\end{proof}
+
+All quantities admit outward-rounded interval evaluation. An unresolved
+derivative, a radius reaching a pole or a carrier zero, or an unsuccessful
+Taylor-order limit is an unresolved certificate, not a claimed absent
+root. Arithmetic precision used to verify this finite rational function
+is distinct from accuracy of its source eigenvector.
+
+\paragraph{A stronger finite check on the retained mode pair.}
+The unchanged $c=1000$, $N=800\to890$ pair from
+Section~\ref{ssec:quantitative-mode-transfer} was evaluated at all thirteen
+previously frozen indices. The parent and child vectors are the exact
+decimal vectors in the retained files; no eigensolve or matrix assembly
+was repeated. Interval evaluation uses 2100 decimal digits, and an
+independent direct-power evaluation at 2600 digits rechecks every certified
+derivative margin and both endpoint signs. Nine hundred separate exact
+rational fixture checks verify the derivative-tail implementation.
+
+All thirteen parent neighborhoods and nine child neighborhoods certify.
+The nine originally eligible pairs all retain the one-percent pass for
+the frozen full two-term Newton prediction. The largest certified
+relative comparison bound is below $7.36\cdot10^{-10}$, including the
+deliberate enclosure padding; it is not an estimate of the actual model
+error. The old global energy/Fourier-radius calculation established
+neighborhoods at only four of these indices. The new child orders are
+\begin{center}\small
+\begin{tabular}{@{}rrrrrrrrrr@{}}
+\toprule
+$k$ & 1 & 20 & 100 & 300 & 400 & 450 & 475 & 500 & 525\\
+$M$ & 1 & 1 & 1 & 1 & 1 & 3 & 5 & 9 & 21\\
+\bottomrule
+\end{tabular}
+\end{center}
+The four originally ineligible child cases remain unresolved: $k=550$
+reaches the fixed order limit 96, while the proposed neighborhoods for
+$k=575,600,610$ meet a Fourier carrier zero. They are retained rather
+than removed or relabeled as converged. These are local certificates for
+serialized states, not analytic-ground source certificates, full-spectrum
+ordinal counts, or thirteen independent matrix experiments.
+
+\paragraph{Three different notions of sufficient resolution.}
+The condition $\alpha_{N+1}>\nu$ in the earlier adjoint-tail bound is a
+condition for that particular estimate, not a necessary condition for an
+accurate movable root. In this retained example, $N=800,k=500$ has about
+73.905 relative digits while $\nu L/(2\pi)\simeq891.819>N+1$.
+A hard rule discarding every target beyond the retained Fourier band
+would therefore discard a successful reproduction.
+
+There is nevertheless a degree obstruction: after multiplication by
+$t\prod_{j=1}^N(t^2-\alpha_j^2)$, the secular numerator is a polynomial
+of degree at most $N$ in $t^2$. A nonzero even state therefore has at
+most $N$ distinct positive nonlattice secular roots. Resolving an entire
+prefix of $K$ such roots requires $N\ge K$; it does not guarantee the
+required accuracy, nor identify a reference label with a spectral ordinal.
+
+Finally, writing $\rho=\nu/\alpha_{N+1}<1$, the earlier multiplier is
+\[
+ \frac{\nu}{\alpha_{N+1}^2-\nu^2}
+ =\frac1{\alpha_{N+1}}\frac{\rho}{1-\rho^2}.
+\]
+Its fixed-$k$ $N^{-2}$ behavior becomes only $N^{-1}$ when $\rho$ stays
+strictly between zero and one, and loses that suppression as
+$\alpha_{N+1}-\nu$ remains bounded. These statements concern this explicit
+factor at fixed cutoff, with the other theorem constants controlled;
+they are not lower bounds for the actual error. An accuracy-dependent
+minimum-$N$ law must distinguish the degree floor, an estimate's
+admissibility conditions, and the actual indexed accuracy threshold.
+
+\paragraph{What this removes, and what remains.}
+This local certificate closes the root-nonlinearity qualification for
+the nine retained eligible comparisons. It does not determine the
+arithmetic mode innovation, cutoff displacement, or source uncertainty
+from $c,N,P,k$. Those remain the work needed for the parameter law.

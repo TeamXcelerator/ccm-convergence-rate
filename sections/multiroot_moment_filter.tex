@@ -1,0 +1,288 @@
+\subsection{Local multi-root cancellation and the remaining common-scale problem}
+\label{ssec:multiroot-filter}
+
+\paragraph{Status (10 September 2026).}
+The identities below are exact finite statements under their explicit hypotheses.
+The reported evaluations use point arithmetic, not outward-rounded numerical
+certificates. They improve the a posteriori transfer from a finite eigenstate
+to a root displacement; they do not supply the missing a priori law in
+$c=\lambda^2,N$ and precision. In particular, no fitted conversion constant or
+reference-root error enters the new predictor.
+
+Retain the normalization and observables of
+\eqref{eq:divided-observables}. For a stencil $\mathcal J$ of $p+1$ distinct
+simple positive nonlattice finite roots $\nu_i$, set
+\[
+ t_i=\nu_i^2,\qquad a_i^*=\frac{2t_i}{\kappa_i},\qquad
+ y_i=\frac{J_i-f_i^2-\varepsilon_N h_iS_i}
+                {\varepsilon_N\kappa_i}.
+\]
+Assume $\varepsilon_N f_i\kappa_i\ne0$ and correctly match each root to a
+distinct simple real ordinate $\gamma_i$. Put $d_i=\gamma_i-\nu_i$,
+$B_i=F(\gamma_i)/d_i$, continued by $f_i$, and define
+\[
+ L_i=\frac{2\nu_i d_i B_i^2}{2\nu_i+d_i},\quad
+ Q_i=B_i^2\left(1+\frac{d_i^2}{(2\nu_i+d_i)^2}\right),\quad
+ C_i=\frac{Q_i-f_i^2-h_iL_i}{\varepsilon_N\kappa_i}.
+\]
+Exclude every stencil pair from a \emph{common} remote multiset, write
+$x_m=z_m^2$, $E_m=2F(z_m)^2$ for positive-real-part representatives, including
+multiplicity, and set $M(t)=\sum_{\rm common}(E_m/\varepsilon_N)/(x_m-t)$.
+Assume $\gamma_j^2\ne t_i$ for $i\ne j$ and $x_m\ne t_i$ in the common
+remote set. Off-line summands retain complex squares and conjugate pairing.
+The finite Weil identities give exactly
+\begin{equation}\label{eq:multiroot-robin}
+ y_i=M(t_i)+a_i^*M'(t_i)+C_i+
+ \sum_{j\in\mathcal J\setminus\{i\}}\frac{E_j}{\varepsilon_N}
+ \left(\frac1{\gamma_j^2-t_i}+\frac{a_i^*}{(\gamma_j^2-t_i)^2}\right).
+\end{equation}
+The local pair contributes $L_i$ to $\varepsilon_NS_i$ and $Q_i$ to $J_i$.
+The respective remote-pair contributions are
+$\nu_i E_m/(x_m-t_i)$ and $E_m(x_m+t_i)/(x_m-t_i)^2$.
+Subtraction uses $1-\nu_i h_i=\kappa_i$.
+
+\begin{proposition}[Polynomial-reproducing remote cancellation]
+\label{prop:multiroot-cancellation}
+Fix a target $0\in\mathcal J$. Suppose weights $w_i$ solve
+\begin{equation}\label{eq:multiroot-weights}
+ \sum_{i\in\mathcal J}w_i\bigl[P(t_i)+a_i^*P'(t_i)\bigr]=P(t_0)
+ \quad(\deg P\le p).
+\end{equation}
+Then the operator-derived predictor
+\begin{equation}\label{eq:multiroot-predictor}
+ \widehat\delta_p=\frac{\varepsilon_N}{f_0^2}
+              \left(\nu_0\sum_i w_i y_i-S_0\right)
+\end{equation}
+has remote error kernel
+\begin{equation}\label{eq:multiroot-kernel}
+ K(x)=\sum_i w_i\left(\frac1{x-t_i}+\frac{a_i^*}{(x-t_i)^2}\right)
+                  -\frac1{x-t_0}=O(x^{-p-2}).
+\end{equation}
+For $p=0$ this is the previous divided-form correction.
+\end{proposition}
+\begin{proof}
+Expand each rational term at infinity. Its coefficient of $x^{-q-1}$ is
+$t_i^q+q a_i^*t_i^{q-1}$. Equation~\eqref{eq:multiroot-weights} makes this
+coefficient equal to $t_0^q$ for $q=0,\ldots,p$. This proves the stated
+cancellation, without assuming that the remote transform is a polynomial.
+\end{proof}
+
+For completeness define
+\[
+ X=\sum_{j\in\mathcal J}\frac{E_j}{\varepsilon_N}
+ \left\{\nu_0\sum_{i\ne j}w_i
+ \left[\frac1{\gamma_j^2-t_i}+\frac{a_i^*}{(\gamma_j^2-t_i)^2}\right]
+       -\frac{\mathbf1_{j\ne0}\nu_0}{\gamma_j^2-t_0}\right\}.
+\]
+Direct substitution in~\eqref{eq:multiroot-robin} proves the exact remainder
+\begin{equation}\label{eq:multiroot-remainder}
+ \widehat\delta_p-(\nu_0-\gamma_0)=
+ \frac{\varepsilon_N}{f_0^2}
+ \left\{\nu_0\sum_{\rm common}\frac{E_m}{\varepsilon_N}K(x_m)
+                +X+\nu_0\sum_iw_iC_i\right\}
+                  +d_0-\frac{L_0}{f_0^2}.
+\end{equation}
+In particular, the cross-stencil and nonlinear local terms cannot be omitted
+from a proof merely because they are small in a numerical example.
+
+\paragraph{An explicit finite-height bound.}
+Let $\Delta_i=t_i-t_0$, $\max_i\nu_i<H<T$, and $T>\alpha_N$. Require every matched stencil ordinate to lie below $H$. Define
+\begin{align*}
+ B_K(H)=\sum_i\frac{|w_i|}{(H^2-t_0)^{p+1}}
+ \biggl\{&\frac{|\Delta_i|^{p+1}}{H^2-t_i}\\
+ &+|a_i^*|\left[\frac{(p+1)|\Delta_i|^p}{H^2-t_i}
+             +\frac{|\Delta_i|^{p+1}}{(H^2-t_i)^2}\right]\biggr\}.
+\end{align*}
+Expanding $1/(x-t_i)$ to order $p$ in $\Delta_i$, with exact remainder
+$\Delta_i^{p+1}/[(x-t_0)^{p+1}(x-t_i)]$, and differentiating that remainder
+proves $|K(z^2)|\le B_K(H)$ when $|\Re z|\ge H$.
+Here $|z^2-t_i|\ge H^2-t_i$, including off-line zeros.
+Platt--Trudgian's finite verification permits $T=3\cdot10^{12}$
+\cite{AttackPlattTrudgian}. For a complete pair-energy prefix $E_H$ and an
+absolute complex-tail bound $V_T$, the uncomputed portion of
+$\sum_{\rm common}E_mK(x_m)$ is bounded by
+\begin{equation}\label{eq:multiroot-tail}
+ (\varepsilon_N-E_H+V_T)B_K(H)+V_TB_K(T).
+\end{equation}
+Positivity is used only between $H$ and $T$; the rest uses absolute variation.
+A valid conservative choice from the finite rational expansion is
+\begin{gather*}
+ V_T\le\frac{16}{L}\cosh^2(L/4)B_M(T)^2\frac{\log T+1}{T},
+ \qquad \mu_{2m}=\sum_j a_j\alpha_j^{2m},\\
+ B_M(T)=\sum_{m<M}\frac{|\mu_{2m}|}{T^{2m}}+
+ \frac{\|a\|_1(\alpha_N/T)^{2M}}{1-(\alpha_N/T)^2}.
+\end{gather*}
+Here $M\ge1$ is an integer and $\alpha_N=2\pi N/L$.
+Corollary~1.2 of Hasanalizade--Shen--Wong \cite{AttackZeroCount}
+implies $\mathcal N(t)\le t\log t$ for $t\ge T$. Integration by parts gives
+$\sum_{\Im\rho>T}(\Im\rho)^{-2}\le2(\log T+1)/T$; the finite even
+rational expansion and $|\sin(Lz/2)|\le\cosh(L/4)$ in the critical strip
+then give the displayed variation bound. No assumption of global RH is used.
+
+If $|d_i|\le r_i<2\nu_i$ and $|F'''|\le M_{3,i}$ on the corresponding real
+interval, put $b=M_{3,i}/(6|f_i|)$,
+\begin{gather*}
+ C=2b+(|h_i|/2+br_i)^2,\qquad
+ G=\frac{|h_i|}{2\nu_i-r_i}+\frac1{(2\nu_i-r_i)^2},\\
+ H_i=C+G+(|h_i|+Cr_i)(|h_i|+Gr_i),\\
+ R_i=(1+|h_i|r_i/2+br_i^2)^2.
+\end{gather*}
+Taylor's theorem, with the first-order terms canceled, gives
+\[
+ |C_i|\le\frac{f_i^2r_i^2H_i}{|\varepsilon_N\kappa_i|},\qquad
+ |d_i-L_i/f_i^2|\le r_i^2
+       \left(|h_i|+Cr_i+\frac{R_i}{2\nu_i-r_i}\right).
+\]
+Together these formulas give a fully specified conditional finite enclosure.
+Matching, certified coefficients and directed rounding are separate obligations.
+If the remainder is enclosed by $[A,B]$, the signed relative displacement
+error is obtained from $q/(\widehat\delta_p-q)$ at the endpoints only when
+$\widehat\delta_p\notin[A,B]$. An interval containing that pole cannot be
+reported as a finite relative-error enclosure; it must remain unassessed.
+
+\paragraph{Conditioning and falsification.}
+Simplicity alone does not imply $\kappa_i\ne0$: the even polynomial
+$F(z)=z^2-4$ at $\nu=2$ is an algebraic counterexample. Nor do nonzero kappas
+imply an invertible stencil: $F=(z^2-1)(z^2-4)$ gives
+$t_i+a_i^*=5/2$ at both roots, making the $p=1$ system singular. These are
+algebraic fixtures, not asserted CCM ground-state examples. A CCM-specific
+uniform conditioning theorem remains open.
+
+The frozen primary choice was $p=2$, using the target and the two nearest
+available computed roots by $|\nu_i-\nu_0|$, ties to lower $\nu_i$.
+It passed the $1\%$ displacement gate on 110 retained configuration/root pairs.
+Point substitution into the finite-height remainder covered all 90 pairs with
+complete energy/Taylor inputs; 20 others lacked those audit inputs. In the
+original sparse $c=1000,N=890$ pool, the signed magnitude errors at $k=600,610$
+were $-0.4876697\%$ and $+0.5583456\%$, with respective point ranges
+$[-0.4876807,-0.4876566]\%$ and $[0.5583284,0.5583617]\%$.
+A separately frozen acquisition of 11 additional indices gave a denser 41-root
+pool. All 41 primary predictions passed; the errors at $k=595,600,610$ became
+$+0.0559910\%$, $-0.00314985\%$, $+0.00447358\%$. The previous one-root
+correction fails at $k=595$ as well, by $-1.8918383\%$.
+The new indices use reference-seeded, full-precision Newton validation on the
+same retained eigenstate, not independent discovery or 41 independent assemblies.
+There are 121 distinct configuration/root pairs across the two stages,
+because 30 of the 41 dense-pool cases repeat earlier indices.
+The fresh dense cases are not included in the earlier 90-case remainder audit.
+The largest weight $1$-norm in the dense primary rule is $4.408$; at degree
+$4$ it exceeds $1156$. Higher order therefore requires a conditioning audit,
+even when its point score improves. Rounding the initial predictor inputs
+$y_i,\kappa_i$ to 20 significant digits changes its value by at most
+$1.11\cdot10^{-20}$ relatively in 110 tests; this checks postprocessing
+sensitivity, not eigenstate accuracy.
+Global Pad\'e and nonlinear rational alternatives failed near the edge and are
+retained as failures in the research return packet. The previously frozen
+shifted-erf eigenvalue model also fails the denser $c=1200,N=60$--$150$ window
+($1.166\%$ RMS and $1.424\%$ maximum depth error) and gives the wrong cutoff-derivative
+sign at $c=100,N=300$. These are dated evidence against that model, not a
+contradiction of an unrelated coarse value envelope or a new fit.
+
+\paragraph{The exact polynomial window and the common factor.}
+Let $\beta=2\pi/L$, $x_j=\beta^2j^2$, $w_0=1$, $w_j=\sqrt2$ for $j>0$,
+$Q_N(x)=\prod_{j=0}^N(x-x_j)$ and
+$P_u(x)=Q_N(x)\sum_{j=0}^N w_ju_j/(x-x_j)$. Then
+\begin{equation}\label{eq:attack-gamma-bridge}
+ F_u(z)=\frac{(-1)^N2\pi}{\sqrt L\,\beta^{2N+1}}
+       \frac{P_u(z^2)}{\Gamma(N+1+z/\beta)\Gamma(N+1-z/\beta)}.
+\end{equation}
+This follows from the finite Gamma product and sine reflection identities,
+including removable singularities by reciprocal Gamma. Thus at most $N$
+positive nonlattice roots are movable polynomial roots; reciprocal Gamma
+supplies forced lattice zeros beyond the Fourier band. A consecutive prefix
+of $k$ distinct movable positive roots therefore requires $k\le N$. An
+isolated root matched to a higher ordinal does not imply that every preceding
+root has been recovered. This is a counting restriction, not a matching theorem.
+
+For integers $N\ge1$, real $|\tau|<1$, and $\Phi_N(s)=\Gamma(N+1)^2/[\Gamma(N+1+s)\Gamma(N+1-s)]$,
+positive-real Stirling remainders \cite{AttackDLMF} prove
+\begin{gather*}
+ \left|\log\Phi_N(N\tau)+NV(\tau)+\tfrac12\log(1-\tau^2)\right|
+ \le\frac1{6N(1-\tau^2)},\\
+ V(\tau)=(1+\tau)\log(1+\tau)+(1-\tau)\log(1-\tau).
+\end{gather*}
+In particular $V=\tau^2+\tau^4/6+\cdots$; a Gaussian replacement is only
+central-window information, not a band-wide approximation.
+The exact extremal quotient uses
+\begin{gather*}
+ W_N(z)=\frac{2L}{\Gamma(N+1+z/\beta)^2\Gamma(N+1-z/\beta)^2},\\
+ v_0=(N!)^{-4},\qquad v_j=\frac{2}{[(N-j)!(N+j)!]^2}\quad(j>0).
+\end{gather*}
+These are the numerator weights on positive-real-part zero representatives
+and the denominator weights on $x_j$, respectively. Then
+the precise finite problem is
+\[
+ \varepsilon_N=\min_{0\ne P\in\mathcal P_N}
+ \frac{\sum_{\Re z>0}W_N(z)P(z^2)^2}{\sum_{j=0}^Nv_jP(x_j)^2}.
+\]
+Here the numerator includes multiplicities and complex squares, and defines
+the positive finite polynomial inner product inherited from the exact even
+matrix. For its reproducing kernel $K_N$, the elementary Gram-inverse
+and Christoffel principles \cite{AttackSimon} give
+\[
+ T_1=\sum_jv_jK_N(x_j,x_j),\qquad
+ T_2=\sum_{i,j}v_iv_jK_N(x_i,x_j)^2.
+\]
+The signed-complex numerator must be retained without global RH; finite
+positivity suffices for this finite-dimensional kernel identity.
+A uniform relative estimate of this arithmetic weighted kernel is still missing.
+
+\paragraph{Residual and precision obligations.}
+The divided-form algebra specifies errors that an implementation must retain.
+In full Fourier coordinates write $D=\operatorname{diag}(\alpha_j)$,
+$[D,A]=g e^T-e g^T$ with fixed boundary vector $e=(1,\ldots,1)^T$,
+$b=(D-\nu I)^{-1}a$, $q=Aa-\varepsilon_Na$,
+$r=-e^Tb=\sum_j a_j/(\nu-\alpha_j)$, $G=g^Tb$, and
+$H=g^T(D-\nu I)^{-1}b$. Then $r'=-e^T(D-\nu I)^{-1}b$
+and the displacement identity gives
+\[
+ b^TAb=\varepsilon_N\|b\|^2+G r'-rH
+                  +b^T(D-\nu I)^{-1}q.
+\]
+The root-residual term $-rH$ is retained in the new dense postprocessing;
+the stored eigenvector alone does not certify the last term.
+
+For normalized, sign-matched finite states with $\|u-\widetilde u\|\le\eta_u$,
+the Fourier integral and Cauchy--Schwarz give the real-axis bound
+\[
+ |F_u^{(m)}-F_{\widetilde u}^{(m)}|
+ \le \frac{\eta_u L^{m+1/2}}{2^m\sqrt{2m+1}}.
+\]
+If $F_u(\nu)=0$ and $|F_u'|\ge m_0>0$ on $[\nu-r,\nu+r]$,
+$\eta_u\sqrt L<m_0r$, and $\eta_u L^{3/2}/\sqrt{12}<m_0$, the perturbed
+transform has a unique zero in that interval, displaced by at most
+$\eta_u\sqrt L/m_0$. This is a conditional stability bound. Certified state
+error, root matching, derivative lower bounds, and stencil conditioning are
+still needed for an end-to-end precision guarantee.
+
+\paragraph{The arithmetic innovation profile.}
+The equivalent computational route uses the even displacement nodes $j^2$ and
+scalar Schur jets: for a pivot $\sigma_N(z)$ of $A_N-zI$,
+\[
+ I_N=-\sigma_N'(0)/\sigma_N(0),\qquad
+ T_p=-p[z^p]\sum_{j=0}^N\log\sigma_j(z).
+\]
+Fixed-order rank-two generator elimination costs $O(N^2)$ scalar operations.
+Its exact recurrence was checked on 1,032 rational identities, and an independent
+analytic assembly reproduced all 366 retained $c=500$ prefix exports of
+$\sigma,M,T_1,T_2$ to their full 80 significant digits. This does not constitute
+a derived innovation asymptotic or a stability certificate. At fixed $c$, if
+the continuum bottom is positive, logarithmic diagonal growth instead implies
+$T_p(N)\sim N/(\log N)^p$ for each fixed integer $p\ge1$; eventual fixed-order ground-state
+dominance is impossible. The present ramp and the unlimited late-$N$ regime
+therefore require different uniformity statements.
+
+The boundary-column-only closure was also tested without fitted constants on
+every $N=320,\ldots,1600$ at $c=5,9$. Only one of 1281 rows at each cutoff
+passed a $1\%$ gate. The precise profile remains an open arithmetic problem;
+it cannot be replaced by that failed local boundary approximation.
+At a prime-power event $c=q=p^r$, the one-sided cutoff derivatives obey
+\[
+ \operatorname{jump}\frac{d[-\log_{10}\varepsilon_N]}{dL}
+ =\frac{2\log p}{\sqrt q\log q}\,
+   \frac{(w^Tu)^2}{\varepsilon_N\log 10},
+ \qquad w=(1,\sqrt2,\ldots,\sqrt2)^T.
+\]
+Hellmann--Feynman gives this identity from the rank-one arithmetic jump.
+It constrains a uniform derivative law;
+it does not by itself falsify a coarse approximation to eigenvalue values.
