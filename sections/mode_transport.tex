@@ -1,0 +1,81 @@
+\subsection{Exact joint transport under a mode increment}
+\label{ssec:joint-mode-transport}
+
+The failed saturation control points to an exact finite replacement for
+an isolated carrier correction. Let the next even matrix be
+$M=\left(\begin{smallmatrix}A&b\\b^T&d\end{smallmatrix}\right)$,
+with $M>0$, and extend the old leading-coefficient functional $\ell$
+by $w=\sqrt2$. Define
+\[
+ u=A^{-1}\ell,\quad h=(\ell^Tu)^{-1},\quad a=hu,\quad
+ v=A^{-1}b,\quad \sigma=d-b^Tv,\quad \eta=\ell^Tv-w.
+\]
+Here $a$ is the old monic minimizer, and $h$ is its form norm; it is
+not a ground eigenvalue.
+
+\begin{proposition}[Joint monic mode update]
+\label{prop:joint-mode-update}
+Put $\mathcal D=\sigma+\eta^2h$, $q=\eta a-v$ and
+$\tau_*=-\eta h/\mathcal D$. The new monic minimizer and norm are
+\[
+ a_{\rm new}=\binom a0+\tau_*\binom q1,
+ \qquad h_{\rm new}=\frac{h\sigma}{\mathcal D},
+ \qquad \log_{10}\frac h{h_{\rm new}}
+       =\log_{10}\left(1+\frac{\eta^2h}{\sigma}\right).
+\]
+\end{proposition}
+\begin{proof}
+For a fixed last coefficient $\tau$, completing the square under
+$\ell^Tx+w\tau=1$ gives $x=a(1+\eta\tau)-\tau v$ and the energy
+$h(1+\eta\tau)^2+\sigma\tau^2$. Its minimum gives the formulas.
+Also $\ell^Tq+w=0$, so the update has one lower polynomial degree.
+\end{proof}
+
+Set $s=(N+1)^2$ and $\kappa=\sqrt2\,sQ_N(s)$. In the new form let
+$K_{\rm new}$ reproduce polynomials of degree at most $N$, and put
+\[
+ r(t)=\frac{K_{\rm new}(t,s)}{K_{\rm new}(s,s)},
+ \qquad h_r=\frac1{K_{\rm new}(s,s)}.
+\]
+The vector $(q,1)/\kappa$ represents $r$: it has degree at most $N$,
+value one at $s$, and is orthogonal to $(t-s)$ times every old
+polynomial of degree less than $N$. Consequently
+\[
+ h_r=\frac{\mathcal D}{\kappa^2},\qquad
+ P_{N+1}(t)=(t-s)P_N(t)-\xi_Nr(t),\qquad
+ \xi_N=\frac{\eta h\kappa}{\mathcal D}.
+\]
+This identity holds at $t=s$ as well. If $K_{\rm old}$ reproduces
+old degrees at most $N-1$, the orthogonal direct sum also gives
+\[
+ K_{\rm new}(t,u)=(t-s)(u-s)K_{\rm old}(t,u)
+                         +\frac{r(t)r(u)}{h_r}.
+\]
+No global positive zeta measure is needed for these finite-form
+identities. Under the earlier conditional measure interpretation,
+$d\mu_{C,N}=(t-s)^2d\mu_{C,N+1}$ is consistent with the same
+embedding; division alone could omit a mass at the removed carrier.
+
+Write $g_N(t)=[\Gamma(N+1+\sqrt t)\Gamma(N+1-\sqrt t)]^{-1}$.
+Since $g_N=(s-t)g_{N+1}$, the corresponding monic transforms satisfy
+\[
+ F_{N+1}(x)=F_N(x)+I_N(x),\qquad
+ I_N(x)=(-1)^N\sqrt L\,\xi_Nr((x/\beta)^2)g_{N+1}((x/\beta)^2).
+\]
+The carrier change cancels the embedded part of the polynomial
+exactly. The remaining update depends on $\eta$, $\sigma$ and $r$,
+not merely on the Gamma factor. These identities pass 2275 exact
+rational checks on 35 positive fixtures and 585 interval checks on
+five existing $C=125$ prefixes, $N=10,20,40,80,120$. The latter use
+2100 working digits and verified positive interval pivots. An initial
+700-digit direct-inverse check failed arithmetic qualification at
+$N=120$ and is retained separately.
+
+At an old zero $x_N$, a constant-sign derivative bound
+$|F_{N+1}'|\ge m_N>0$ on $[x_N-\rho,x_N+\rho]$, together with
+$|I_N(x_N)|<m_N\rho$, gives a unique next zero and
+$|x_{N+1}-x_N|\le |I_N(x_N)|/m_N$. A summable indexed majorant
+would control the mode tail. Uniform parameter estimates, identification
+of its limit, transfer to the changing ground shift, and the finite
+precision remainder remain open. The exact monic norm formula must
+not be substituted for the ground-eigenvalue convergence rate.

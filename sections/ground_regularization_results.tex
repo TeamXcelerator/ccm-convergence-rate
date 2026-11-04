@@ -1,0 +1,40 @@
+The two independently enclosed finite sources now support all 1000
+analytic ground-root ordinals. Point refinement uses 4000 decimal
+working digits, the serialized-vector residual uses 4500, and the
+positive source certificate uses 6000. These are certification settings,
+not necessary precision requirements for a claim run. No reference
+zero enters source assembly or the ground refinement.
+
+\begin{center}
+\begin{tabular}{rrrrr}
+\toprule
+$C$ & $N$ & $D_1$ (approx.) & $D_{1000}$ (approx.) & predictor error bound \\
+\midrule
+125 & 2000 & 662.268420 & 22.018173 & $2.521\times10^{-6}$ \\
+250 & 1500 & 1175.398737 & 305.898719 & $1.792\times10^{-7}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+The depths are approximate summaries of analytic intervals.
+The last column bounds the worst relative displacement-prediction
+error over all 1000 indices, using the previously frozen three-root
+operator predictor without refitting. Its inputs remain the earlier
+computed eigenstates; the comparison denominator is now an enclosed
+error of the true finite analytic ground root. All 2000 one-percent
+prediction checks pass, including the source and reference uncertainties.
+
+The ground-eigenvalue relative radii are below $2.432\times10^{-1477}$
+and $3.554\times10^{-1614}$ respectively. Exact decimal brackets,
+seeded from the earlier point displacements with relative half-width
+$10^{-8}$, receive counts $k-1$ and $k$ before analytic source inflation
+and window checks. All requested targets and arithmetic attempts are
+retained. The regularization certifies the roots at the stated complete
+$N$ values; smaller prefixes of the same shifted matrix must not be
+misidentified as their own ground-state sources.
+
+This strengthens the certification scope of the earlier thousand-root
+comparisons. It establishes neither a uniform error bound for the
+operator predictor nor a closed parameter-only convergence law. In
+particular, good performance at these two resolved sources does not
+remove the recorded low-mode edge failures.
+

@@ -1,0 +1,287 @@
+\subsection{Quantitative transfer from eigenvalue error to mode-root error}
+\label{ssec:quantitative-mode-transfer}
+
+This result concerns the genuine fixed-cutoff mode channel. It sharpens the
+generic dual identity of Section~\ref{ssec:indexed-resolution-budget}
+using the CCM divided-difference structure. The use of adjoint-weighted
+Galerkin residuals is classical~\cite{IndexedBeckerRannacher}; the estimate
+below exploits the two inverse-frequency powers in the even adjoint tail.
+The finite transform is that of~\cite[Prop.~5.9]{CCM2025}. Qualitative
+ground-state convergence under the hypotheses of~\cite[Thm.~6.1]{CvS2025}
+does not itself supply this quantitative rate.
+
+Fix $c=\lambda^2>1$, $L=\log c$, and $\alpha_j=2\pi j/L$.
+Assume the exact real self-adjoint realization on $\ell^2(\mathbb Z)$ is
+$A=D_L+K$, with $D_L$ diagonal, even, increasing with $|j|$,
+$d_j\sim\log|j|$, $\|K\|\le K_*$, and
+$\operatorname{Dom}A=\operatorname{Dom}D_L$.
+Assume reflection commutes with $A$, and the off-diagonal entries satisfy
+\[
+ (\alpha_i-\alpha_j)A_{ij}=g_i-g_j,\qquad g_j=\alpha_j A_{j0}.
+\]
+Let $a$ be a real even unit ground state \emph{in the even sector}, with
+eigenvalue $\ell$, simple and isolated there by a gap $g>0$.
+Write $B=A-\ell I$. Thus $B$ is nonnegative on even vectors; no positivity
+of its odd restriction is assumed. Let $v_N$ be a unit even ground Ritz
+vector on $|j|\le N$, phase aligned with $a$, and set
+\[
+ \Delta_N=\ell_N-\ell,\qquad Q_N=I-P_N,\qquad
+ r_N=(A-\ell_N)v_N=Q_NKv_N.
+\]
+Fix a positive simple nonlattice real root $\nu=\nu_{c,\infty,k}$ of
+$F_a$, and define
+\begin{align*}
+ b_j&=a_j/(\alpha_j-\nu),&
+ b_j^+&=\nu a_j/(\alpha_j^2-\nu^2),\\
+ S&=\langle a,b\rangle=\langle a,b^+\rangle,&
+ G&=\sum_j g_j b_j,\qquad p=2L^{-1/2}\sin(\nu L/2).
+\end{align*}
+
+\begin{proposition}[Exact even adjoint and its positive denominator]
+\label{prop:mode-transfer-adjoint}
+Under these hypotheses $b\in\operatorname{Dom}A$, $G\ne0$, and
+\begin{equation}\label{eq:mode-transfer-exact}
+ F_{v_N}(\nu)=\frac pG\left\{
+   \Delta_N\langle b^+,v_N\rangle+\langle Q_Nb^+,r_N\rangle\right\}.
+\end{equation}
+Moreover, with $f=F_a'(\nu)$,
+\begin{equation}\label{eq:mode-transfer-positive}
+ \langle b,Bb\rangle=\frac{Gf}{p}
+     =2\langle b^+,Bb^+\rangle>0.
+\end{equation}
+In particular the coefficient
+\begin{equation}\label{eq:mode-transfer-coefficient}
+ \mathcal C_{c,k}=-\frac{pS}{Gf}
+       =-\frac{S}{\langle b,Bb\rangle}
+\end{equation}
+is well defined. No nonvanishing assumption on its numerator is made.
+\end{proposition}
+\begin{proof}
+The multiplier $(\alpha_j-\nu)^{-1}$ is bounded and commutes with $D_L$,
+so it preserves its operator domain. The series $\sum b_j$ is absolutely
+convergent by Cauchy--Schwarz. So is $G$, since $(A_{j0})_j\in\ell^2$
+and $\alpha_j/(\alpha_j-\nu)$ is bounded. Neither $g$ nor the all-ones
+sequence is being treated as an $\ell^2$ vector.
+The root condition is $\sum_j b_j=0$. Subtracting the $i$th eigenvector
+equation after division by $\alpha_i-\nu$, and using the off-diagonal
+identity, gives the convergent component identity
+\[
+ (Bb)_i=\sum_j A_{ij}a_j
+ \left(\frac1{\alpha_j-\nu}-\frac1{\alpha_i-\nu}\right)
+ =-\frac G{\alpha_i-\nu}.
+\]
+If $\phi_j=p/(\nu-\alpha_j)$ is the evaluation representer, this says
+$Bb=(G/p)\phi$. Taking the even part and pairing with $v_N$ proves
+\eqref{eq:mode-transfer-exact} whenever $G\ne0$.
+
+For completeness, nonvanishing and positivity follow in the even sector
+itself. Differentiating the secular sum at its root yields
+$f/p=-\sum_j a_j/(\alpha_j-\nu)^2$. Evenness and the root condition give
+$\sum_j a_j/(\alpha_j^2-\nu^2)=0$. Subtracting the two energies then gives
+\[
+ \langle b,Bb\rangle-2\langle b^+,Bb^+\rangle
+ =-G\sum_j\frac{a_j}{\alpha_j^2-\nu^2}=0.
+\]
+The even vector $b^+$ is not proportional to $a$: proportionality would
+confine the support of $a$ to one value of $|j|$, whose even transform
+has no positive nonlattice zero in its secular factor. The simple
+even-ground hypothesis therefore gives $\langle b^+,Bb^+\rangle>0$.
+The component identity now proves $G\ne0$ and
+\eqref{eq:mode-transfer-positive}. This positivity argument concerns
+this divided vector; it does not assert positivity of the full operator.
+\end{proof}
+
+\begin{proposition}[Projection energy and the omitted adjoint term]
+\label{prop:mode-transfer-tail}
+Put $t_N=Q_Na$, $\tau_N^2=\|t_N\|^2$, $q_N=\langle t_N,Bt_N\rangle$,
+\[
+ m_N=d_{N+1}-\ell-K_*,\qquad \chi_N=K_*^2/(g m_N).
+\]
+If $\tau_N^2<1$, $m_N>0$ and $\chi_N<1$, then
+\begin{equation}\label{eq:mode-transfer-energy}
+ q_N(1-\chi_N)\le\Delta_N\le q_N/(1-\tau_N^2).
+\end{equation}
+If also $\alpha_{N+1}>\nu$, then
+\begin{align}
+ |\langle Q_Nb^+,r_N\rangle|&\le\Delta_N\beta_N,
+ \label{eq:mode-transfer-tail}\\
+ \beta_N&=\frac{\nu}{\alpha_{N+1}^2-\nu^2}
+ \sqrt{\frac{1+2K_*/m_N}{1-K_*^2/(g m_N)}}.
+ \nonumber
+\end{align}
+At fixed $c,k$, $\beta_N=O_{c,k}(N^{-2})$.
+\end{proposition}
+\begin{proof}
+Let $w=P_Na$. Since $Ba=0$, one has $\langle w,Bw\rangle=q_N$
+and $P_NBP_Nw=-P_NKt_N$. Expand $w$ in an orthonormal eigenbasis of
+$P_NBP_N$: its first eigenvalue is $\Delta_N$, and every other one is
+at least $g$ by min--max. Consequently
+\[
+ q_N\le\Delta_N+\|P_NKt_N\|^2/g
+       \le\Delta_N+K_*^2\tau_N^2/g.
+\]
+On the omitted subspace $B\ge m_N I$, so $\tau_N^2\le q_N/m_N$.
+This proves the lower bound; testing $w/\|w\|$ gives the upper bound.
+
+On the omitted subspace write $Q_Nb^+=Mt_N$, where $M$ is the diagonal
+multiplier $\nu/(\alpha_j^2-\nu^2)$ and
+$\|M\|\le\mu_N:=\nu/(\alpha_{N+1}^2-\nu^2)$.
+Since $D_L-\ell I$ is positive there and commutes with $M$,
+\[
+ \langle Mt_N,BMt_N\rangle
+ \le\mu_N^2(q_N+2K_*\tau_N^2)
+ \le\mu_N^2\Delta_N\frac{1+2K_*/m_N}{1-\chi_N}.
+\]
+Both vectors are even. Cauchy--Schwarz in the nonnegative even form $B$
+therefore gives
+\[
+ |\langle Q_Nb^+,Bv_N\rangle|^2
+ \le\langle Q_Nb^+,BQ_Nb^+\rangle\Delta_N.
+\]
+The $\Delta_N v_N$ term vanishes in this pairing, proving the assertion.
+\end{proof}
+
+\paragraph{An explicit root remainder.}
+Choose $I=[\nu-r,\nu+r]$ on which
+$h=\inf_I|F_a'|>0$, and put
+$M_1=L^{3/2}/\sqrt{12}$, $M_2=L^{5/2}/\sqrt{80}$.
+These bound the first and second Fourier-evaluation derivatives of unit
+vectors on the real axis, by the second and fourth moments of the centered
+interval. The gap gives
+$e_N:=\sqrt{2\Delta_N/g}\ge\|v_N-a\|$. Define
+\[
+ m=h-M_1e_N,\qquad
+ X_N=|p/G|\Delta_N\bigl(|S|+\|b^+\|e_N+\beta_N\bigr).
+\]
+If $m>0$ and $X_N<mr$, $F_{v_N}$ has exactly one root $\nu_N$ in $I$,
+with $|\nu_N-\nu|\le X_N/m$. Taylor's theorem gives
+\begin{align}
+ |\nu_N-\nu-\mathcal C_{c,k}\Delta_N|
+ &\le \frac{|p/G|\Delta_N(\|b^+\|e_N+\beta_N)}{|f|}
+ \nonumber\\
+ &\quad+\frac{M_1e_NX_N}{m|f|}
+       +\frac{M_2X_N^2}{2m^2|f|}.
+ \label{eq:mode-transfer-remainder}
+\end{align}
+Indeed, the derivative of $F_{v_N}$ has fixed sign and magnitude at least
+$m$ on $I$, while $|F_{v_N}(\nu)|\le X_N$. The endpoint signs prove
+existence and uniqueness. Expand at $\nu$, use
+$|F_{v_N}'(\nu)-f|\le M_1e_N$, and apply
+\eqref{eq:mode-transfer-exact} to obtain the displayed remainder.
+Thus, as $N\to\infty$ with $c,k$ fixed,
+\begin{equation}\label{eq:mode-transfer-law}
+ \boxed{\nu_{c,N,k}-\nu_{c,\infty,k}
+ =\mathcal C_{c,k}\Delta_N
+  +O_{c,k}(\Delta_NN^{-2}+\Delta_N^{3/2}).}
+\end{equation}
+If $S=0$, this formula does not imply a nonzero leading term or equality
+of the two convergence rates. The onset $m_N>K_*^2/g$, pole separation,
+and the root-derivative margin cannot be suppressed in growing-$c,k$ use.
+For example, $A=3I-\mathbf1\mathbf1^T$ on frequencies $-1,0,1$ has a
+uniform simple ground state. Its secular root $\nu=1/\sqrt3$ has $S=0$.
+This is an exact Loewner example, not a CCM state.
+
+\paragraph{Residuals and arithmetic conditioning.}
+For an approximate parent let $r_a=(A-\ell)a$ and
+$s=\sum_j a_j/(\alpha_j-\nu)$. The component identity becomes
+\[
+ Bb=-G(\alpha-\nu)^{-1}+e_b,\qquad
+ (e_b)_j=\frac{(r_a)_j+s g_j}{\alpha_j-\nu}.
+\]
+For any even child, with $r_v=(A-\ell_N)v$, its exact finite algebra gives
+\[
+ F_v(\nu)=\frac pG\left\{(\ell_N-\ell)\langle b,v\rangle
+              +\langle b,r_v\rangle-\langle e_b,v\rangle\right\}.
+\]
+Using only the omitted block of $r_v$ requires an additional bound on its
+retained block. For two scalar terms $Y=q+t\ne0$, changing only $q$ by a
+relative $\eta$ changes $Y$ by exactly $\eta q$; the amplification
+$|q/(q+t)|$ can be large. It is one component of the precision budget,
+not a complete prescription for $P$ or evidence that an input artifact
+is corrupt.
+
+\paragraph{Resolution and the remaining parameter law.}
+For certified upper bounds on $\Delta_N$ and the explicit remainder,
+\[
+ B_{\mathrm{mode},k}
+ =\frac{|\mathcal C_{c,k}|\overline\Delta_N+
+              \overline{\mathcal R}_{c,k,N}}{\gamma_k}
+\]
+feeds the three-channel sufficient budget in
+Section~\ref{ssec:indexed-resolution-budget}. This still depends on the
+continuum ground state, its tail, gap and root conditioning; no closed
+uniform function of $c,N,P,k$ has been established. In particular
+$\Delta_N$ is not the finite eigenvalue $\ell_N$, and $\nu_{c,\infty,k}$
+is not being identified with the Riemann ordinate $\gamma_k$.
+
+The intrinsic first attainment at depth $D_*$ is the minimum of
+$\{N\in\mathcal A_{c,k}:|\nu_{c,N,k}-\gamma_k|/\gamma_k\le10^{-D_*}\}$,
+with value $+\infty$ for an empty set. A persistent threshold instead
+requires every later integer to be admissible and accurate. They may
+differ under cancellation. The monotone zero-shift family in
+Section~\ref{ssec:certified-accuracy-budget} supplies its own special
+ordering theorem; that theorem is not automatically transferred to the
+changing-ground family considered here.
+
+The admissibility set must specify the root observable. For positive
+nonlattice $T$, the finite transform has exactly
+\[
+ J_{c,N}(T)=\max\{0,\lfloor T L/(2\pi)\rfloor-N\}
+\]
+forced positive lattice locations below $T$ outside the retained band.
+This counts locations, not multiplicity or all transform zeros. A
+reference-matched movable root need not have the same ordinal in the
+full transform; other roots and separation must also be counted.
+
+\paragraph{Verification scope.}
+The displayed arguments were independently reconstructed and checked with
+3,900 exact rational identities and 414 separate 80-digit Ritz checks
+on 18 finite Loewner fixtures. These fixtures test the algebra, including
+the parity energy identity and retained-residual defects. They are not
+CCM assemblies and do not prove a uniform arithmetic tail estimate.
+Finite-parent numerical comparisons do not replace the continuum
+hypotheses or the explicit omitted-mode term in this theorem.
+
+\paragraph{Reproduced finite-parent comparisons.}
+A separate retained-data replay uses the stored $c=1000$, $N=800,890$
+states and the same 1700-digit analytic generator. The exact two-term
+identity agrees at all 13 fixed indices to relative discrepancy below
+$2\cdot10^{-397}$. Nine pairs meet the frozen accuracy and root-residual
+gate. The full two-term Newton displacement passes all nine one-percent
+tests; deleting the omitted-mode term or using the parent coefficient
+alone passes none. At $k=1$ omission already causes $-1.60335\%$ error.
+This is consistent with a fixed-cutoff late theorem whose onset is not
+yet attained in the large-cutoff ramp.
+
+The measured relative depths make the indexed resolution dependence clear:
+\begin{center}\small
+\begin{tabular}{@{}rrr@{}}
+\toprule
+Target label $k$ & $N=800$ & $N=890$\\
+\midrule
+1 & 1260.364036 & 1358.789387\\
+100 & 1088.105848 & 1190.938797\\
+300 & 729.949771 & 862.073328\\
+500 & 73.905037 & 299.440729\\
+525 & 29.817503 & 180.934808\\
+\bottomrule
+\end{tabular}
+\end{center}
+These are reference-assisted point matches, not certified full-spectrum
+ordinals or minima over untested integers. At the parent target heights
+labeled $500,600,610$, respectively $1,142,155$ forced lattice locations
+already lie below them outside the retained band. The labels therefore
+require their explicit movable-root convention.
+
+Four late comparisons at $c=5,9$, using $320\to640$ and $640\to1280$,
+instead pass the one-percent parent-coefficient test. Their overlapping
+states and 45-significant-digit coefficient summaries are retained with
+summary-rounding allowances. The original interval-center eigenvalue
+calculation, which fails the high-index identity, is also retained;
+Rayleigh products on the same vectors and generator repair it. Replaying
+these computations, including both versions, reproduces all eight
+comparison tables byte for byte and the selected exact-decimal identity
+fields. No source assembly or reference-zero certification is inferred
+from this replay. A separate contraction audit has two failures among
+11 retained late rows, so a universal one-half gain-ratio shortcut is
+not supported by that corpus.

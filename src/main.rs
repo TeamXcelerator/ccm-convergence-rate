@@ -20,6 +20,28 @@ use std::path::{Path, PathBuf};
 
 use xc_spectral::ccm::{self, CcmParams};
 
+#[cfg(feature = "hp")]
+mod capture;
+mod journal;
+#[cfg(feature = "hp")]
+mod preparation;
+
+const TOOLKIT_REVISION: &str = "0cc3f9acf5f0886aeb9f4b6bfc4bcd36327b6f99";
+
+fn build_info() -> serde_json::Value {
+    serde_json::json!({
+        "schema_version": 1,
+        "software_version": env!("CARGO_PKG_VERSION"),
+        "version": env!("CARGO_PKG_VERSION"),
+        "toolkit_revision": TOOLKIT_REVISION,
+        "implementation_digest": journal::implementation_digest(),
+        "hp_enabled": cfg!(feature = "hp"),
+        "complete_positive_roots": cfg!(feature = "arb"),
+        "parallel_gl_roots": cfg!(feature = "hp"),
+        "features": {"hp": cfg!(feature = "hp"), "arb": cfg!(feature = "arb")}
+    })
+}
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize, ValueEnum)]
 #[serde(rename_all = "kebab-case")]
 enum ParityPolicy {
@@ -63,6 +85,15 @@ enum RootAcquisition {
     Independent,
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize, ValueEnum)]
+#[serde(rename_all = "kebab-case")]
+enum GroundIndexPolicy {
+    /// Require the Toolkit's directed ground-index and separation proof.
+    Require,
+    /// Retain the directed outcome for a selected stored-state experiment.
+    RecordOutcome,
+}
+
 impl RootAcquisition {
     fn as_str(self) -> &'static str {
         match self {
@@ -79,6 +110,7 @@ enum ResearchCapture {
     Research,
     Gap,
     Maximum,
+    Ultra,
 }
 
 impl ResearchCapture {
@@ -88,6 +120,7 @@ impl ResearchCapture {
             Self::Research => "research",
             Self::Gap => "gap",
             Self::Maximum => "maximum",
+            Self::Ultra => "ultra",
         }
     }
 }
@@ -143,6 +176,16 @@ enum Command {
         #[arg(long, value_enum, default_value_t = EigenstateSolver::Auto)]
         eigenstate_solver: EigenstateSolver,
 
+        /// Ground-index admission. Record-outcome is an explicit selected-state
+        /// experiment; an unestablished outcome never proves a ground-state claim.
+        #[arg(long, value_enum, default_value_t = GroundIndexPolicy::Require)]
+        ground_index_policy: GroundIndexPolicy,
+
+        /// Separately assess unavailable diagnostics for the fixed precision-control
+        /// experiments. Raw Ultra outcomes and incomplete capture remain unchanged.
+        #[arg(long)]
+        precision_control_capture: bool,
+
         /// Supplemental artifact capture level.
         #[arg(long, value_enum, default_value_t = ResearchCapture::Claim)]
         research_capture: ResearchCapture,
@@ -150,6 +193,26 @@ enum Command {
         /// Low eigenpairs retained per parity sector in maximum capture.
         #[arg(long, default_value_t = 8)]
         research_sector_eigenpairs: usize,
+
+        /// Enable native-Linux parallel Gauss-Legendre roots (unsupported on WSL).
+        #[arg(long)]
+        parallel_gl_roots: bool,
+
+        /// Request the separate sector-gap certificate. Off by default.
+        #[arg(long)]
+        capture_sector_gap_certificate: bool,
+
+        /// Cumulative scalar-text budget for streaming finite diagnostics.
+        #[arg(long, default_value_t = 274_877_906_944_u64)]
+        capture_maximum_stream_scalar_bytes: u64,
+
+        /// Parent directory for immutable request, primary, and capture journals.
+        #[arg(long, default_value = "results/journals")]
+        capture_output: PathBuf,
+
+        /// Retain root-certificate outcomes separately from computed refinements.
+        #[arg(long)]
+        certify_roots: bool,
 
         /// Optional structured result file. Parent directories are created.
         #[arg(long)]
@@ -173,6 +236,14 @@ enum Command {
         #[arg(long, value_enum, default_value_t = EigenstateSolver::Auto)]
         eigenstate_solver: EigenstateSolver,
 
+        /// Parent directory for immutable evenness source and measurement journals.
+        #[arg(long, default_value = "results/journals")]
+        capture_output: PathBuf,
+
+        /// Retain selected-state outcomes explicitly for precision-floor controls.
+        #[arg(long, value_enum, default_value_t = GroundIndexPolicy::Require)]
+        ground_index_policy: GroundIndexPolicy,
+
         #[arg(long)]
         json_output: Option<PathBuf>,
     },
@@ -186,6 +257,11 @@ enum Command {
 }
 
 fn main() -> Result<()> {
+    let arguments = std::env::args().collect::<Vec<_>>();
+    if arguments.len() == 2 && arguments[1] == "--build-info" {
+        println!("{}", build_info());
+        return Ok(());
+    }
     let cli = Cli::parse();
     match cli.command {
         Command::Measure {
@@ -198,8 +274,15 @@ fn main() -> Result<()> {
             root_acquisition,
             parity_policy,
             eigenstate_solver,
+            ground_index_policy,
+            precision_control_capture,
             research_capture,
             research_sector_eigenpairs,
+            parallel_gl_roots,
+            capture_sector_gap_certificate,
+            capture_maximum_stream_scalar_bytes,
+            capture_output,
+            certify_roots,
             json_output,
         } => run_measure(MeasureRequest {
             lambda_sq,
@@ -211,8 +294,15 @@ fn main() -> Result<()> {
             root_acquisition,
             parity_policy,
             eigenstate_solver,
+            ground_index_policy,
+            precision_control_capture,
             research_capture,
             research_sector_eigenpairs,
+            parallel_gl_roots,
+            capture_sector_gap_certificate,
+            capture_maximum_stream_scalar_bytes,
+            capture_output,
+            certify_roots,
             json_output,
         }),
         Command::MeasureEvenness {
@@ -221,6 +311,8 @@ fn main() -> Result<()> {
             precision_digits,
             display_digits,
             eigenstate_solver,
+            ground_index_policy,
+            capture_output,
             json_output,
         } => run_measure_evenness(
             lambda_sq,
@@ -228,12 +320,15 @@ fn main() -> Result<()> {
             precision_digits,
             display_digits,
             eigenstate_solver,
+            ground_index_policy,
+            capture_output,
             json_output,
         ),
         Command::FinalizePublication => finalize_publication(),
     }
 }
 
+#[derive(Clone, Serialize)]
 struct MeasureRequest {
     lambda_sq: u64,
     n_modes: usize,
@@ -244,8 +339,15 @@ struct MeasureRequest {
     root_acquisition: RootAcquisition,
     parity_policy: ParityPolicy,
     eigenstate_solver: EigenstateSolver,
+    ground_index_policy: GroundIndexPolicy,
+    precision_control_capture: bool,
     research_capture: ResearchCapture,
     research_sector_eigenpairs: usize,
+    parallel_gl_roots: bool,
+    capture_sector_gap_certificate: bool,
+    capture_maximum_stream_scalar_bytes: u64,
+    capture_output: PathBuf,
+    certify_roots: bool,
     json_output: Option<PathBuf>,
 }
 
@@ -255,9 +357,23 @@ struct MeasurementReport {
     application: &'static str,
     application_version: &'static str,
     toolkit_version: String,
+    build_info: serde_json::Value,
+    journal: PathBuf,
+    capture_complete: bool,
+    all_requested_capture_complete: bool,
+    applicable_capture_complete: bool,
+    precision_control_capture: bool,
+    capture_applicability: serde_json::Value,
+    capture_applicability_artifact: Option<xc_cache::ArtifactManifest>,
+    capture_receipt: serde_json::Value,
+    primary_sources: Vec<xc_cache::ArtifactManifest>,
     root_acquisition: RootAcquisition,
     parity_policy: ParityPolicy,
     eigenstate_solver: EigenstateSolver,
+    ground_index_policy: GroundIndexPolicy,
+    ground_index_admission: serde_json::Value,
+    stored_state_resolution: serde_json::Value,
+    selected_state_scope: &'static str,
     research_capture: ResearchCapture,
     research_sector_eigenpairs: usize,
     comparison_semantics: &'static str,
@@ -274,6 +390,7 @@ struct MeasurementReport {
     available_cpus: usize,
     elapsed_seconds: f64,
     weil_min_eigenvalue: String,
+    selected_eigenvalue: String,
     roots: Vec<RootMeasurement>,
 }
 
@@ -308,7 +425,18 @@ struct EvennessReport {
     application: &'static str,
     application_version: &'static str,
     toolkit_version: String,
+    build_info: serde_json::Value,
+    capture_complete: Option<bool>,
+    capture_scope: &'static str,
+    journal: PathBuf,
+    primary_sources: Vec<xc_cache::ArtifactManifest>,
+    claim_scope: serde_json::Value,
+    assembly_error_bound: Option<String>,
     eigenstate_solver: EigenstateSolver,
+    ground_index_policy: GroundIndexPolicy,
+    ground_index_admission: serde_json::Value,
+    source_state_resolutions: Vec<serde_json::Value>,
+    selected_state_scope: &'static str,
     lambda_sq: u64,
     n_modes: usize,
     matrix_size: usize,
@@ -347,6 +475,39 @@ fn high_prec_config(
 
 #[cfg(feature = "hp")]
 fn run_measure(request: MeasureRequest) -> Result<()> {
+    let journal =
+        journal::Journal::start(&request.capture_output, &serde_json::to_value(&request)?)?;
+    let resources = xc_core::RunResources::with_worker_limit(
+        ccm::capture_runtime::CaptureResourcePolicy::from_environment()?.maximum_working_bytes,
+        rayon::current_num_threads(),
+    )?
+    .waiting_for_independent();
+    let _scope = resources.enter();
+    let policy = xc_numerics::hp_runtime::HpRuntimePolicy {
+        parallel_gl_roots: request.parallel_gl_roots,
+        ..Default::default()
+    };
+    let result = xc_numerics::hp_runtime::run_hp_with_policy(&policy, || {
+        run_measure_inner(&request, &journal)
+    })
+    .map_err(anyhow::Error::from)
+    .and_then(std::convert::identity);
+    if let Err(error) = &result {
+        journal.save(
+            "failure.json",
+            &serde_json::json!({
+                "error": format!("{error:#}"),
+                "primary_saved": journal.directory.join("primary.json").exists(),
+            "measurements_saved": journal.directory.join("measurements.json").exists()
+                || journal.directory.join("primary-measurements.json").exists()
+            }),
+        )?;
+    }
+    result
+}
+
+#[cfg(feature = "hp")]
+fn run_measure_inner(request: &MeasureRequest, journal: &journal::Journal) -> Result<()> {
     use rug::Float;
 
     if request.lambda_sq < 2 {
@@ -370,6 +531,18 @@ fn run_measure(request: MeasureRequest) -> Result<()> {
     if request.research_sector_eigenpairs == 0 {
         anyhow::bail!("research-sector-eigenpairs must be positive");
     }
+    anyhow::ensure!(
+        (1..=1_099_511_627_776).contains(&request.capture_maximum_stream_scalar_bytes),
+        "capture-maximum-stream-scalar-bytes must be in 1..=1099511627776"
+    );
+    anyhow::ensure!(
+        !request.certify_roots || cfg!(feature = "arb"),
+        "root certification requires a build with --features arb"
+    );
+    anyhow::ensure!(
+        request.root_acquisition != RootAcquisition::Independent || cfg!(feature = "arb"),
+        "independent root discovery requires a build with --features arb"
+    );
     let last_zero_index = request
         .first_zero_index
         .checked_add(request.zero_count - 1)
@@ -377,12 +550,17 @@ fn run_measure(request: MeasureRequest) -> Result<()> {
 
     let params = CcmParams::from_lambda_sq_integer(request.lambda_sq, request.n_modes);
     let prime_powers = ccm::prime_powers_up_to(params.lambda_sq_int());
-    let cfg = high_prec_config(
+    let mut cfg = high_prec_config(
         request.precision_digits,
         request.parity_policy,
         request.eigenstate_solver,
         request.zero_count,
     );
+    cfg.ground_index_policy = match request.ground_index_policy {
+        GroundIndexPolicy::Require => ccm::hp::CcmGroundIndexPolicy::Require,
+        GroundIndexPolicy::RecordOutcome => ccm::hp::CcmGroundIndexPolicy::RecordOutcome,
+    };
+    capture::preflight(request, cfg.precision_bits)?;
     let dataset = xc_zeta::zeros::bundled_dataset_identity()?;
     if last_zero_index > dataset.record_count {
         anyhow::bail!(
@@ -456,55 +634,57 @@ fn run_measure(request: MeasureRequest) -> Result<()> {
         rayon_workers, available_cpus
     );
 
-    let sector_count = match request.research_capture {
-        ResearchCapture::Claim | ResearchCapture::Research => None,
-        ResearchCapture::Gap => Some(2.min(request.n_modes)),
-        ResearchCapture::Maximum => Some(request.research_sector_eigenpairs.min(request.n_modes)),
-    };
-    if sector_count == Some(0) {
-        anyhow::bail!("sector research capture requires N >= 1");
+    let arithmetic_reference =
+        preparation::arithmetic_reference_selection(request.n_modes, journal)?;
+    let mut target_binding = preparation::target_binding()?;
+    if let Some(selection) = &arithmetic_reference {
+        target_binding["arithmetic_reference_dataset"] = selection.binding();
     }
-    let sector_analysis = sector_count.map(|count| match request.research_capture {
-        ResearchCapture::Maximum => ccm::hp::CcmSectorAnalysisOptions::maximum(count),
-        _ => ccm::hp::CcmSectorAnalysisOptions::selected(count),
-    });
-    let capture_options = ccm::hp::CcmResearchCaptureOptions {
-        capture_evenness: sector_analysis.is_some(),
-        sector_analysis,
-        root_certification: None,
-    };
-    let capture_requested = !matches!(
-        request.research_capture,
-        ResearchCapture::Claim | ResearchCapture::Research
-    );
+    let managed = xc_cache::ManagedArtifactCacheSession::from_environment()?
+        .context("managed cache is required to retain primary source identities")?;
+    let cache = managed.context();
     let target = ccm::window::ZeroTarget::IndexRange {
         first: request.first_zero_index,
         last: last_zero_index,
     };
-    let hp_result = match (request.root_acquisition, capture_requested) {
-        (RootAcquisition::Seeded, false) => ccm::hp::run_indexed_seeded(
+    let mut run = match request.root_acquisition {
+        RootAcquisition::Seeded => ccm::hp::capture_run::RetainedCcmRun::seeded(
             &params,
             &cfg,
             request.first_zero_index,
             &zero_seeds,
             &dataset,
+            &cache,
         )?,
-        (RootAcquisition::Seeded, true) => {
-            ccm::hp::run_indexed_seeded_with_research_capture(
-                &params,
-                &cfg,
-                request.first_zero_index,
-                &zero_seeds,
-                &dataset,
-                capture_options,
-            )?
-            .primary
-        }
-        (RootAcquisition::Independent, false) => ccm::hp::run_independent(&params, &cfg, &target)?,
-        (RootAcquisition::Independent, true) => {
-            ccm::hp::run_independent_with_research_capture(&params, &cfg, &target, capture_options)?
-                .primary
-        }
+        RootAcquisition::Independent => ccm::hp::capture_run::RetainedCcmRun::independent(
+            &params,
+            &cfg,
+            &target,
+            ccm::hp::IndependentRootDiscoveryOptions::advanced(false, true),
+            &cache,
+        )?,
+    };
+    journal.save(
+        "primary.json",
+        &ccm::hp::PortableHighPrecResult::from_runtime(run.primary())?,
+    )?;
+    journal.save("primary-sources.json", &run.primary_sources())?;
+    if let Some(selection) = arithmetic_reference {
+        selection.install(&mut run)?;
+    }
+    let hp_result = run.primary();
+    let ground_index_admission = reported_ground_admission(
+        request.ground_index_policy,
+        hp_result.ground_index_admission.as_ref(),
+    )?;
+    let selected_state_scope = if ground_index_admission["established"] == true {
+        "proven_ground_state_of_exact_stored_matrix_in_requested_subspace"
+    } else {
+        println!(
+            "[UNASSESSED] selected-state ground index: {}",
+            ground_index_admission["reason"]
+        );
+        "selected_stored_state_only_ground_index_not_established"
     };
     if hp_result.first_positive_root_index != request.first_zero_index {
         anyhow::bail!(
@@ -515,7 +695,7 @@ fn run_measure(request: MeasureRequest) -> Result<()> {
     }
 
     println!(
-        "  solved in {:.3}s, epsilon_N = {}",
+        "  solved in {:.3}s, selected stored eigenvalue = {}",
         hp_result.elapsed_seconds,
         xc_numerics::fmt::display_hp(&hp_result.weil_min_eigenvalue, 8)
     );
@@ -576,14 +756,28 @@ fn run_measure(request: MeasureRequest) -> Result<()> {
         roots.push(measurement);
     }
 
-    let report = MeasurementReport {
+    let mut report = MeasurementReport {
         schema_version: 1,
         application: "ccm-convergence-rate",
         application_version: env!("CARGO_PKG_VERSION"),
         toolkit_version: xc_cache::current_toolkit_version()?.to_string(),
+        build_info: build_info(),
+        journal: journal.directory.clone(),
+        capture_complete: false,
+        all_requested_capture_complete: false,
+        applicable_capture_complete: false,
+        precision_control_capture: request.precision_control_capture,
+        capture_applicability: serde_json::json!({"status":"not_run"}),
+        capture_applicability_artifact: None,
+        capture_receipt: serde_json::json!({"status":"not_run"}),
+        primary_sources: run.primary_sources(),
         root_acquisition: request.root_acquisition,
         parity_policy: request.parity_policy,
         eigenstate_solver: request.eigenstate_solver,
+        ground_index_policy: request.ground_index_policy,
+        ground_index_admission,
+        stored_state_resolution: serde_json::to_value(&hp_result.stored_state_resolution)?,
+        selected_state_scope,
         research_capture: request.research_capture,
         research_sector_eigenpairs: request.research_sector_eigenpairs,
         comparison_semantics,
@@ -605,14 +799,189 @@ fn run_measure(request: MeasureRequest) -> Result<()> {
         available_cpus,
         elapsed_seconds: hp_result.elapsed_seconds,
         weil_min_eigenvalue: hp_result.weil_min_eigenvalue.to_string_radix(10, None),
+        selected_eigenvalue: hp_result.weil_min_eigenvalue.to_string_radix(10, None),
         roots,
     };
 
-    if let Some(path) = request.json_output {
+    journal.save("primary-measurements.json", &report)?;
+    // Operational paths/timings stay in the journal, never in mathematical
+    // artifact identity or payload. Repeating a configuration must not create
+    // different evidence merely because it ran in another directory.
+    let measurement_payload = retained_measurement_payload(&report)?;
+    let measurement_record = xc_cache::capture_and_persist(
+        &serde_json::json!({"semantics":"paper3-indexed-root-measurements-v1",
+            "implementation_digest":journal::implementation_digest(),
+            "configuration":{
+                "lambda_squared":request.lambda_sq,"n_modes":request.n_modes,
+                "precision_digits":request.precision_digits,"first_zero_index":request.first_zero_index,
+                "zero_count":request.zero_count,"root_acquisition":request.root_acquisition,
+                "parity_policy":request.parity_policy,"eigenstate_solver":request.eigenstate_solver,
+                "ground_index_policy":request.ground_index_policy
+            },"sources":report.primary_sources}),
+        vec!["paper3_measurements".into()],
+        |_| {
+            xc_cache::CapturedDiagnostic::new(&measurement_payload, report.primary_sources.clone())
+                .map_err(xc_cache::CaptureFailure::failed)
+        },
+        &cache,
+    )?;
+    journal.save("measurement-receipt.json", &measurement_record.value)?;
+    let measurement_manifest = measurement_record
+        .produced_manifest
+        .as_ref()
+        .or(measurement_record.reused_manifest.as_ref())
+        .context("retained measurement manifest unavailable")?;
+    journal.save("measurement-manifest.json", measurement_manifest)?;
+    anyhow::ensure!(
+        measurement_record.value.receipt.is_complete(),
+        "measurement retention incomplete"
+    );
+    let mut checks = Vec::new();
+    let capture_result = capture::capture(
+        &mut run,
+        &params,
+        &cfg,
+        request,
+        &cache,
+        journal,
+        &mut checks,
+        &target_binding,
+    );
+    report.capture_complete = capture_result.as_ref().copied().unwrap_or(false);
+    report.capture_receipt = if journal.directory.join("capture.json").exists() {
+        serde_json::from_slice(&fs::read(journal.directory.join("capture.json"))?)?
+    } else {
+        serde_json::json!({"status": if report.capture_complete {"completed"} else {"incomplete"},
+            "reason": capture_result.as_ref().err().map(|e| format!("{e:#}"))})
+    };
+    report.all_requested_capture_complete = report.capture_complete;
+    report.capture_applicability = capture::assess_applicability(
+        request,
+        cfg.precision_bits,
+        &report.ground_index_admission,
+        &report.stored_state_resolution,
+        &report.selected_eigenvalue,
+        &report.primary_sources,
+        &report.capture_receipt,
+        report.capture_complete,
+        journal,
+    )?;
+    report.applicable_capture_complete = report.capture_applicability
+        ["applicable_capture_complete"]
+        .as_bool()
+        .unwrap_or(false);
+    journal.save("capture-applicability.json", &report.capture_applicability)?;
+    if request.precision_control_capture {
+        let raw_manifest: xc_cache::ArtifactManifest =
+            serde_json::from_slice(&fs::read(journal.directory.join("capture-manifest.json"))?)?;
+        let mut dependencies = report.primary_sources.clone();
+        dependencies.extend([raw_manifest.clone(), measurement_manifest.clone()]);
+        let assessment_payload = serde_json::json!({
+            "schema_version":1,"semantics":capture::APPLICABILITY_EVIDENCE,
+            "assessment":report.capture_applicability,"raw_capture":report.capture_receipt,
+            "measurement":measurement_payload,
+            "raw_capture_manifest":raw_manifest,"measurement_manifest":measurement_manifest
+        });
+        let assessment_record = xc_cache::capture_and_persist(
+            &serde_json::json!({"policy":capture::APPLICABILITY_POLICY,
+                "configuration":report.capture_applicability["configuration"],
+                "implementation_digest":journal::implementation_digest(),
+                "raw_capture":raw_manifest.key,"raw_capture_content_digest":raw_manifest.content_digest,
+                "measurement":measurement_manifest.key,
+                "measurement_content_digest":measurement_manifest.content_digest}),
+            vec!["paper3_capture_applicability".into()],
+            |_| {
+                xc_cache::CapturedDiagnostic::new(&assessment_payload, dependencies.clone())
+                    .map_err(xc_cache::CaptureFailure::failed)
+            },
+            &cache,
+        )?;
+        anyhow::ensure!(
+            assessment_record.value.receipt.is_complete(),
+            "precision-control applicability evidence retention incomplete"
+        );
+        let manifest = assessment_record
+            .produced_manifest
+            .as_ref()
+            .or(assessment_record.reused_manifest.as_ref())
+            .context("precision-control applicability manifest unavailable")?;
+        let payload = xc_core::finite_json::to_vec(&assessment_record.value)?;
+        anyhow::ensure!(
+            xc_cache::ContentDigest::sha256(&payload) == manifest.content_digest,
+            "precision-control applicability payload does not match its retained manifest"
+        );
+        journal.save_bytes("capture-applicability-record.json", &payload)?;
+        journal.save("capture-applicability-artifact.json", manifest)?;
+        report.capture_applicability_artifact = Some(manifest.clone());
+    }
+    let roots_complete = report.zero_count_returned == report.zero_count_requested
+        && report.roots.iter().all(|row| row.status == "converged");
+    journal.save("summary.json", &serde_json::json!({
+        "roots_complete":roots_complete,"capture_complete":report.capture_complete,
+        "all_requested_capture_complete":report.all_requested_capture_complete,
+        "applicable_capture_complete":report.applicable_capture_complete,
+        "capture_applicability":report.capture_applicability,
+        "ground_index_admission":report.ground_index_admission,"selected_state_scope":report.selected_state_scope,
+        "checks":checks,"scope":"finite indexed measurements; mathematical qualifications remain in each artifact"}))?;
+    journal.save("measurements.json", &report)?;
+    if let Some(path) = &request.json_output {
         write_json_atomic(&path, &report)?;
         println!("\nStructured result: {}", path.display());
     }
+    capture_result?;
+    anyhow::ensure!(roots_complete, "one or more requested roots are not converged; retained measurements preserve solver outcomes");
+    anyhow::ensure!(
+        report.applicable_capture_complete,
+        "requested research capture incomplete; inspect retained receipt"
+    );
     Ok(())
+}
+
+#[cfg(feature = "hp")]
+fn reported_ground_admission(
+    policy: GroundIndexPolicy,
+    outcome: Option<&ccm::hp::CcmGroundIndexAdmission>,
+) -> Result<serde_json::Value> {
+    match (policy, outcome) {
+        (GroundIndexPolicy::Require, None) => Ok(serde_json::json!({"established":true})),
+        (GroundIndexPolicy::RecordOutcome, Some(value))
+            if (value.established && value.reason.is_none())
+                || (!value.established
+                    && value
+                        .reason
+                        .as_deref()
+                        .is_some_and(|r| !r.trim().is_empty())) =>
+        {
+            Ok(serde_json::to_value(value)?)
+        }
+        _ => anyhow::bail!("ground-index outcome does not match the explicit admission policy"),
+    }
+}
+
+#[cfg(feature = "hp")]
+fn retained_measurement_payload(report: &MeasurementReport) -> Result<serde_json::Value> {
+    let mut value = serde_json::to_value(report)?;
+    let object = value
+        .as_object_mut()
+        .expect("measurement report serializes as an object");
+    for field in [
+        "journal",
+        "elapsed_seconds",
+        "rayon_workers",
+        "available_cpus",
+        "capture_complete",
+        "all_requested_capture_complete",
+        "applicable_capture_complete",
+        "precision_control_capture",
+        "capture_applicability",
+        "capture_applicability_artifact",
+        "capture_receipt",
+        "research_capture",
+        "research_sector_eigenpairs",
+    ] {
+        object.remove(field);
+    }
+    Ok(value)
 }
 
 #[cfg(feature = "hp")]
@@ -698,7 +1067,49 @@ fn run_measure_evenness(
     precision_digits: u32,
     display_digits: usize,
     eigenstate_solver: EigenstateSolver,
+    ground_index_policy: GroundIndexPolicy,
+    capture_output: PathBuf,
     json_output: Option<PathBuf>,
+) -> Result<()> {
+    let journal = journal::Journal::start(
+        &capture_output,
+        &serde_json::json!({
+            "command":"measure-evenness", "lambda_sq":lambda_sq, "n_modes":n_modes,
+            "precision_digits":precision_digits, "display_digits":display_digits,
+            "eigenstate_solver":eigenstate_solver,"ground_index_policy":ground_index_policy,
+            "capture_scope":"stored-source evenness only"
+        }),
+    )?;
+    let result = run_measure_evenness_inner(
+        lambda_sq,
+        n_modes,
+        precision_digits,
+        display_digits,
+        eigenstate_solver,
+        ground_index_policy,
+        json_output,
+        &journal,
+    );
+    if let Err(error) = &result {
+        journal.save(
+            "failure.json",
+            &serde_json::json!({"error":format!("{error:#}"),
+            "measurements_saved":journal.directory.join("measurements.json").exists()}),
+        )?;
+    }
+    result
+}
+
+#[cfg(feature = "hp")]
+fn run_measure_evenness_inner(
+    lambda_sq: u64,
+    n_modes: usize,
+    precision_digits: u32,
+    display_digits: usize,
+    eigenstate_solver: EigenstateSolver,
+    ground_index_policy: GroundIndexPolicy,
+    json_output: Option<PathBuf>,
+    journal: &journal::Journal,
 ) -> Result<()> {
     use xc_numerics::fmt::{display_hp, sign_of};
 
@@ -709,18 +1120,46 @@ fn run_measure_evenness(
         anyhow::bail!("n-modes, precision-digits, and display-digits must be positive");
     }
     let params = CcmParams::from_lambda_sq_integer(lambda_sq, n_modes);
-    let cfg = high_prec_config(
+    let mut cfg = high_prec_config(
         precision_digits,
         ParityPolicy::EvenSector,
         eigenstate_solver,
         1,
     );
+    cfg.ground_index_policy = match ground_index_policy {
+        GroundIndexPolicy::Require => ccm::hp::CcmGroundIndexPolicy::Require,
+        GroundIndexPolicy::RecordOutcome => ccm::hp::CcmGroundIndexPolicy::RecordOutcome,
+    };
     println!(
         "Measuring evenness: lambda^2={}, N={}, requested precision={} digits ({} working bits)",
         lambda_sq, n_modes, precision_digits, cfg.precision_bits
     );
     println!("  eigenstate solver: {}", eigenstate_solver.as_str());
-    let result = ccm::hp::measure_evenness(&params, &cfg)?;
+    let managed = xc_cache::ManagedArtifactCacheSession::from_environment()?
+        .context("managed cache required for evenness source retention")?;
+    let cache = managed.context();
+    let (result, primary_sources, source_state_resolutions) =
+        journal::source_observer::with_sources(&cache, ground_index_policy, |observed| {
+            ccm::hp::measure_evenness_via_cache(&params, &cfg, observed)
+        })?;
+    journal.save("primary-sources.json", &primary_sources)?;
+    journal.save("source-state-resolutions.json", &source_state_resolutions)?;
+    let all_established = source_state_resolutions
+        .iter()
+        .all(|value| value["ground_index_admission"]["established"] == true);
+    let ground_index_admission = if all_established {
+        serde_json::json!({"established":true})
+    } else {
+        serde_json::json!({"established":false,"reason":"one or more selected stored states lack a proven ground index; inspect source_state_resolutions"})
+    };
+    let selected_state_scope = if all_established {
+        "proven_ground_states_of_exact_stored_matrix_in_each_requested_subspace"
+    } else {
+        "selected_stored_states_only_ground_index_not_established"
+    };
+    if !all_established {
+        println!("[UNASSESSED] evenness is measured for selected stored states; inspect source-state-resolutions.json");
+    }
     let natural_sign = sign_of(&result.natural_eigenvalue).as_str().to_owned();
     let forced_even_sign = sign_of(&result.forced_eigenvalue).as_str().to_owned();
     println!(
@@ -728,11 +1167,11 @@ fn run_measure_evenness(
         display_hp(&result.evenness_deviation, display_digits)
     );
     println!(
-        "  natural smallest eigenvalue     = {}",
+        "  natural selected eigenvalue     = {}",
         display_hp(&result.natural_eigenvalue, display_digits)
     );
     println!(
-        "  forced-even smallest eigenvalue = {}",
+        "  forced-even selected eigenvalue = {}",
         display_hp(&result.forced_eigenvalue, display_digits)
     );
     println!(
@@ -740,24 +1179,46 @@ fn run_measure_evenness(
         natural_sign, forced_even_sign
     );
 
+    let report = EvennessReport {
+        schema_version: 1,
+        application: "ccm-convergence-rate",
+        application_version: env!("CARGO_PKG_VERSION"),
+        toolkit_version: xc_cache::current_toolkit_version()?.to_string(),
+        build_info: build_info(),
+        capture_complete: None,
+        capture_scope:
+            "stored-source evenness only; Ultra capture belongs to the paired root measurement",
+        journal: journal.directory.clone(),
+        primary_sources,
+        claim_scope: serde_json::to_value(result.claim_scope)?,
+        assembly_error_bound: result
+            .assembly_error_bound
+            .as_ref()
+            .map(|x| x.to_string_radix(10, None)),
+        eigenstate_solver,
+        ground_index_policy,
+        ground_index_admission,
+        source_state_resolutions,
+        selected_state_scope,
+        lambda_sq,
+        n_modes,
+        matrix_size: params.matrix_size(),
+        precision_digits_requested: precision_digits,
+        precision_bits_working: result.natural_eigenvalue.prec(),
+        evenness_deviation: result.evenness_deviation.to_string_radix(10, None),
+        natural_eigenvalue: result.natural_eigenvalue.to_string_radix(10, None),
+        forced_even_eigenvalue: result.forced_eigenvalue.to_string_radix(10, None),
+        natural_sign,
+        forced_even_sign,
+    };
+    journal.save("measurements.json", &report)?;
+    journal.save(
+        "summary.json",
+        &serde_json::json!({"execution_integrity":"PASS",
+        "capture_complete":null,"scope":report.capture_scope,
+        "ground_index_admission":report.ground_index_admission,"selected_state_scope":report.selected_state_scope}),
+    )?;
     if let Some(path) = json_output {
-        let report = EvennessReport {
-            schema_version: 1,
-            application: "ccm-convergence-rate",
-            application_version: env!("CARGO_PKG_VERSION"),
-            toolkit_version: xc_cache::current_toolkit_version()?.to_string(),
-            eigenstate_solver,
-            lambda_sq,
-            n_modes,
-            matrix_size: params.matrix_size(),
-            precision_digits_requested: precision_digits,
-            precision_bits_working: result.natural_eigenvalue.prec(),
-            evenness_deviation: result.evenness_deviation.to_string_radix(10, None),
-            natural_eigenvalue: result.natural_eigenvalue.to_string_radix(10, None),
-            forced_even_eigenvalue: result.forced_eigenvalue.to_string_radix(10, None),
-            natural_sign,
-            forced_even_sign,
-        };
         write_json_atomic(&path, &report)?;
         println!("Structured result: {}", path.display());
     }
@@ -771,6 +1232,8 @@ fn run_measure_evenness(
     _precision_digits: u32,
     _display_digits: usize,
     _eigenstate_solver: EigenstateSolver,
+    _ground_index_policy: GroundIndexPolicy,
+    _capture_output: PathBuf,
     _json_output: Option<PathBuf>,
 ) -> Result<()> {
     anyhow::bail!(
@@ -788,19 +1251,26 @@ fn run_measure(_request: MeasureRequest) -> Result<()> {
 }
 
 fn finalize_publication() -> Result<()> {
-    let Some(managed) =
-        xc_cache::ManagedArtifactCacheSession::from_environment().map_err(anyhow::Error::from)?
-    else {
-        println!("Publication finalization: managed cache session is disabled");
-        return Ok(());
-    };
-    match managed
-        .finalize_publication_inventory()
-        .map_err(anyhow::Error::from)?
-    {
-        Some(path) => println!("Publication inventory finalized: {}", path.display()),
-        None => println!("Publication finalization: no staging root is configured"),
-    }
+    let config = xc_cache::ManagedArtifactCacheConfig::from_environment()?
+        .context("publication requires explicit managed cache configuration")?;
+    anyhow::ensure!(config.profile == xc_cache::ManagedRunProfile::Author
+        && config.execute_remote_mutations
+        && config.publication_target != xc_core::PublicationTarget::None
+        && config.staging_root.is_some() && config.output_validation.is_none(),
+        "publication requires an author staging root, execution, a destination, and no output validation");
+    let root = config.staging_root.as_ref().expect("checked staging root");
+    anyhow::ensure!(
+        fs::symlink_metadata(root)?.file_type().is_dir(),
+        "publication requires an ordinary staging directory"
+    );
+    let managed = xc_cache::ManagedArtifactCacheSession::new_with_resources(
+        config,
+        xc_cache::managed_resource_policy_from_environment()?,
+    )?;
+    let path = managed
+        .retry_retained_publication()?
+        .context("publication did not finalize a retained inventory")?;
+    println!("Publication inventory finalized: {}", path.display());
     Ok(())
 }
 
@@ -840,7 +1310,11 @@ mod tests {
                 root_acquisition,
                 parity_policy,
                 eigenstate_solver,
+                ground_index_policy,
+                precision_control_capture,
                 research_capture,
+                capture_sector_gap_certificate,
+                parallel_gl_roots,
                 ..
             } => {
                 assert_eq!(first_zero_index, 1);
@@ -848,7 +1322,11 @@ mod tests {
                 assert_eq!(root_acquisition, RootAcquisition::Seeded);
                 assert_eq!(parity_policy, ParityPolicy::EvenSector);
                 assert_eq!(eigenstate_solver, EigenstateSolver::Auto);
+                assert_eq!(ground_index_policy, GroundIndexPolicy::Require);
+                assert!(!precision_control_capture);
                 assert_eq!(research_capture, ResearchCapture::Claim);
+                assert!(!capture_sector_gap_certificate);
+                assert!(!parallel_gl_roots);
             }
             _ => panic!("expected measure command"),
         }
@@ -889,6 +1367,121 @@ mod tests {
                 assert_eq!(parity_policy, ParityPolicy::Natural);
                 assert_eq!(eigenstate_solver, EigenstateSolver::ShiftInvertKrylov);
                 assert_eq!(research_capture, ResearchCapture::Maximum);
+            }
+            _ => panic!("expected measure command"),
+        }
+    }
+
+    #[test]
+    fn build_identity_is_bound_to_locked_toolkit_and_features() {
+        let info = build_info();
+        assert_eq!(info["toolkit_revision"], TOOLKIT_REVISION);
+        assert_eq!(info["hp_enabled"], cfg!(feature = "hp"));
+        assert_eq!(info["complete_positive_roots"], cfg!(feature = "arb"));
+        let digest = info["implementation_digest"].as_str().unwrap();
+        assert_eq!(digest.len(), 64);
+        assert!(digest.bytes().all(|b| b.is_ascii_hexdigit()));
+        assert!(include_str!("../Cargo.lock").contains(TOOLKIT_REVISION));
+        assert!(!include_str!("../Cargo.lock").contains("tag=v0.13.5"));
+    }
+
+    #[cfg(feature = "hp")]
+    #[test]
+    fn recorded_ground_outcome_cannot_be_promoted_to_a_proof() {
+        let outcome = ccm::hp::CcmGroundIndexAdmission {
+            established: false,
+            reason: Some("a lower stored eigenvalue was proven".into()),
+        };
+        let recorded =
+            reported_ground_admission(GroundIndexPolicy::RecordOutcome, Some(&outcome)).unwrap();
+        assert_eq!(recorded["established"], false);
+        assert_eq!(recorded["reason"], "a lower stored eigenvalue was proven");
+        assert!(reported_ground_admission(GroundIndexPolicy::Require, Some(&outcome)).is_err());
+        assert!(reported_ground_admission(GroundIndexPolicy::RecordOutcome, None).is_err());
+        assert_eq!(
+            reported_ground_admission(GroundIndexPolicy::Require, None).unwrap()["established"],
+            true
+        );
+    }
+
+    #[test]
+    fn selected_state_policy_requires_an_explicit_cli_choice() {
+        for command in ["measure", "measure-evenness"] {
+            let cli = Cli::try_parse_from([
+                "ccm-convergence-rate",
+                command,
+                "--lambda-sq",
+                "13",
+                "--n-modes",
+                "80",
+                "--precision-digits",
+                "30",
+                "--ground-index-policy",
+                "record-outcome",
+            ])
+            .unwrap();
+            let policy = match cli.command {
+                Command::Measure {
+                    ground_index_policy,
+                    ..
+                }
+                | Command::MeasureEvenness {
+                    ground_index_policy,
+                    ..
+                } => ground_index_policy,
+                _ => unreachable!(),
+            };
+            assert_eq!(policy, GroundIndexPolicy::RecordOutcome);
+        }
+    }
+
+    #[cfg(feature = "hp")]
+    #[test]
+    fn failed_root_is_preserved_without_an_accuracy_value() {
+        let row = root_measurement(
+            7,
+            &ccm::hp::EigenvalueResult::Failed {
+                iterations: 12,
+                reason: "explicit finite solver refusal".into(),
+            },
+            "40.918719012147495187398126914633254395726165962777",
+            256,
+        )
+        .unwrap();
+        assert_eq!(row.reference_index, 7);
+        assert_eq!(row.status, "failed");
+        assert_eq!(row.iterations, 12);
+        assert!(row.computed_value.is_none());
+        assert!(row.matching_digits.is_none());
+        assert_eq!(
+            row.failure_reason.as_deref(),
+            Some("explicit finite solver refusal")
+        );
+    }
+
+    #[test]
+    fn ultra_is_explicit_and_keeps_sector_gap_separate() {
+        let cli = Cli::try_parse_from([
+            "ccm-convergence-rate",
+            "measure",
+            "--research-capture",
+            "ultra",
+            "--capture-output",
+            "journals",
+            "--capture-maximum-stream-scalar-bytes",
+            "1024",
+        ])
+        .unwrap();
+        match cli.command {
+            Command::Measure {
+                research_capture,
+                capture_sector_gap_certificate,
+                capture_maximum_stream_scalar_bytes,
+                ..
+            } => {
+                assert_eq!(research_capture, ResearchCapture::Ultra);
+                assert!(!capture_sector_gap_certificate);
+                assert_eq!(capture_maximum_stream_scalar_bytes, 1024);
             }
             _ => panic!("expected measure command"),
         }

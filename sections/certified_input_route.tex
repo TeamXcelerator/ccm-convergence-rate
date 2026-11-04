@@ -1,0 +1,116 @@
+\subsection{A verified finite input route and an indexed dual reduction}
+\label{ssec:certified-input-route}
+
+The next computation strengthens the insufficient-mode example to the
+ground state of the finite analytic matrix. At $C=250,N=500$, the matrix
+is assembled from digamma and trigamma formulas with finite endpoints and prime
+powers, with Arb rounding and explicit geometric tail bounds. No retained
+eigenstate or zeta ordinate enters this matrix/eigenpair construction.
+The interval implementation encloses 1830 values from an independent
+high-precision assembly control. These checks validate the implementation;
+the analytic identities and remainder bounds remain its mathematical basis.
+
+\paragraph{Enclosed scalar branch.}
+At a real shift $z$, positive pivots of $B-zI$ certify its positivity.
+The central Schur jet yields
+\[
+ \sigma(z)=a-z-c^T(B-zI)^{-1}c,\quad
+ -\sigma'(z)=1+\eta(z),\quad
+ b(z)=\frac1{\operatorname{tr}(B-zI)^{-1}}
+       \le\lambda_{\min}(B-zI).
+\]
+Here $\eta(z)=\|(B-zI)^{-1}c\|^2$. If $0<a_*<b(z)$, then throughout
+$|t|\le a_*$ the magnitude of the Schur derivative lies between
+\[
+ M_-=1+\frac{\eta(z)}{(1+a_*/b(z))^2},\qquad
+ M_+=1+\frac{\eta(z)}{(1-a_*/b(z))^2}.
+\]
+Verifying $a_*M_->|\sigma(z)|$ gives opposite endpoint signs and the
+enclosure $z+\sigma(z)/[M_-,M_+]$ for its unique root. The positive
+noncentral block identifies this root as the lowest finite eigenvalue.
+
+The direct interval elimination fails to prove positive pivots at 1000
+and 3000 working digits, and succeeds at 5000. Seven scalar refinements
+give relative eigenvalue radius below $7.47\cdot10^{-1415}$. Direct
+interval vector back-substitution remains too wide. Instead, a point
+central-normalized vector $v=(1,v_{\rm tail})$ is checked by recomputing
+\[
+ r_v=(B-\varepsilon I)v_{\rm tail}+c
+\]
+in interval arithmetic. A verified $g\le\lambda_{\min}(B-\varepsilon I)$
+gives $\|v_*-v\|\le\|r_v\|/g=:E$. If $E<\|v\|$, the unit-vector
+error is at most $2E/(\|v\|-E)$. The resulting bound is
+$2.271\cdot10^{-1424}$. The large guard precision is a feature of this
+certification algorithm, not a necessary physical mode or precision budget.
+
+\paragraph{A finite-operator mode breaker.}
+Five hundred disjoint positive interval-Newton root enclosures, together
+with a nonzero leading coefficient of the degree-500 numerator, exhaust
+its movable roots for the enclosed ground vector. Previous roots are warm
+seeds only. The first 362 movable roots match their corresponding zeta
+midpoint windows, and the $k=363$ window contains no movable root. Every
+one of the 362 earlier displacement intervals contains the new bound.
+Thus this breaker now concerns the independently enclosed finite analytic
+operator. Carrier roots are still counted separately. The later regularization in
+Section~\ref{ssec:ground-regularization} supplies an analytic certificate
+for the $C=250,N=1500$ thousand-root ground source.
+
+The historical 5047-bit unit vector differs from the new finite ground
+state by approximately $1.36603\cdot10^{-858}$; its eigenvalue has relative
+difference $6.51756\cdot10^{-849}$. These are finite source errors consistent
+with the retained root measurements, not a storage-corruption finding.
+
+\paragraph{A failed larger-cutoff extrapolation.}
+The fixed global-germ rule from Section~\ref{sec:transfer-germ-bounds}
+does not give uniform higher-cutoff edge accuracy. The following counts
+use a one-percent \emph{inverse-squared-slope} gate, rather than the earlier
+combined-predictor gate:
+\[
+\begin{array}{c|rr}
+(C,N)&64\text{ coefficients, }[31/32]&128\text{ coefficients, }[63/64]\\
+\hline
+(1000,890)&33/58&34/58\\
+(1200,970)&4/10&3/10
+\end{array}
+\]
+These are all eligible previously acquired points, not complete certified
+prefixes or blind data. Mismatched and unsuccessful acquisitions remain
+recorded. The higher-order system is first unresolved at 1100 working
+digits; all targets are scored at 1700 digits and the model failures
+remain. More coefficients do not repair it uniformly, and some misses
+occur at roots that still have several accurate digits.
+
+\paragraph{Two global vectors determine the indexed dual.}
+Write $B_\varepsilon=B-\varepsilon I$, $D=\operatorname{diag}(1^2,\ldots,N^2)$,
+and the inherited displacement identity as
+\[
+ DB_\varepsilon-B_\varepsilon D=rw^T-wr^T,\qquad
+ w_j=\sqrt2,\quad r_j=\sqrt2\,j b_j.
+\]
+Set $X=B_\varepsilon^{-1}$, $p=Xr$, $q=Xw$, and
+$R_t=(D-tI)^{-1}$ away from the finite frequency poles. Then
+\begin{equation}\label{eq:input-cauchy-dual}
+ XR_tw=R_t\{q(1+p^TR_tw)-p(q^TR_tw)\}.
+\end{equation}
+Indeed, $DX-XD=qp^T-pq^T$ and
+$XR_t-R_tX=R_t(DX-XD)R_t$. Applying this identity to $w$ proves the
+formula. Once $p,q$ are known, each indexed dual needs two Cauchy sums and
+linear work in $N$, rather than another dense inverse solve. Numerical
+cancellation in this identity still requires control.
+
+For $t=(z/\beta)^2$, put
+$K(z)=2z\sin(zL/2)/(\sqrt L\,\beta^2)$. The tail transform functional
+is $-K(z)R_tw$. Thus the exact central-normalized finite transform obeys
+\begin{equation}\label{eq:input-residual-transform}
+ F_*(z)-F_v(z)=K(z)(XR_tw)^Tr_v.
+\end{equation}
+This follows directly from
+$(v_*-v)_{\rm tail}=-Xr_v$. Both the inverse-displacement identity and
+this sign convention pass 156 exact rational component checks.
+A derivative lower bound and a valid root neighborhood turn
+\eqref{eq:input-residual-transform} into an indexed displacement bound.
+The specific norm $\|XR_tw\|$ can be much smaller than the generic inverse
+norm. Its uniform dependence on $C,N,k$, together with the structured
+residual's dependence on $P$, is a concrete remaining target for the
+convergence law. The finite computation and exact reduction do not yet
+establish that rate.

@@ -1,0 +1,150 @@
+\subsection{An exact logarithmic diagonal and the late-resolution error}
+\label{ssec:logdiag}
+
+The following decomposition identifies the principal operator in the actual
+CCM basis, including the correction from zero extension at the endpoints.
+It requires neither RH nor positivity of the Weil form. All operators in this
+subsection use exact assembly; numerical assembly errors are separate.
+
+\begin{proposition}[Bounded logarithmic remainder]\label{prop:logdiag}
+Set $c=\lambda^2>1$, $L=\log c$, and let $A_c$ be the self-adjoint operator
+of the full Weil form, expressed in the basis $V_j$. Then $A_c=D_L+K_c$,
+where
+\[
+ D_LV_j=d_jV_j,\qquad
+ d_j=\tfrac12\log\bigl(\tfrac14+(2\pi j/L)^2\bigr)-\log(2\pi),
+ \qquad \operatorname{Dom}(A_c)=\operatorname{Dom}(D_L),
+\]
+and $K_c$ is bounded self-adjoint with $\|K_c\|\le\mathcal C(c)$, where
+\begin{align}
+ \mathcal C(c)={}&\pi-\log(1-c^{-1/2})+\gamma+\tfrac\pi2+\log2
+ \nonumber\\
+ &+\log c+\sqrt c-c^{-1/2}
+   +2\sum_{p^k\le c}\frac{\log p}{p^{k/2}}.\label{eq:logdiagconstant}
+\end{align}
+The same decomposition restricts to either parity sector.
+\end{proposition}
+\begin{proof}
+Transport $V_j$ to $U_j(x)=L^{-1/2}e^{2\pi ijx/L}$ on $(0,L)$ by
+\cite[Prop.~3.2]{CCM2025}. For $a>0$, the multiplier
+$m_a(t)=\tfrac12\log(a^2+t^2)$ satisfies
+\[
+ m_a(t)=\log a+\int_0^\infty e^{-as}\frac{1-\cos(ts)}s\,ds.
+\]
+Subtract its periodic realization from its whole-line realization applied to
+zero-extended functions. The local terms cancel and the difference is the
+integral operator
+\[
+ H_{a,L}(x,y)=\frac12\sum_{k\in\mathbb Z\setminus\{0\}}
+       \frac{e^{-a|x-y+kL|}}{|x-y+kL|}.
+\]
+This identity first holds as a quadratic-form identity on trigonometric
+polynomials, by truncating the singular integral and taking its limit.
+Each of the two adjacent images is bounded in norm by $\pi/2$: reflect one
+endpoint and apply weighted Schur to $1/(x+y)$ with weight $x^{-1/2}$,
+using $\int_0^\infty u^{-1/2}(1+u)^{-1}\,du=\pi$.
+The images $|k|=m+1$, $m\ge1$, together have norm at most $e^{-amL}/m$.
+Hence $\|H_{a,L}\|\le\pi-\log(1-e^{-aL})$. Positive values of this kernel
+are not being used to assert positive semidefiniteness.
+
+The archimedean multiplier is
+$h(t)=\operatorname{Re}\psi(1/4+it/2)-\log\pi$
+\cite[eq.~(3.19)]{CCM2025}. Choose $a=1/2$. With $z=1/4+it/2$ its remainder
+after subtracting $m_{1/2}(t)-\log(2\pi)$ is
+$\operatorname{Re}(\psi(z)-\log z)$. The digamma integral
+\cite[eq.~5.9.13]{DLMF} gives
+\[
+ \psi(z)-\log z=-\int_0^\infty
+   \left(\frac1{1-e^{-s}}-\frac1s\right)e^{-zs}\,ds.
+\]
+The parenthesis is positive, so the absolute value of the real remainder
+is at most $\log(1/4)-\psi(1/4)=\gamma+\pi/2+\log2$.
+Plancherel gives the same norm bound after compression to the interval.
+The pole kernel $2\cosh((x-y)/2)$ has eigenvalues
+$L\pm2\sinh(L/2)$ and norm $L+2\sinh(L/2)$. Each active prime power is
+$-(\log p)p^{-k/2}$ times a compressed translation and its adjoint, with
+norm at most $2(\log p)p^{-k/2}$. These estimates give
+\eqref{eq:logdiagconstant}.
+
+Trigonometric polynomials are a form core for $D_L$ and for the Weil form
+\cite[Prop.~3.4]{CCM2025}. A bounded perturbation preserves the form domain;
+equality on the core therefore identifies the closed forms and their
+associated operators. Reflection about $L/2$ commutes with every component.
+\end{proof}
+
+\begin{proposition}[Quantitative tail stability at fixed cutoff]
+\label{prop:tailstability}
+Suppose $A_c$ has a simple normalized ground state $u$, eigenvalue
+$\varepsilon_\infty$, and spectral gap $g>0$. Let $u_N$ be a normalized
+ground state of $P_NA_cP_N$, phase aligned with $u$, and put
+$q_N=\|(I-P_N)u\|_2^2$. For all sufficiently large $N$,
+\begin{equation}
+ \|u_N-u\|_2^2\le2\left(1+\frac{\mathcal C(c)^2}{g^2}\right)q_N.
+ \label{eq:tailstability}
+\end{equation}
+For centered logarithmic coordinates and every complex $z$,
+\begin{equation}
+ |\widehat u_N(z)-\widehat u(z)|
+ \le\sqrt{2L\left(1+\mathcal C(c)^2/g^2\right)q_N}\,
+       e^{L|\operatorname{Im}z|/2}.\label{eq:tailtransformexplicit}
+\end{equation}
+\end{proposition}
+\begin{proof}
+Write $p=P_Nu$, $w=(I-P_N)u$. The projected eigenvalue equation is
+$(P_NA_cP_N-\varepsilon_\infty)p=-P_NK_cw$.
+By min--max, every retained eigenvalue other than the first is at least
+$\varepsilon_\infty+g$. Projecting this equation orthogonally to $u_N$
+therefore gives $\|(I-|u_N\rangle\langle u_N|)p\|_2
+\le\mathcal C(c)\sqrt{q_N}/g$. Consequently
+$1-|\langle u,u_N\rangle|^2\le(1+\mathcal C(c)^2/g^2)q_N$.
+Phase alignment and $2(1-t)\le2(1-t^2)$ for $0\le t\le1$ prove
+\eqref{eq:tailstability}. Cauchy--Schwarz in the Fourier integral proves
+\eqref{eq:tailtransformexplicit}. The ground Ritz value eventually lies
+below $\varepsilon_\infty+g$ by form-core convergence, making it simple.
+\end{proof}
+
+\begin{proposition}[Late eigenvalue error as logarithmic tail energy]
+\label{prop:lateenergy}
+Under the preceding spectral hypotheses, let
+$E_N=\sum_{|j|>N}d_j|u_j|^2$, $v=P_Nu/\sqrt{1-q_N}$,
+$\delta_N=\langle v,A_cv\rangle-\varepsilon_\infty$, and
+$B=\mathcal C(c)+|\varepsilon_\infty|$.
+If $q_N<1$ and $\delta_N<g$, then
+\begin{align}
+ \frac{E_N-Bq_N}{1-q_N}
+ -\frac{\mathcal C(c)^2q_N}{(1-q_N)(g-\delta_N)}
+ &\le\varepsilon_N-\varepsilon_\infty
+ \le\frac{E_N+Bq_N}{1-q_N}.\label{eq:lateenergybounds}
+\end{align}
+If $E_N>0$, $d_{N+1}>0$, and $\delta_N\le g/2$, this implies
+\begin{equation}
+ \left|\frac{\varepsilon_N-\varepsilon_\infty}{E_N}-1\right|
+ \le\frac{q_N}{1-q_N}
+ +\frac{B+2\mathcal C(c)^2/g}{(1-q_N)d_{N+1}}.
+ \label{eq:lateenergyrelative}
+\end{equation}
+In particular $\varepsilon_N-\varepsilon_\infty\sim E_N$ at fixed $c$
+unless the eigenvector has finite support, in which case convergence terminates.
+\end{proposition}
+\begin{proof}
+The exact projection identity is
+$\delta_N=\langle w,(A_c-\varepsilon_\infty)w\rangle/(1-q_N)$;
+its difference from $E_N/(1-q_N)$ is bounded by $Bq_N/(1-q_N)$.
+Rayleigh--Ritz gives the upper bound. The retained residual of $v$ is
+$-(I-|v\rangle\langle v|)P_NK_cw/\sqrt{1-q_N}$, of squared norm at most
+$\mathcal C(c)^2q_N/(1-q_N)$. The retained second eigenvalue is at least
+$\varepsilon_\infty+g$, so the Temple residual inequality bounds
+$\langle v,A_cv\rangle-\varepsilon_N$ by that squared norm divided by
+$g-\delta_N$. This proves the lower bound. Finally $E_N\ge d_{N+1}q_N$
+gives \eqref{eq:lateenergyrelative}. Since $u\in\operatorname{Dom}(D_L)$,
+$E_N,q_N\to0$, while $d_{N+1}\to\infty$.
+\end{proof}
+
+These results supply a quantitative fixed-cutoff Galerkin transfer, but their
+constants can grow rapidly as the spectral gap closes. They neither establish
+a coefficient asymptotic nor control the coupled $c,N$ limit. For example,
+if one could prove $|u_j|^2\sim A(c)^2/[j^2(\log|j|)^3]$ for an even state,
+then \eqref{eq:lateenergyrelative} would imply
+$\varepsilon_N-\varepsilon_\infty\sim2A(c)^2/[N(\log N)^2]$.
+The coefficient premise and its nonzero amplitude remain unproved; this is
+not a replacement fitted law for the large-cutoff ramp.

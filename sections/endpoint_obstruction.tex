@@ -1,0 +1,86 @@
+\subsection{An endpoint obstruction to global analytic decay}
+\label{ssec:endpoint}
+
+The logarithmic endpoint term imposes a restriction on possible coefficient
+laws. It is stronger than the observation that finite-window fitted exponents
+drift, and does not require an eigenfunction to have one sign.
+
+\begin{proposition}[Smooth eigenfunctions must be flat at the boundary]
+\label{prop:endpointflat}
+Let $c>1$. If an eigenfunction $u$ of the exact full CCM operator has a
+$C^\infty$ representative on $[0,L]$, $L=\log c$, then
+$u^{(m)}(0)=u^{(m)}(L)=0$ for every $m\ge0$.
+Consequently no nonzero eigenfunction is analytic on a neighborhood of
+$[0,L]$, and no nonzero eigenfunction has periodic Fourier coefficients
+bounded by $Ce^{-a|j|^q}$ for any $a>0$, $q\ge1$.
+\end{proposition}
+\begin{proof}
+For the zero-extension realization $Q_a$ of
+$m_a(t)=\tfrac12\log(a^2+t^2)$, the symmetric translation formula gives
+\begin{align*}
+ Q_a u(x)={}&(\log a)u(x)
+ +\frac12\int_0^L e^{-a|x-y|}\frac{u(x)-u(y)}{|x-y|}\,dy\\
+ &+\frac12u(x)\bigl(E_1(ax)+E_1(a(L-x))\bigr),\qquad 0<x<L.
+\end{align*}
+The two exponential integrals are exactly the contributions from outside
+the interval. By the expansion of $E_1$ at zero
+\cite[eq.~6.6.2]{DLMF}, $E_1(ax)+\log x$ is analytic near zero.
+Split the integral at $y=x$; the divided difference extends smoothly
+through the diagonal, since
+\[
+ \frac{u(x)-u(y)}{x-y}=\int_0^1u'(y+s(x-y))\,ds.
+\]
+It follows that $Q_au(x)=-\tfrac12u(x)\log x+G_a(x)$ with $G_a$
+smooth up to the left endpoint whenever $u$ is smooth on $[0,L]$.
+
+For $a=1/2$, the remaining archimedean kernel in
+Proposition~\ref{prop:logdiag} is explicitly
+\[
+ -b(2|x-y|)e^{-|x-y|/2},\qquad
+ b(s)=\frac1{1-e^{-s}}-\frac1s.
+\]
+This follows by Fourier inversion of the digamma integral used there.
+The singularity of $b$ at zero is removable, with
+$b(s)=\tfrac12+s/12+O(s^3)$. Splitting at $x=y$ again shows that this
+remainder maps smooth functions to functions smooth at the endpoint.
+The pole kernel is analytic. In a sufficiently small one-sided neighborhood
+of zero, each of the finitely many prime translations is either zero or
+an interior translate of $u$. A translation of length $L$ is zero on the
+open interval. Thus the full eigenvalue equation is
+\[
+ 0=(A_c-\varepsilon)u(x)=-\tfrac12u(x)\log x+G(x),
+ \qquad G\in C^\infty([0,\eta])
+\]
+for some $\eta>0$. If $m$ is the first nonvanishing derivative of $u$ at
+zero, the $m$th derivative of $u(x)\log x$ contains
+$u^{(m)}(0)\log x$, which is unbounded. This contradicts the smoothness
+of $G$. Hence $u$ is flat at zero, and reflection gives flatness at $L$.
+An analytic function flat at an endpoint is identically zero on the
+connected interval. A Fourier bound with $q=1$ gives a holomorphic strip
+extension, while $q>1$ gives a holomorphic extension to every finite strip;
+both are therefore excluded.
+\end{proof}
+
+This does not rule out $0<q<1$: smooth nonanalytic functions can be flat at
+both endpoints. It also does not prove the nonzero logarithmic-boundary
+amplitude needed for the conditional $1/[N(\log N)^2]$ rate above.
+
+\begin{corollary}[No exact termination of the CCM Ritz sequence]
+\label{cor:notermination}
+For every finite $N$, the smallest exact Ritz value satisfies
+$\varepsilon_N>\varepsilon_\infty$.
+\end{corollary}
+\begin{proof}
+Equality in the variational principle would put a nonzero trigonometric
+polynomial in the continuum ground eigenspace. Such a polynomial is
+analytic, contradicting Proposition~\ref{prop:endpointflat}.
+\end{proof}
+
+The calibrated parameter $q_\gamma(c)=2/(2\gamma+\log\log c)$ satisfies
+$q_\gamma(c)\ge1$ up to
+$c_*=\exp(\exp(2-2\gamma))=10.27077047\ldots$, wherever its denominator
+is positive. In particular $q_\gamma(7)=1.0988038\ldots$ and
+$q_\gamma(9)=1.0300643\ldots$. Its proposed identification with a global
+continuum coefficient exponent is therefore false at those cutoffs.
+The finite-window root-error fit and its measured accuracy are separate:
+a finite band can decay much faster than the eventual endpoint tail.

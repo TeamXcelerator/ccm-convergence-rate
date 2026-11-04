@@ -1,0 +1,161 @@
+\subsection{Nonlinear local transfer and its exact interpolation defect}
+\label{ssec:nonlinear-local-closure}
+
+The linear moment filter can fail when a neighboring root is outside its
+local linear regime even though the target is accurate. Retaining the
+derived nonlinear terms yields an operator-only extension. It remains an
+a posteriori predictor; it does not replace the indexed budget in
+Section~\ref{ssec:indexed-resolution-budget}.
+
+\paragraph{A division-free system.}
+Retain the finite hypotheses of Section~\ref{ssec:multiroot-filter}, but
+allow an individual $\kappa_i$ to vanish. Define
+$Z_i=J_i-f_i^2-\varepsilon_Nh_iS_i$. For proposed displacements $d_i$,
+all obtained from the known finite transform, put
+\begin{align*}
+ B_i(d_i)&=F(\nu_i+d_i)/d_i,
+ &x_i(d_i)&=(\nu_i+d_i)^2,\\
+ L_i(d_i)&=\frac{2\nu_i d_iB_i(d_i)^2}{2\nu_i+d_i},
+ &E_i(d_i)&=2d_i^2B_i(d_i)^2,\\
+ A_i(d_i)&=B_i(d_i)^2\left(1+\frac{d_i^2}{(2\nu_i+d_i)^2}\right)
+                    -f_i^2-h_iL_i(d_i).
+\end{align*}
+Continue $B_i$ by $f_i$ at zero. Let $\mathsf D$ be the derivative
+matrix of polynomial interpolation at the $m=p+1$ distinct nodes
+$t_i=\nu_i^2$. Eliminating the common polynomial values gives
+\begin{align}
+ U_i(d)&=\frac{\varepsilon_NS_i-L_i(d_i)}{\nu_i}
+              -\sum_{j\ne i}\frac{E_j(d_j)}{x_j(d_j)-t_i},\nonumber\\
+ H_i(d)&=Z_i-\kappa_iU_i(d)-2t_i(\mathsf D U(d))_i-A_i(d_i)\nonumber\\
+ &\hspace{8mm}-\sum_{j\ne i}E_j(d_j)
+       \left\{\frac{\kappa_i}{x_j(d_j)-t_i}
+                          +\frac{2t_i}{(x_j(d_j)-t_i)^2}\right\}.
+ \label{eq:nonlinear-local-system}
+\end{align}
+The proposed model solves $H(d)=0$, approximating only the common remote
+field by a polynomial of degree $p$. It retains the local and
+cross-stencil terms, with no fitted correction coefficient.
+
+Set $\mathsf K=\operatorname{diag}(\kappa)
++2\operatorname{diag}(t)\mathsf D$. Since $L_i=f_i^2d_i+O(d_i^2)$
+and $A_i,E_i=O(d_i^2)$,
+\[
+ H(0)=Z-\mathsf K\operatorname{diag}(1/\nu)(\varepsilon_NS),\qquad
+ J_H(0)=\mathsf K\operatorname{diag}(f_i^2/\nu_i).
+\]
+If this matrix is nonsingular, the first Newton step gives exactly the
+division-free linear moment predictor: choose $v_i$ so that
+$\sum_i v_i[\kappa_iP(t_i)+2t_iP'(t_i)]=P(t_0)$ for $\deg P\le p$,
+then $\widehat\delta=(\nu_0\sum_i v_iZ_i-\varepsilon_NS_0)/f_0^2$.
+Individual zero kappas therefore need not be singularities, although the
+whole system must be invertible. The current numerical source path uses
+archived nonzero-kappa $y$ values to reconstruct $Z$; an actual zero-kappa
+source requires direct $Z$ acquisition.
+
+\begin{proposition}[Exact nonlinear common-field defect]
+\label{prop:nonlinear-common-defect}
+Let $\Omega(t)=\prod_j(t-t_j)$ and let $d^{\rm true}$ contain the truly
+matched local displacements. Under the exact finite Weil identities,
+\begin{equation}\label{eq:nonlinear-common-defect}
+ H_i(d^{\rm true})=2t_i\Omega'(t_i)
+       \sum_{\rm common}\frac{E_m}{(x_m-t_i)\Omega(x_m)}.
+\end{equation}
+Complex energies retain their squares and conjugate pairing; global RH
+is not required by this identity.
+\end{proposition}
+\begin{proof}
+For interpolation $I_p$ at the nodes,
+\[
+ \frac1{x-t}-I_p\!\left[\frac1{x-t}\right]
+           =\frac{\Omega(t)}{(x-t)\Omega(x)}.
+\]
+Differentiate at $t=t_i$. At the true displacements,
+$U_i=\varepsilon_NM(t_i)$, and all retained local terms cancel from
+$H_i$ except $2\varepsilon_Nt_i[M'(t_i)-(I_pM)'(t_i)]$.
+Substitution proves the formula. Absolute convergence is as in the
+preceding finite Weil sums.
+\end{proof}
+For $|\Re z|\ge H_0>\max_i\nu_i$, its kernel is bounded by
+\[
+ \mathcal B_i(H_0)=\frac{2t_i|\Omega'(t_i)|}
+       {(H_0^2-t_i)\prod_j(H_0^2-t_j)}.
+\]
+The unknown part is at most
+$(\varepsilon_N-E_{H_0}+V_T)\mathcal B_i(H_0)+V_T\mathcal B_i(T)$,
+under the same verified-height and complete-energy hypotheses as
+\eqref{eq:multiroot-tail}. The kernel decays as $x^{-p-2}$.
+
+\paragraph{Residual is not displacement.}
+For a scaled residual $G(x)$ on an infinity-norm box of radius $R$ about
+$x_0$, take fixed invertible $Y$ and suppose
+\[
+ q=\sup_x\|I-YJ_G(x)\|_\infty<1,\qquad
+ \|YG(x_0)\|_\infty+qR\le R.
+\]
+The map $x\mapsto x-YG(x)$ is then a contraction of the box into itself,
+so its model root $\widehat x$ is unique there. If a truly matched root
+$x^{\rm true}$ also lies in that box and $G(x^{\rm true})=\rho$, then
+\[
+ \|\widehat x-x^{\rm true}\|_\infty
+               \le\|Y\rho\|_\infty/(1-q).
+\]
+This follows by subtracting the fixed-point equations. A point Jacobian
+and a small Newton residual do not establish the box-wide hypothesis.
+Source error and Taylor truncation must also enter the error budget.
+
+\paragraph{Measured continuation, with failures retained.}
+The fixed primary model has $p=2$, a quarter-nearest-spacing displacement
+domain at every stencil root, and Taylor order 16; order 24 is a numerical
+crosscheck. Source arithmetic uses 1700 decimal digits and postprocessing
+120. All percentages in Table~\ref{tab:nonlinear-edge} refer to signed
+error in the predicted displacement $\delta=\nu-\gamma$, not to error
+in the zero itself.
+\begin{table}[htbp]
+\centering\small
+\begin{tabular}{rrrrl}
+\toprule
+$(C,N)$ & $k$ & Linear error & Nonlinear error & Outcome\\
+\midrule
+$(1000,890)$ &610&$-0.00745679\%$&$-0.00745681\%$&within $1\%$\\
+ &616&$-0.0270812\%$&$-0.0266569\%$&within $1\%$\\
+ &618&$-86.8459\%$&$-2.22210\%$&fails $1\%$\\
+ &619&$+71.9606\%$&$-0.0444023\%$&within $1\%$\\
+ &620&$+35.8510\%$&$-1.04454\%$&fails $1\%$\\
+\midrule
+$(1200,970)$ &650&$-0.0000251935\%$&$-0.0000251935\%$&qualified point pass\\
+ &675&$+2.56032\%$&$-0.0248694\%$&qualified point pass\\
+ &700&$-15.7757\%$&$+25.2621\%$&unqualified\\
+ &725&$+49.5347\%$&$-10.7295\%$&unqualified\\
+\bottomrule
+\end{tabular}
+\caption{Five exploratory revisits and four frozen new-index tests in an
+existing source family. The latter give two qualified passes and two
+unqualified targets, not four successes.}
+\label{tab:nonlinear-edge}
+\end{table}
+At $k=700$ the solver finds no descending step within the local domain,
+and a neighbor seed has a different nearest-reference ordinal. At $k=725$
+the solver converges but a neighbor ordinal drifts. The two qualified
+targets have measured relative depths $23.8950$ and $4.97824$ digits.
+Reference-seeded acquisition and nearest-reference checks do not certify
+independent ordinal discovery.
+
+The exact kernel also identifies the remaining nearby-field obstruction.
+At target $618$, the observed fractional predictor error is $-0.0222210$;
+the known common sum propagated with a point Jacobian gives $-0.0222233$,
+of which the excluded pair $621$ supplies $-0.0219676$. The point
+linearized unknown-tail width is about $1.03\cdot10^{-10}$. The seed for
+$621$ had instead reached the same finite root as $622$; adding that
+duplicate does not represent the important omitted pair. A diagnostic
+64-subinterval scan in its reference-midpoint window finds no
+sign-changing rational-secular bracket. This finite scan does not prove
+absence of a root.
+
+Thirty-five exact rational/complex fixture checks verify the nonlinear
+algebra. Twenty-seven direct evaluations of the retained transform at
+predicted points give maximum relative discrepancies from order 24 of
+$3.26\cdot10^{-41}$ and $7.08\cdot10^{-24}$ in the two families.
+These checks, the 28 dual-identity checks, and all unresolved outcomes
+are recorded with input and script hashes in the research checkpoint.
+They establish neither outward-rounded source certificates nor a
+uniform convergence law for $1\le k\le1000$.

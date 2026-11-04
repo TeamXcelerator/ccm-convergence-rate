@@ -1,0 +1,167 @@
+\subsection{Curvature, amplitude, and exact source transfer}
+\label{sec:action-prefactor}
+
+The leading action has now been tested at the level of its local
+curvature and its root-specific prefactor. These tests distinguish
+mechanism evidence from an accurate displacement formula.
+With the notation of \eqref{eq:action-endpoint}, direct differentiation
+on the positive side gives
+\[
+ \mathcal S''(0+)=\frac{1-2L\sqrt{a^2-A^2}/(\pi A)}{a}
+ \quad(A<a),\qquad \mathcal S''(0+)=\frac1a\quad(A\geq a).
+\]
+After restoring the exact $\xi'$ height feature, the linear Gamma
+envelope cancels the action's $-\pi|x|/2$ term. The resulting local
+quadratic coefficient is $a_{2,\mathrm{model}}=\mathcal S''(0+)/(2\log10)$.
+It has no fitted parameters. Its comparison with the earlier first-50
+fits is a comparison of a local coefficient with a finite-range fit,
+not an assertion that the two definitions coincide:
+\begin{center}\small
+\begin{tabular}{rr|rrr}
+\toprule
+$C$&$N$&Earlier fitted $a_2$&Model $a_2$&Relative difference\\
+\midrule
+1000&890 &$-4.2777\,10^{-4}$&$-4.25028\,10^{-4}$&$-0.6410\%$\\
+1000&800 &$-5.0343\,10^{-4}$&$-4.99223\,10^{-4}$&$-0.8356\%$\\
+1200&970 &$-4.3028\,10^{-4}$&$-4.27892\,10^{-4}$&$-0.5550\%$\\
+100&500  &$ 1.2519\,10^{-4}$&$ 1.25192\,10^{-4}$&$ 0.00155\%$\\
+250&1500 &$ 5.0432\,10^{-5}$&$ 4.99851\,10^{-5}$&$-0.8861\%$\\
+250&500  &$-2.5214\,10^{-4}$&$-2.47408\,10^{-4}$&$-1.8769\%$\\
+13&120   &$ 1.4732\,10^{-3}$&$ 1.32923\,10^{-3}$&$-9.7724\%$\\
+\bottomrule
+\end{tabular}
+\end{center}
+Every sign agrees; the previously identified low-$C$ outlier is retained.
+This supports the finite-mode mechanism but does not settle its remainder.
+
+\paragraph{A trial amplitude and a remote-energy discriminator.}
+Let $\Xi(x)=\xi(\tfrac12+ix)$ and define, inside the model endpoint,
+\[
+ F_m(x)=\Xi(x)e^{G(x)},\qquad
+ 2G(x)=\mathcal S(|x|)-\mathcal S(0)+\pi|x|/2.
+\]
+For $\beta J<a$, the finite lattice sums
+\[
+ Z_J=\frac1L\sum_{|j|\leq J}F_m(\beta j)^2,\qquad
+ W_J(\gamma)=-\frac\gamma L\sum_{|j|\leq J}
+                 \frac{F_m(\beta j)^2}{\beta j-\gamma}
+\]
+specify the trial normalization and Stieltjes factor without fitting.
+If the source approximation and the omission of remote energy were valid,
+the bare identity would give
+\[
+ \frac{\delta_k}{\gamma_k}\approx
+ \frac{\varepsilon W_J(\gamma_k)}
+ {\gamma_k^2|\xi'(\tfrac12+i\gamma_k)|^2
+  e^{\mathcal S(\gamma_k)-\mathcal S(0)+\pi\gamma_k/2}}.
+\]
+The normalization $Z_J$ cancels. This diagnostic uses reference ordinates
+and reference $\xi'$ values, as well as the computed eigenvalue; it is
+not a parameter-only prediction. Lattice sums through $|j|=128$ and
+$192$ agree closely, but the finite added-shell bounds are not infinite
+tail certificates.
+
+A separate exploratory hypothesis assigns paired energy the density
+\[
+ dE_m(y)=\frac{2a}{\pi y\sqrt{y^2-a^2}}\,dy,\qquad y>a.
+\]
+Equivalently $a^2/y^2$ has the arcsine distribution. In the unscaled
+squared ordinate $t=\gamma^2$, its exact resolvent identity is
+\[
+ R_m(t)=1+t\int\frac{dE_m(y)}{y^2-t}
+       =\frac1{\sqrt{1-t/a^2}},\qquad 0\leq t<a^2.
+\]
+The proposed density is not derived for CCM. The comparison below uses
+the measured ratio of displacement to the bare operator estimate,
+with the same counted-prefix and model-domain gates as before.
+It tests only the remote multiplier, not the whole error law.
+\begin{center}\small
+\begin{tabular}{rr|rr|rr}
+\toprule
+$C$&$N$&Trial RMS digits&Trial 1\% passes&Remote 1\% passes&Worst remote error\\
+\midrule
+125&1500&0.3580&43/1000&682/1000&4.0053\%\\
+250&750 &0.8270&17/576 &538/576 &218.292\%\\
+250&1000&0.7975&26/797 &763/797 &82.0279\%\\
+250&1250&0.5893&38/1000&781/1000&2.3615\%\\
+250&1500&0.2670&50/1000&1000/1000&0.5128\%\\
+\bottomrule
+\end{tabular}
+\end{center}
+The full trial passes only 174/4373 eligible targets. Its modeled
+Stieltjes numerator closely matches the stored operator quantity, while
+its derivative amplitude increasingly fails at high index. For
+$C=250,N=1500$, the modeled-to-measured derivative-squared ratio falls
+from $0.99988$ at $k=1$ to $0.13147$ at $k=1000$; the Stieltjes ratio
+stays close to one. This directs the next derivation to amplitude and
+source transfer, rather than another fitted depth curve. The remote
+model passes 3764/4373 but fails strongly near underresolved edges.
+The exploratory central-normalized closure
+$F_0'/F_\varepsilon'\approx(1+\sqrt{1-\gamma_k^2/a^2})/2$
+also improves with resolution: its resulting displacement predictor
+passes 1000/1000 at $N=1500$, but only 250/362 at $N=500$, both at
+$C=250$. It is not a uniform replacement for the earlier operator
+predictor. All these comparisons are exploratory on previously inspected
+data; no constants are fitted. Twenty-one independent 100-digit point
+checks verify the model curvature and distribution identities only.
+
+\paragraph{An exact transfer bound that stays regular at the ground.}
+The following result supplies a rigorous finite alternative to assuming
+the two source amplitudes agree. Here $\mathbf A$ denotes the even
+matrix, to distinguish it from the Fourier endpoint $A=2\pi N/L$.
+\begin{proposition}[Monic source resolvent]
+\label{prop:monic-source-resolvent}
+Suppose $\mathbf A>0$ has simple lowest eigenvalue $\varepsilon$ and
+ground vector $g$ with $\ell^Tg\ne0$. Put
+\[
+ a_0=\frac{\mathbf A^{-1}\ell}{\ell^T\mathbf A^{-1}\ell},\quad
+ \mathcal J=\binom{-w^T}{I},\quad
+ H_z=\mathcal J^T(\mathbf A-zI)\mathcal J,\quad b=\mathcal J^Ta_0.
+\]
+For $0\leq z\leq\varepsilon$, $H_z>0$ and the unique monic stationary
+vector is
+\[
+ a_z=a_0+z\mathcal JH_z^{-1}b,\qquad
+ a_\varepsilon=\frac{g}{\ell^Tg}.
+\]
+For every fixed real linear functional $d$,
+\[
+ |d^T(a_z-a_0)|\leq z
+ \sqrt{(\mathcal J^Td)^TH_z^{-1}(\mathcal J^Td)}
+ \sqrt{b^TH_z^{-1}b}.
+\]
+\end{proposition}
+\begin{proof}
+The only possible kernel of $\mathbf A-zI$ is the ground line at
+$z=\varepsilon$, which is not contained in $\ker\ell^T$; its compression
+is therefore positive. Write $a_z=a_0+\mathcal Jr$. Stationarity gives
+$H_zr=zb$, proving the formula and its endpoint. Cauchy--Schwarz in
+the $H_z^{-1}$ inner product proves the bound.
+\end{proof}
+Taking $d$ to be transform differentiation at a fixed ordinate bounds
+the amplitude change; a bound below $|d^Ta_0|$ excludes a vanishing
+derivative there. Comparisons at different roots and changes from monic
+to unit normalization still require their own factors. The constrained
+energy $h(z)=a_z^T(\mathbf A-zI)a_z$ also obeys
+\[
+ h'(z)=-\|a_z\|^2,\qquad
+ h''(z)=-2(\mathcal J^Ta_z)^TH_z^{-1}(\mathcal J^Ta_z)\leq0.
+\]
+Consequently $h(0)=\int_0^\varepsilon\|a_z\|^2dz$ and
+$\varepsilon\leq h(0)/\|a_0\|^2$. These statements pass 3332 exact
+rational checks, including the singular full-matrix ground endpoint.
+
+Returning to $t=(\nu/\beta)^2$, Parseval and the Gamma transform give
+a useful interpretation:
+\[
+ d\eta_N(t)=\frac{L\beta\,dt}
+ {2\pi\sqrt t\,\Gamma(N+1+\sqrt t)^2\Gamma(N+1-\sqrt t)^2},
+ \qquad d\mu_z=d\mu_0-z\,d\eta_N.
+\]
+The measure representation is conditional on the earlier positive real
+Weil hypothesis; the matrix proposition is not. For $z>0$ the displayed
+measure is signed, even though its lower-degree form remains positive.
+Thus a positive-measure zero-shift asymptotic cannot simply be transferred
+to the ground source. The degree-$N$ ground polynomial has zero shifted
+norm. Uniform estimates for this resolvent, the discrete prefactor and
+the precision channel remain necessary to close the $C,N,P,k$ law.
