@@ -1,0 +1,39 @@
+name: Driver qualification
+
+# Development qualification is explicit, not triggered by each edit or PR update.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: driver-qualification-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  driver:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      # Preparation changes only this scratch checkout. It neither commits
+      # source changes nor establishes clean-checkout release qualification.
+      - name: Prepare candidate driver changes in the scratch checkout
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path('tools/materialize_driver_hardening.py')
+          text = path.read_text()
+          old = 's = once(s, "_MEASUREMENTS = []\\n", """_MEASUREMENTS = []'
+          new = 's = once(s, "\\n_MEASUREMENTS = []\\n", """\\n_MEASUREMENTS = []'
+          assert text.count(old) == 1
+          path.write_text(text.replace(old, new))
+          PY
+          python3 tools/materialize_driver_hardening.py
+      - name: Driver regression tests
+        run: python3 -m unittest discover -s tests -p 'test_*.py' -v
+      - name: CLI smoke check without numerical execution
+        run: python3 scripts/reproduce.py --help
